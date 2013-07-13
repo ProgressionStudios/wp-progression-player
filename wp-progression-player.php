@@ -6,7 +6,7 @@ Description: Implemenation of ProgressionPlayer for WordPress to play video and 
 Version: 0.1
 Author: Progression Studios
 Author Email: contact@progressionstudios.com
-License:
+License: 
 
   Copyright 2012 Progression Studios (contact@progressionstudios.com)
 

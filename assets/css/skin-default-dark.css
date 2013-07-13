@@ -1,0 +1,228 @@
+/*
+Skin Name: Dark Default
+*/
+
+/*  Table of Contents 
+01. Responsive Max Width
+02. Main Backgrounds
+03. Borders
+04. Button/Font Colors
+05. Playlist Backgrounds & Fonts
+06. Progress/Volume Bar Backgrounds
+07. Player Height
+08. Button Sizes
+*/
+
+
+/*
+=============================================== 01. Responsive Max Width ===============================================
+*/
+/* body .responsive-wrapper {max-width:550px;} */
+
+
+/*
+=============================================== 02. Main Backgrounds ===============================================
+*/
+/* Main Background Color */
+body .mejs-container.progression-skin.progression-default-dark .mejs-controls {
+	background:#202020; /* IE Fall-Back */
+	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#202020), to(#494949));  /* Safari 4+, Chrome 1-9 */
+	background-image: -webkit-linear-gradient(bottom, #202020, #494949);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
+	background-image: -moz-linear-gradient(bottom, #202020, #494949);  /* Firefox 3.6+ */
+	background-image: -ms-linear-gradient(bottom, #202020, #494949); /* IE 10+ */
+	background-image: -o-linear-gradient(bottom, #202020, #494949); /* Opera 11.10+ */
+	background-image: linear-gradient(bottom, #202020 0%, #494949 100%);
+}
+
+/* Button Hover Background Color */
+body .progression-skin.progression-default-dark .mejs-controls .mejs-nexttrack:hover, body .progression-skin.progression-default-dark .mejs-controls .mejs-prevtrack:hover,  body .progression-skin.progression-default-dark .mejs-controls .mejs-show-playlist:hover, body .progression-skin.progression-default-dark  .mejs-controls .mejs-hide-playlist:hover,  body .progression-skin.progression-default-dark .mejs-controls .mejs-mute button:hover,  body .progression-skin.progression-default-dark .mejs-controls .mejs-fullscreen-button:hover,  body .progression-skin.progression-default-dark .mejs-controls .mejs-hide-playlist, body .progression-skin.progression-default-dark .mejs-controls .mejs-playpause-button:hover {
+	background: #494949; /* IE Fall-Back */
+	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#494949), to(#202020));  /* Safari 4+, Chrome 1-9 */
+	background-image: -webkit-linear-gradient(bottom, #494949, #202020);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
+	background-image: -moz-linear-gradient(bottom, #494949, #202020);  /* Firefox 3.6+ */
+	background-image: -ms-linear-gradient(bottom, #494949, #202020); /* IE 10+ */
+	background-image: -o-linear-gradient(bottom, #494949, #202020); /* Opera 11.10+ */
+	background-image: linear-gradient(bottom, #494949 0%, #202020 100%);
+}
+
+
+/*
+=============================================== 03. Borders ===============================================
+*/
+/* Main Outline Border */
+body .mejs-container.progression-skin.progression-default-dark, body .mejs-container.progression-skin.progression-default-dark .mejs-controls  {
+	border-color:#444444;
+}
+
+/* Button Borders */
+body .progression-skin.progression-default-dark .mejs-controls .mejs-playpause-button, body .progression-skin.progression-default-dark .mejs-inner .mejs-controls .mejs-time, body .progression-skin.progression-default-dark .mejs-controls .mejs-fullscreen-button,  body .progression-skin.progression-default-dark .mejs-controls .mejs-show-playlist, body .progression-skin.progression-default-dark  .mejs-controls .mejs-hide-playlist, body .progression-skin.progression-default-dark .mejs-controls .mejs-prevtrack button,  body .progression-skin.progression-default-dark .mejs-controls .mejs-nexttrack button {
+	border-color:#333333;
+}
+
+
+/*
+=============================================== 04. Button/Font Colors ===============================================
+*/
+/* Main Button Color */
+body .progression-skin.progression-default-dark .mejs-controls button {color:#eeeeee;}
+
+/* Main Button Hover Color */
+body .progression-skin.progression-default-dark .mejs-controls button:hover {
+	color:#ffffff;
+}
+
+/* Timer Color 00:00 */
+body .progression-skin.progression-default-dark .mejs-inner .mejs-time .mejs-currenttime, body .progression-skin.progression-default-dark .mejs-inner .mejs-time  .mejs-duration {
+	color:#ffffff;
+}
+
+
+/*
+=============================================== 05. Playlist Backgrounds & Fonts ===============================================
+*/
+/* PlayList Borders */
+body .progression-skin.progression-default-dark .mejs-playlist ul, body .progression-skin.progression-default-dark .mejs-playlist li {border-color:#333333;}
+
+/* PlayList Background */
+body .progression-skin.progression-default-dark .mejs-playlist, body .progression-skin.progression-default-dark .mejs-playlist ul { background: #202020;}
+
+/* PlayList Font Color */
+body .progression-skin.progression-default-dark .mejs-playlist li { color: #999999;  background-color: rgba(250, 250, 250, 0.1);}
+
+/* PlayList Hover Background */
+body .progression-skin.progression-default-dark .mejs-playlist li:hover {
+	background-color: #000000;
+	background-color: rgba(250, 250, 250, 0.06);
+}
+
+/* PlayList Current Selected Item */
+body .progression-skin.progression-default-dark .mejs-playlist li.current {
+	color:#ffffff;
+	background:#000000;
+	background: rgba(0, 0, 0, 0.35);
+}
+
+
+/*
+=============================================== 06. Progress/Volume Bar Backgrounds ===============================================
+*/
+/* Main Progress Bar Background */
+body .progression-skin.progression-default-dark .mejs-controls .mejs-time-rail .mejs-time-total {
+	background:#888888; /* IE Fall-Back */
+	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#888888), to(#666666));  /* Safari 4+, Chrome 1-9 */
+	background-image: -webkit-linear-gradient(bottom, #888888, #666666);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
+	background-image: -moz-linear-gradient(bottom, #888888, #666666);  /* Firefox 3.6+ */
+	background-image: -ms-linear-gradient(bottom, #888888, #666666); /* IE 10+ */
+	background-image: -o-linear-gradient(bottom, #888888, #666666); /* Opera 11.10+ */
+	background-image: linear-gradient(bottom, #888888 0%, #666666 100%);
+	
+	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
+	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
+}
+
+/* Main Progress Bar Loading Background */
+body .progression-skin.progression-default-dark .mejs-controls .mejs-time-rail .mejs-time-loaded { 
+	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+	background:#aaaaaa; /* IE Fall-Back */
+	
+	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#aaaaaa), to(#999999));  /* Safari 4+, Chrome 1-9 */
+	background-image: -webkit-linear-gradient(bottom, #aaaaaa, #999999);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
+	background-image: -moz-linear-gradient(bottom, #aaaaaa, #999999);  /* Firefox 3.6+ */
+	background-image: -ms-linear-gradient(bottom, #aaaaaa, #999999); /* IE 10+ */
+	background-image: -o-linear-gradient(bottom, #aaaaaa, #999999); /* Opera 11.10+ */
+	background-image: linear-gradient(bottom, #aaaaaa 0%, #999999 100%);
+	
+}
+
+/* Main Progress Bar Currently Played Background */
+body .progression-skin.progression-default-dark .mejs-controls .mejs-time-rail .mejs-time-current {
+	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+	background:#eeeeee; /* IE Fall-Back */
+	
+	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#ffffff), to(#bbbbbb));  /* Safari 4+, Chrome 1-9 */
+	background-image: -webkit-linear-gradient(bottom, #ffffff, #bbbbbb);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
+	background-image: -moz-linear-gradient(bottom, #ffffff, #bbbbbb);  /* Firefox 3.6+ */
+	background-image: -ms-linear-gradient(bottom, #ffffff, #bbbbbb); /* IE 10+ */
+	background-image: -o-linear-gradient(bottom, #ffffff, #bbbbbb); /* Opera 11.10+ */
+	background-image: linear-gradient(bottom, #ffffff 0%, #bbbbbb 100%);
+}
+
+/* Main Progress Bar Handle */
+body .progression-skin.progression-default-dark .mejs-controls .mejs-time-rail .mejs-time-handle  {
+	display: block; margin: 0; padding:0px; border: 0;
+	width: 6px;
+	height: 6px;
+	-webkit-border-radius: 12px;
+	-moz-border-radius: 12px;
+	border-radius: 12px;
+	top:-3px;
+	left:-8px;
+	-webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.25);
+	box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.25);
+	border:5px solid #eaeaea;
+	background: #adadad;	
+	
+	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#9c9c9c), to(#adadad));  /* Safari 4+, Chrome 1-9 */
+	background-image: -webkit-linear-gradient(bottom, #9c9c9c, #adadad);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
+	background-image: -moz-linear-gradient(bottom, #9c9c9c, #adadad);  /* Firefox 3.6+ */
+	background-image: -ms-linear-gradient(bottom, #9c9c9c, #adadad); /* IE 10+ */
+	background-image: -o-linear-gradient(bottom, #9c9c9c, #adadad); /* Opera 11.10+ */
+	background-image: linear-gradient(bottom, #9c9c9c 0%, #adadad 100%);
+	
+}
+
+/* Volume Bar Background Default */
+body .progression-skin.progression-default-dark .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-total {
+	background:#888888; /* IE Fall-Back */
+	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#888888), to(#666666));  /* Safari 4+, Chrome 1-9 */
+	background-image: -webkit-linear-gradient(bottom, #888888, #666666);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
+	background-image: -moz-linear-gradient(bottom, #888888, #666666);  /* Firefox 3.6+ */
+	background-image: -ms-linear-gradient(bottom, #888888, #666666); /* IE 10+ */
+	background-image: -o-linear-gradient(bottom, #888888, #666666); /* Opera 11.10+ */
+	background-image: linear-gradient(bottom, #888888 0%, #666666 100%);
+	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
+	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
+}
+
+/* Volume Bar Background Volume On */
+body .progression-skin.progression-default-dark .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-current {
+	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+	background:#eeeeee; /* IE Fall-Back */
+	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#ffffff), to(#bbbbbb));  /* Safari 4+, Chrome 1-9 */
+	background-image: -webkit-linear-gradient(bottom, #ffffff, #bbbbbb);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
+	background-image: -moz-linear-gradient(bottom, #ffffff, #bbbbbb);  /* Firefox 3.6+ */
+	background-image: -ms-linear-gradient(bottom, #ffffff, #bbbbbb); /* IE 10+ */
+	background-image: -o-linear-gradient(bottom, #ffffff, #bbbbbb); /* Opera 11.10+ */
+	background-image: linear-gradient(bottom, #ffffff 0%, #bbbbbb 100%);
+	
+}
+
+
+/* Volume Bar Volume Handle */
+body .progression-skin.progression-default-dark .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-handle {
+	display: block;
+	position: absolute;
+	width: 5px;
+	height:5px;
+	margin-left:-6px;
+	top:8px;
+	background: #adadad;
+	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#9c9c9c), to(#adadad));  /* Safari 4+, Chrome 1-9 */
+	background-image: -webkit-linear-gradient(bottom, #9c9c9c, #adadad);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
+	background-image: -moz-linear-gradient(bottom, #9c9c9c, #adadad);  /* Firefox 3.6+ */
+	background-image: -ms-linear-gradient(bottom, #9c9c9c, #adadad); /* IE 10+ */
+	background-image: -o-linear-gradient(bottom, #9c9c9c, #adadad); /* Opera 11.10+ */
+	background-image: linear-gradient(bottom, #9c9c9c 0%, #adadad 100%);
+		
+	-webkit-border-radius: 12px;
+	-moz-border-radius: 12px;
+	border-radius: 12px;
+	cursor: pointer;
+	-webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.25);
+	box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.25);
+	border:4px solid #eaeaea;
+	text-align: center;
+}
