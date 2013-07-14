@@ -2,7 +2,7 @@
 Tags: player, media
 Requires at least: 3.5.1
 Tested up to: 3.5
-Stable tag: 0.1
+Stable tag: 0.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,7 +35,7 @@ that lacks those changes -- as long as the trunk's `readme.txt` points to the co
     If no stable tag is provided, it is assumed that trunk is stable, but you should specify "trunk" if that's where
 you put the stable version, in order to eliminate any doubt.
 
-~Current Version:0.1~
+~Current Version:0.1.1~
 
 == Installation ==
 
