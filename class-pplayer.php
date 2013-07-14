@@ -261,11 +261,66 @@ class Progression_Player {
 	 */
 	
 	public function render_shortcode($atts) {
-		
+
 		extract(shortcode_atts(array(
 			'attr1' => 'foo', // foo is a default value
 			'attr2' => 'bar'
 			), $atts));
+
+		$html = '';
+
+		$html .= $this->render_player_element();
+		$html .= $this->render_player_options();
+
+		return $html;
+	}
+	/**
+	 * Render the player.
+	 *
+	 * @since    1.0.0
+	 */
+	public function render_player_element($options = null) {
+
+		return '<div class="responsive-wrapper youtube-wrapper">
+<video style="width: 100%; height: 100%;" class="progression-single progression-skin" controls="controls" preload="none">
+	<source type="video/youtube" src="http://www.youtube.com/watch?v=nOEw9iiopwI" />
+</video>
+</div><!-- close .responsive-wrapper -->';
+	}
+
+	/**
+	 * Render the required javascript options to the jQuery plugin call.
+	 *
+	 * @since    1.0.0
+	 */
+	public function render_player_options($options = null) {
+
+		return "
+		<script>
+		(function ($) {
+			$('.progression-single').mediaelementplayer({
+				defaultVideoWidth: 480, // if the <video width> is not specified, this is the default
+				defaultVideoHeight: 270, // if the <video height> is not specified, this is the default
+				videoWidth: -1, // if set, overrides <video width>
+				videoHeight: -1, // if set, overrides <video height>
+				audioWidth: 400, // width of audio player
+				audioHeight: 30, // height of audio player
+				startVolume: 0.8, // initial volume when the player starts
+				loop: false, // useful for <audio> player loops
+				enableAutosize: true, // enables Flash and Silverlight to resize to content size
+				features: ['playpause','current','progress','duration','tracks','volume','fullscreen'], // the order of controls you want on the control bar (and other plugins below)
+				alwaysShowControls: false,  // Hide controls when playing and mouse is not over the video
+				iPadUseNativeControls: false,  // force iPad's native controls
+				iPhoneUseNativeControls: false,  // force iPhone's native controls
+				AndroidUseNativeControls: false, // force Android's native controls
+				alwaysShowHours: false, // forces the hour marker (##:00:00)
+				showTimecodeFrameCount: false, // show framecount in timecode (##:00:00:00)
+				framesPerSecond: 25, // used when showTimecodeFrameCount is set to true
+				enableKeyboard: true, // turns keyboard support on and off for this instance
+				pauseOtherPlayers: true // when this player starts, it will pause other players
+			});
+		}(jQuery));
+		</script>";
 	}
 
 }
