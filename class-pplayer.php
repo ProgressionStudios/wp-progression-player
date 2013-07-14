@@ -86,9 +86,6 @@ class Progression_Player {
 		add_action( 'TODO', array( $this, 'action_method_name' ) );
 		add_filter( 'TODO', array( $this, 'filter_method_name' ) );
 
-		// Initiate Github plugin updater
-		add_action( 'init', array( $this, 'github_plugin_updater_init' ) );
-
 	}
 
 	/**
@@ -326,40 +323,4 @@ class Progression_Player {
 		</script>";
 	}
 
-	/**
-	 * Updates the plugin whenever a new version is available from Github.
-	 *
-	 * @since    1.0.0
-	 */
-	
-	public function github_plugin_updater_init() {
-
-	include_once 'updater.php';
-
-	define( 'WP_GITHUB_FORCE_UPDATE', true );
-
-	if ( is_admin() ) {
-
-		$config = array(
-			'slug' => 'wp-progression-player',
-			'proper_folder_name' => 'wp-progression-player',
-			'api_url' => 'https://api.github.com/repos/jancbeck/wp-progression-player',
-			'raw_url' => 'https://raw.github.com/jancbeck/wp-progression-player/master',
-			'github_url' => 'https://github.com/jancbeck/wp-progression-player',
-			'zip_url' => 'https://github.com/jancbeck/wp-progression-player/archive/master.zip',
-			'sslverify' => true,
-			'requires' => '3.5.1',
-			'tested' => '3.5',
-			'readme' => 'README.txt',
-			'access_token' => '528ad3399520b244e6afbb1bb7f420fc23bbfbec',
-		);
-
-		new WP_GitHub_Updater( $config );
-
-	}
-
 }
-
-}
-
-include_once 'class-updater.php';
