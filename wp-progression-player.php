@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: WP Progression Player
+Plugin Name: WP-Progression-Player
 Plugin URI: http://progressionstudios.com/
 Description: Implemenation of ProgressionPlayer for WordPress to play video and audio files.
 Version: 0.1
