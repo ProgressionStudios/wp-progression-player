@@ -114,7 +114,7 @@ class Progression_Player {
 		global $wp_version;
 
 		$update_url = network_admin_url('update-core.php');
-		$error_msg = sprintf(__('<p><b>WP Progression Player</b> requires at least WordPress 3.6. Your installation runs version %s. Please <a href="%s">update.</a></p>'), $wp_version, $update_url);
+		$error_msg = sprintf(__('<p><b>WP Progression Player</b> requires at least WordPress version 3.6. You are running version %s. Please <a href="%s">upgrade</a> and try again.</p>'), $wp_version, $update_url);
 		
 		// check for native audio and video shortcode support
 		if ( ! function_exists( 'wp_video_shortcode' ) || ! function_exists( 'wp_audio_shortcode' ) ) {
