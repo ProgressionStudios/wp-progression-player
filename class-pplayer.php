@@ -29,10 +29,7 @@ class Progression_Player {
 	protected $version = '1.0.0';
 
 	/**
-	 * Unique identifier for your plugin.
-	 *
-	 * Use this value (not the variable name) as the text domain when internationalizing strings of text. It should
-	 * match the Text Domain file header in the main plugin file.
+	 * Unique identifier of the plugin.
 	 *
 	 * @since    1.0.0
 	 *
@@ -113,7 +110,6 @@ class Progression_Player {
 	 * @param    boolean    $network_wide    True if WPMU superadmin uses "Network Activate" action, false if WPMU is disabled or plugin is activated on an individual blog.
 	 */
 	public static function activate( $network_wide ) {
-		// TODO: Define activation functionality here
 
 		global $wp_version;
 
