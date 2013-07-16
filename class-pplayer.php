@@ -155,7 +155,7 @@ class Progression_Player {
 
 		$screen = get_current_screen();
 		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
-			wp_enqueue_style( $this->plugin_slug .'-admin-styles', plugins_url( 'css/admin.css', __FILE__ ), array(), $this->version );
+			wp_enqueue_style( $this->plugin_slug .'-admin-styles', plugins_url( 'css/pplayer-admin.css', __FILE__ ), array(), $this->version );
 		}
 
 	}
@@ -175,7 +175,7 @@ class Progression_Player {
 
 		$screen = get_current_screen();
 		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
-			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/admin.js', __FILE__ ), array( 'jquery' ), $this->version );
+			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/pplayer-admin.js', __FILE__ ), array( 'jquery' ), $this->version );
 		}
 
 	}
@@ -186,6 +186,11 @@ class Progression_Player {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
+
+		// remove WordPress specific style. We will use our own.
+		wp_deregister_style( 'mediaelement' ); 
+		wp_deregister_style( 'wp-mediaelement' ); 
+
 		wp_enqueue_style( $this->plugin_slug . '-default-style', plugins_url( 'assets/css/progression-player.css', __FILE__ ), array(), $this->version );
 		wp_enqueue_style( $this->plugin_slug . '-icons', plugins_url( 'assets/font-awesome/css/font-awesome.min.css', __FILE__ ), array(), $this->version );
 	}
@@ -196,8 +201,14 @@ class Progression_Player {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
+		
 		wp_enqueue_script( 'jquery' );
-		wp_enqueue_script( $this->plugin_slug, plugins_url( 'assets/build/mediaelement-and-player.min.js', __FILE__ ), array( 'jquery' ), $this->version );
+		wp_enqueue_script( 'mediaelement' ); 
+
+		// remove WordPress specific handling of mediaelement.js and define our own options.
+		wp_deregister_script( 'wp-mediaelement' );	
+		wp_enqueue_script( $this->plugin_slug . '-mediaelement', plugins_url( 'js/pplayer-mediaelement.js', __FILE__ ), array( 'mediaelement' ), $this->version );
+
 	}
 
 	/**
@@ -261,7 +272,6 @@ class Progression_Player {
 
 		$class .= ' waddup';
 
-	<source type="video/youtube" src="http://www.youtube.com/watch?v=nOEw9iiopwI" />
 		return $class;
 	}
 
