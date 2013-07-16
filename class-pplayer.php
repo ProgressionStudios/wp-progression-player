@@ -120,7 +120,7 @@ class Progression_Player {
 		if ( ! function_exists( 'wp_video_shortcode' ) || ! function_exists( 'wp_audio_shortcode' ) ) {
 
 			// display an error on activation when audio and video shortcode are not available and ask user to update.
-			wp_die( $error_msg, 'Plugin Activation Error',  array( 'response'=>200, 'back_link'=>TRUE ) );
+			wp_die( $error_msg, 'Plugin Activation Error',  array( 'response' => 200, 'back_link' => TRUE ) );
 		}
 		
 	}
