@@ -252,39 +252,17 @@ class Progression_Player {
 	public function filter_method_name() {
 		// TODO: Define your filter hook callback here
 	}
-
 	/**
-	 * Render the shortcode.
+	 * This is where we set the skin class of the video player
 	 *
 	 * @since    1.0.0
 	 */
-	
-	public function render_shortcode($atts) {
+	public function shortcode_class( $class ) {
 
-		extract(shortcode_atts(array(
-			'attr1' => 'foo', // foo is a default value
-			'attr2' => 'bar'
-			), $atts));
+		$class .= ' waddup';
 
-		$html = '';
-
-		$html .= $this->render_player_element();
-		$html .= $this->render_player_options();
-
-		return $html;
-	}
-	/**
-	 * Render the player.
-	 *
-	 * @since    1.0.0
-	 */
-	public function render_player_element($options = null) {
-
-		return '<div class="responsive-wrapper youtube-wrapper">
-<video style="width: 100%; height: 100%;" class="progression-single progression-skin" controls="controls" preload="none">
 	<source type="video/youtube" src="http://www.youtube.com/watch?v=nOEw9iiopwI" />
-</video>
-</div><!-- close .responsive-wrapper -->';
+		return $class;
 	}
 
 	/**
