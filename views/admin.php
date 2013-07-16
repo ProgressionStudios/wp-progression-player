@@ -17,6 +17,16 @@
 	<?php screen_icon(); ?>
 	<h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 
-	<!-- TODO: Provide markup for your options page here. -->
+	<form method="POST" action="options.php">
+		
+		<?php 
+
+		settings_fields('pplayer');        
+		do_settings_sections('pplayer');
+		submit_button(); 
+		
+		?>
+
+	</form>
 
 </div>

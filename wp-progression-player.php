@@ -30,6 +30,18 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+// Test for 3.6 or higher
+if ( version_compare( $GLOBALS['wp_version'], '3.6-alpha', '<' ) ) {
+
+    global $wp_version;
+
+    $update_url = network_admin_url('update-core.php');
+    $error_msg = sprintf(__('<p><b>WP Progression Player</b> requires at least WordPress version 3.6. You are running version %s. Please <a href="%s">upgrade</a> and try again.</p>'), $wp_version, $update_url);
+
+    // display an error and ask user to upgrade.
+    wp_die( $error_msg, 'Plugin Activation Error',  array( 'response' => 200, 'back_link' => TRUE ) );
+}
+
 require_once( plugin_dir_path( __FILE__ ) . 'class-pplayer.php' );
 
 register_activation_hook( __FILE__, array( 'Progression_Player', 'activate' ) );

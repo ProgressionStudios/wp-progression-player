@@ -9,6 +9,7 @@
  * @copyright 2013 ProgressionStudios
  */
 
+
 /**
  * Plugin class.
  *
@@ -66,10 +67,10 @@ class Progression_Player {
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
 		// Add the options page and menu item.
-		add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
+		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
 
-		// Register the shortcode [pplayer]
-		add_shortcode( 'pplayer', array( &$this, 'render_shortcode' ) );
+		// Register the settings page for the options of this plugin
+		add_action('admin_init', array( $this, 'settings_api_init'));
 
 		// Load admin style sheet and JavaScript.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
@@ -78,6 +79,9 @@ class Progression_Player {
 		// Load public-facing style sheet and JavaScript.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
+		// change the class of the video shortcode
+		add_filter( 'wp_video_shortcode_class', array( $this, 'shortcode_class' ) );
 
 		// Define custom functionality. Read more about actions and filters: http://codex.wordpress.org/Plugin_API#Hooks.2C_Actions_and_Filters
 		add_action( 'TODO', array( $this, 'action_method_name' ) );
@@ -111,17 +115,7 @@ class Progression_Player {
 	 */
 	public static function activate( $network_wide ) {
 
-		global $wp_version;
-
-		$update_url = network_admin_url('update-core.php');
-		$error_msg = sprintf(__('<p><b>WP Progression Player</b> requires at least WordPress version 3.6. You are running version %s. Please <a href="%s">upgrade</a> and try again.</p>'), $wp_version, $update_url);
 		
-		// check for native audio and video shortcode support
-		if ( ! function_exists( 'wp_video_shortcode' ) || ! function_exists( 'wp_audio_shortcode' ) ) {
-
-			// display an error on activation when audio and video shortcode are not available and ask user to update.
-			wp_die( $error_msg, 'Plugin Activation Error',  array( 'response'=>200, 'back_link'=>TRUE ) );
-		}
 		
 	}
 
@@ -165,7 +159,7 @@ class Progression_Player {
 
 		$screen = get_current_screen();
 		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
-			wp_enqueue_style( $this->plugin_slug .'-admin-styles', plugins_url( 'css/admin.css', __FILE__ ), array(), $this->version );
+			wp_enqueue_style( $this->plugin_slug .'-admin-styles', plugins_url( 'css/pplayer-admin.css', __FILE__ ), array(), $this->version );
 		}
 
 	}
@@ -185,7 +179,7 @@ class Progression_Player {
 
 		$screen = get_current_screen();
 		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
-			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/admin.js', __FILE__ ), array( 'jquery' ), $this->version );
+			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/pplayer-admin.js', __FILE__ ), array( 'jquery' ), $this->version );
 		}
 
 	}
@@ -196,8 +190,18 @@ class Progression_Player {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-		wp_enqueue_style( $this->plugin_slug . '-default-style', plugins_url( 'assets/css/progression-player.css', __FILE__ ), array(), $this->version );
+
+		// remove WordPress specific style. We will use our own.
+		wp_deregister_style( 'mediaelement' ); 
+		wp_deregister_style( 'wp-mediaelement' ); 
+
+		wp_enqueue_style( $this->plugin_slug, plugins_url( 'assets/css/progression-player.css', __FILE__ ), array(), $this->version );
 		wp_enqueue_style( $this->plugin_slug . '-icons', plugins_url( 'assets/font-awesome/css/font-awesome.min.css', __FILE__ ), array(), $this->version );
+
+		// load skin CSS
+		$skin = get_option( $this->plugin_slug . '_active_skin', 'default' );
+		wp_enqueue_style( $this->plugin_slug . 'skin-' . $skin, plugins_url( 'assets/css/skin-'. $skin .'.css', __FILE__ ), array(), $this->version );
+
 	}
 
 	/**
@@ -206,16 +210,22 @@ class Progression_Player {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
+		
 		wp_enqueue_script( 'jquery' );
-		wp_enqueue_script( $this->plugin_slug, plugins_url( 'assets/build/mediaelement-and-player.min.js', __FILE__ ), array( 'jquery' ), $this->version );
+		wp_enqueue_script( 'mediaelement' ); 
+
+		// remove WordPress specific handling of mediaelement.js and define our own options.
+		wp_deregister_script( 'wp-mediaelement' );	
+		wp_enqueue_script( $this->plugin_slug . '-mediaelement', plugins_url( 'js/pplayer-mediaelement.js', __FILE__ ), array( 'mediaelement' ), $this->version );
+
 	}
 
 	/**
-	 * Register the administration menu for this plugin into the WordPress Dashboard menu.
+	 * Register the administration menu for this plugin into the WordPress Options menu.
 	 *
 	 * @since    1.0.0
 	 */
-	public function add_plugin_admin_menu() {
+	public function add_admin_menu() {
 
 		$this->plugin_screen_hook_suffix = add_submenu_page(
 			'options-general.php',
@@ -235,6 +245,69 @@ class Progression_Player {
 	 */
 	public function display_plugin_admin_page() {
 		include_once( 'views/admin.php' );
+	}
+
+
+	/**
+	 * Initializing all settings to the admin panel
+	 *
+	 * @since    1.0.0
+	 */
+	public function settings_api_init() {
+
+	 	add_settings_section( $this->plugin_slug . '_skin',
+			'Player skin',
+			array( $this, 'settings_section_skin_cb' ),
+			'pplayer');
+		 	
+	 	add_settings_field( $this->plugin_slug . '_active_skin',
+			'Selected player skin',
+			array($this, 'settings_field_active_skin_cb'),
+			'pplayer',
+			$this->plugin_slug . '_skin');
+	 	
+	 	register_setting('pplayer', $this->plugin_slug . '_active_skin');
+		
+	}
+
+	/**
+	 * Settings section callback function
+	 *
+	 * @since    1.0.0
+	 */
+	
+	function settings_section_skin_cb() {
+		echo '<p>These settings let you choose how Progression Player will look like.</p>';
+	}
+
+	/**
+	 * Callback function for our example setting
+	 *
+	 * @since    1.0.0
+	 */
+	
+	function settings_field_active_skin_cb() { 
+
+		// the list of available skins
+		$skins = array( 
+			'default',
+			'default-dark',
+			'minimal-dark',
+			'minimal-light', 
+			'fancy' );
+
+		$html = '';
+		$html .= '<select name="'. $this->plugin_slug . '_active_skin">';
+
+		$option = '<option value="%s"%s>%s</option>';
+
+			foreach ($skins as $skin)
+				$html .= sprintf( $option, $skin, selected( get_option( $this->plugin_slug . '_active_skin', 'default' ), $skin, false ), $skin);
+
+		$html .= '</select>';
+
+		echo $html;
+
 	}
 
 	/**
@@ -262,74 +335,17 @@ class Progression_Player {
 	public function filter_method_name() {
 		// TODO: Define your filter hook callback here
 	}
-
 	/**
-	 * Render the shortcode.
+	 * This is where we set the skin class of the video player
 	 *
 	 * @since    1.0.0
 	 */
-	
-	public function render_shortcode($atts) {
+	public function shortcode_class( $class ) {
 
-		extract(shortcode_atts(array(
-			'attr1' => 'foo', // foo is a default value
-			'attr2' => 'bar'
-			), $atts));
+		$class .= ' progression-skin';
+		$class .= ' progression-' . get_option( $this->plugin_slug . '_active_skin', 'default' );
 
-		$html = '';
-
-		$html .= $this->render_player_element();
-		$html .= $this->render_player_options();
-
-		return $html;
-	}
-	/**
-	 * Render the player.
-	 *
-	 * @since    1.0.0
-	 */
-	public function render_player_element($options = null) {
-
-		return '<div class="responsive-wrapper youtube-wrapper">
-<video style="width: 100%; height: 100%;" class="progression-single progression-skin" controls="controls" preload="none">
-	<source type="video/youtube" src="http://www.youtube.com/watch?v=nOEw9iiopwI" />
-</video>
-</div><!-- close .responsive-wrapper -->';
-	}
-
-	/**
-	 * Render the required javascript options to the jQuery plugin call.
-	 *
-	 * @since    1.0.0
-	 */
-	public function render_player_options($options = null) {
-
-		return "
-		<script>
-		(function ($) {
-			$('.progression-single').mediaelementplayer({
-				defaultVideoWidth: 480, // if the <video width> is not specified, this is the default
-				defaultVideoHeight: 270, // if the <video height> is not specified, this is the default
-				videoWidth: -1, // if set, overrides <video width>
-				videoHeight: -1, // if set, overrides <video height>
-				audioWidth: 400, // width of audio player
-				audioHeight: 30, // height of audio player
-				startVolume: 0.8, // initial volume when the player starts
-				loop: false, // useful for <audio> player loops
-				enableAutosize: true, // enables Flash and Silverlight to resize to content size
-				features: ['playpause','current','progress','duration','tracks','volume','fullscreen'], // the order of controls you want on the control bar (and other plugins below)
-				alwaysShowControls: false,  // Hide controls when playing and mouse is not over the video
-				iPadUseNativeControls: false,  // force iPad's native controls
-				iPhoneUseNativeControls: false,  // force iPhone's native controls
-				AndroidUseNativeControls: false, // force Android's native controls
-				alwaysShowHours: false, // forces the hour marker (##:00:00)
-				showTimecodeFrameCount: false, // show framecount in timecode (##:00:00:00)
-				framesPerSecond: 25, // used when showTimecodeFrameCount is set to true
-				enableKeyboard: true, // turns keyboard support on and off for this instance
-				pauseOtherPlayers: true // when this player starts, it will pause other players
-			});
-		}(jQuery));
-		</script>";
+		return $class;
 	}
 
 }
