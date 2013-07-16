@@ -195,8 +195,13 @@ class Progression_Player {
 		wp_deregister_style( 'mediaelement' ); 
 		wp_deregister_style( 'wp-mediaelement' ); 
 
-		wp_enqueue_style( $this->plugin_slug . '-default-style', plugins_url( 'assets/css/progression-player.css', __FILE__ ), array(), $this->version );
+		wp_enqueue_style( $this->plugin_slug, plugins_url( 'assets/css/progression-player.css', __FILE__ ), array(), $this->version );
 		wp_enqueue_style( $this->plugin_slug . '-icons', plugins_url( 'assets/font-awesome/css/font-awesome.min.css', __FILE__ ), array(), $this->version );
+
+		// load skin CSS
+		$skin = get_option( $this->plugin_slug . '_active_skin', 'default' );
+		wp_enqueue_style( $this->plugin_slug . 'skin-' . $skin, plugins_url( 'assets/css/skin-'. $skin .'.css', __FILE__ ), array(), $this->version );
+
 	}
 
 	/**
@@ -337,7 +342,8 @@ class Progression_Player {
 	 */
 	public function shortcode_class( $class ) {
 
-		$class .= ' waddup';
+		$class .= ' progression-skin';
+		$class .= ' progression-' . get_option( $this->plugin_slug . '_active_skin', 'default' );
 
 		return $class;
 	}
