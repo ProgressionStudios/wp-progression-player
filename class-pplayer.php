@@ -111,17 +111,7 @@ class Progression_Player {
 	 */
 	public static function activate( $network_wide ) {
 
-		global $wp_version;
-
-		$update_url = network_admin_url('update-core.php');
-		$error_msg = sprintf(__('<p><b>WP Progression Player</b> requires at least WordPress version 3.6. You are running version %s. Please <a href="%s">upgrade</a> and try again.</p>'), $wp_version, $update_url);
 		
-		// check for native audio and video shortcode support
-		if ( ! function_exists( 'wp_video_shortcode' ) || ! function_exists( 'wp_audio_shortcode' ) ) {
-
-			// display an error on activation when audio and video shortcode are not available and ask user to update.
-			wp_die( $error_msg, 'Plugin Activation Error',  array( 'response' => 200, 'back_link' => TRUE ) );
-		}
 		
 	}
 
