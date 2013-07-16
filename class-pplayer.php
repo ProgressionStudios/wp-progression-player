@@ -256,12 +256,12 @@ class Progression_Player {
 	public function settings_api_init() {
 
 	 	add_settings_section( $this->plugin_slug . '_skin',
-			'Player skin',
+			__( 'Player skin' ),
 			array( $this, 'settings_section_skin_cb' ),
 			'pplayer');
 		 	
 	 	add_settings_field( $this->plugin_slug . '_active_skin',
-			'Selected player skin',
+			__( 'Selected player skin' ),
 			array($this, 'settings_field_active_skin_cb'),
 			'pplayer',
 			$this->plugin_slug . '_skin');
@@ -277,7 +277,7 @@ class Progression_Player {
 	 */
 	
 	function settings_section_skin_cb() {
-		echo '<p>These settings let you choose how Progression Player will look like.</p>';
+		echo '<p>'. __( 'These settings let you choose how Progression Player will look like.'). '</p>';
 	}
 
 	/**
@@ -290,19 +290,19 @@ class Progression_Player {
 
 		// the list of available skins
 		$skins = array( 
-			'default',
-			'default-dark',
-			'minimal-dark',
-			'minimal-light', 
-			'fancy' );
+			'default' => __( 'Default Skin', )
+			'default-dark' => __( 'Dark Skin', )
+			'minimal-dark' => __( 'Minimal Dark Skin', )
+			'minimal-light' => __( 'Minimal Light Skin', )
+			'fancy' => __( 'Fancy Skin' );
 
 		$html = '';
 		$html .= '<select name="'. $this->plugin_slug . '_active_skin">';
 
 		$option = '<option value="%s"%s>%s</option>';
 
-			foreach ($skins as $skin)
-				$html .= sprintf( $option, $skin, selected( get_option( $this->plugin_slug . '_active_skin', 'default' ), $skin, false ), $skin);
+			foreach ($skins as $skin => $skin_name)
+				$html .= sprintf( $option, $skin, selected( get_option( $this->plugin_slug . '_active_skin', 'default' ), $skin, false ), $skin_name);
 
 		$html .= '</select>';
 
