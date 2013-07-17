@@ -36,7 +36,7 @@ class Progression_Player {
 	 *
 	 * @var      string
 	 */
-	protected $plugin_slug = 'pplayer';
+	protected $plugin_slug = 'progression';
 
 	/**
 	 * Instance of this class.
