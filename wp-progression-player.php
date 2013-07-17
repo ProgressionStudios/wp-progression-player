@@ -42,7 +42,7 @@ if ( version_compare( $GLOBALS['wp_version'], '3.6-alpha', '<' ) ) {
     wp_die( $error_msg, 'Plugin Activation Error',  array( 'response' => 200, 'back_link' => TRUE ) );
 }
 
-require_once( plugin_dir_path( __FILE__ ) . 'class-pplayer.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'class-player.php' );
 
 register_activation_hook( __FILE__, array( 'Progression_Player', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'Progression_Player', 'deactivate' ) );
