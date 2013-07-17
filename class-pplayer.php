@@ -466,11 +466,14 @@ class Progression_Player {
 	 */
 	public function custom_skin_css( $class ) {
 
-		$color = get_option( $this->plugin_slug . '_color', '#333' );
+		$c_bg = get_option( $this->plugin_slug . '_custom_skin_bg' );
 
 		$html = '';
 		$html .= '<style type="text/css">';
-		    $html .= ".divbox { width: $color; } ";
+		
+		if ( ! empty( $c_bg ) ) 
+			$html .= "body .mejs-container.progression-skin.progression-custom .mejs-controls { background: $c_bg } ";
+		    
 		$html .= '</style>';
 
 		echo $html;
