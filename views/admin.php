@@ -21,8 +21,8 @@
 		
 		<?php 
 
-		settings_fields('pplayer');        
-		do_settings_sections('pplayer');
+		settings_fields('progression');        
+		do_settings_sections('progression');
 		submit_button(); 
 		
 		?>

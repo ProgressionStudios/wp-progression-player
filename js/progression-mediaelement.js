@@ -5,7 +5,7 @@
 
     $(function() {
         $('.wp-audio-shortcode, .wp-video-shortcode').mediaelementplayer({
-        	startVolume: window.pplayer.startvolume // initial volume when the player starts
+        	startVolume: window.progression.startvolume // initial volume when the player starts
         });
     });
 
