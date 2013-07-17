@@ -83,6 +83,9 @@ class Progression_Player {
 		// change the class of the video shortcode
 		add_filter( 'wp_video_shortcode_class', array( $this, 'shortcode_class' ) );
 
+		// Add inline CSS for custom player skin
+		add_action( 'wp_head', array( $this, 'custom_skin_css' ) );
+
 		// Define custom functionality. Read more about actions and filters: http://codex.wordpress.org/Plugin_API#Hooks.2C_Actions_and_Filters
 		add_action( 'TODO', array( $this, 'action_method_name' ) );
 		add_filter( 'TODO', array( $this, 'filter_method_name' ) );
@@ -158,8 +161,9 @@ class Progression_Player {
 		}
 
 		$screen = get_current_screen();
+		
 		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
-			wp_enqueue_style( $this->plugin_slug .'-admin-styles', plugins_url( 'css/pplayer-admin.css', __FILE__ ), array(), $this->version );
+			wp_enqueue_style( $this->plugin_slug .'-admin-styles', plugins_url( 'css/progression-admin.css', __FILE__ ), array( 'wp-color-picker'  ), $this->version );
 		}
 
 	}
@@ -179,7 +183,7 @@ class Progression_Player {
 
 		$screen = get_current_screen();
 		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
-			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/pplayer-admin.js', __FILE__ ), array( 'jquery' ), $this->version );
+			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/progression-admin.js', __FILE__ ), array( 'jquery', 'wp-color-picker' ), $this->version );
 		}
 
 	}
@@ -200,7 +204,8 @@ class Progression_Player {
 
 		// load skin CSS
 		$skin = get_option( $this->plugin_slug . '_active_skin', 'default' );
-		wp_enqueue_style( $this->plugin_slug . 'skin-' . $skin, plugins_url( 'assets/css/skin-'. $skin .'.css', __FILE__ ), array(), $this->version );
+
+		wp_enqueue_style( $this->plugin_slug . '-skin-' . $skin, plugins_url( 'assets/css/skin-'. $skin .'.css', __FILE__ ), array(), $this->version );
 
 	}
 
@@ -210,13 +215,10 @@ class Progression_Player {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-		
-		wp_enqueue_script( 'jquery' );
-		wp_enqueue_script( 'mediaelement' ); 
 
 		// remove WordPress specific handling of mediaelement.js and define our own options.
 		wp_deregister_script( 'wp-mediaelement' );	
-		wp_enqueue_script( $this->plugin_slug . '-mediaelement', plugins_url( 'js/pplayer-mediaelement.js', __FILE__ ), array( 'mediaelement' ), $this->version );
+		wp_enqueue_script( $this->plugin_slug . '-mediaelement', plugins_url( 'js/progression-mediaelement.js', __FILE__ ), array( 'jquery', 'mediaelement' ), $this->version );
 
 		// build options array for mediaelement
 		$options = array(
@@ -264,36 +266,58 @@ class Progression_Player {
 	 		$this->plugin_slug . '_skin',
 			__( 'Player skin' ),
 			array( $this, 'settings_section_skin_cb' ),
-			'pplayer' 
+			'progression' 
 		);
 		 	
 	 	add_settings_field( 
 	 		$this->plugin_slug . '_active_skin',
 			__( 'Selected player skin' ),
-			array($this, 'settings_field_active_skin_cb'),
-			'pplayer',
+			array( $this, 'settings_field_active_skin_cb' ),
+			'progression',
 			$this->plugin_slug . '_skin' 
 		);
 	 	
-	 	register_setting('pplayer', $this->plugin_slug . '_active_skin');
+	 	register_setting( 'progression', $this->plugin_slug . '_active_skin' );
+
+
+ 	 	add_settings_field( 
+ 	 		$this->plugin_slug . '_custom_skin',
+ 			__( 'Custom skin' ),
+ 			array( $this, 'settings_field_custom_skin_cb' ),
+ 			'progression',
+ 			$this->plugin_slug . '_skin' 
+ 		);
+ 	 	
+ 	 	register_setting( 'progression', $this->plugin_slug . '_custom_skin' );
+
+
+ 	 	add_settings_field( 
+ 	 		$this->plugin_slug . '_custom_skin_bg',
+ 			__( 'Player background color' ),
+ 			array($this, 'settings_field_custom_skin_bg_cb'),
+ 			'progression',
+ 			$this->plugin_slug . '_skin' 
+ 		);
+ 	 	
+ 	 	register_setting( 'progression', $this->plugin_slug . '_custom_skin_bg' );
 
 
  	 	add_settings_section( 
  	 		$this->plugin_slug . '_defaults',
  			__( 'Player default options' ),
  			array( $this, 'settings_section_defaults_cb' ),
- 			'pplayer' 
+ 			'progression' 
  		);
  		 	
  	 	add_settings_field( 
  	 		$this->plugin_slug . '_startvolume',
  			__( 'Start volume' ),
  			array($this, 'settings_field_defaults_volume_cb'),
- 			'pplayer',
+ 			'progression',
  			$this->plugin_slug . '_defaults' 
  		);
  	 	
- 	 	register_setting('pplayer', $this->plugin_slug . '_startvolume');
+ 	 	register_setting( 'progression', $this->plugin_slug . '_startvolume' );
 		
 	}
 
@@ -337,6 +361,30 @@ class Progression_Player {
 		$html .= '</select>';
 
 		echo $html;
+
+	}
+
+	/**
+	 * The skin settings section of the admin panel.
+	 *
+	 * @since    1.0.0
+	 */
+	
+	function settings_field_custom_skin_cb() { 
+
+		echo '<label><input name="' . $this->plugin_slug . '_custom_skin" id="gv_thumbnails_insert_into_excerpt" type="checkbox" value="1" class="code" ' . checked( 1, get_option( $this->plugin_slug . '_custom_skin' ), 0 ) . ' /> Customize selected player skin</label>';
+
+	}
+
+	/**
+	 * The colorpicker for the background color of the skin
+	 *
+	 * @since    1.0.0
+	 */
+	
+	function settings_field_custom_skin_bg_cb() { 
+
+		echo '<input name="' . $this->plugin_slug . '_custom_skin_bg" type="text" value="' . get_option( $this->plugin_slug . '_custom_skin_bg' ) . '" class="progression-skincolor" />';
 
 	}
 
@@ -390,6 +438,7 @@ class Progression_Player {
 	public function filter_method_name() {
 		// TODO: Define your filter hook callback here
 	}
+
 	/**
 	 * This is where we set the skin class of the video player
 	 *
@@ -398,9 +447,33 @@ class Progression_Player {
 	public function shortcode_class( $class ) {
 
 		$class .= ' progression-skin';
-		$class .= ' progression-' . get_option( $this->plugin_slug . '_active_skin', 'default' );
+
+		$skin = get_option( $this->plugin_slug . '_active_skin', 'default' );
+
+		$class .= " progression-$skin";
+
+		if ( get_option( $this->plugin_slug . '_custom_skin' ) ) {
+			$class .= " progression-custom";
+		}
 
 		return $class;
+	}
+
+	/**
+	 * Custom skin rules generated from user settings
+	 *
+	 * @since    1.0.0
+	 */
+	public function custom_skin_css( $class ) {
+
+		$color = get_option( $this->plugin_slug . '_color', '#333' );
+
+		$html = '';
+		$html .= '<style type="text/css">';
+		    $html .= ".divbox { width: $color; } ";
+		$html .= '</style>';
+
+		echo $html;
 	}
 
 }
