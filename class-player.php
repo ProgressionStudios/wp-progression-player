@@ -287,15 +287,29 @@ class Progression_Player {
  	 	register_setting( 'progression', $this->plugin_slug . '_custom_skin' );
 
 
- 	 	add_settings_field( 
- 	 		$this->plugin_slug . '_custom_skin_bg',
- 			__( 'Player background color' ),
- 			array($this, 'settings_field_custom_skin_bg_cb'),
- 			'progression',
- 			$this->plugin_slug . '_skin' 
- 		);
- 	 	
- 	 	register_setting( 'progression', $this->plugin_slug . '_custom_skin_bg' );
+ 	 	$color_zones = array(
+ 	 		'bg' 		=> __( 'Background color' ),
+ 	 		'border' 	=> __( 'Border color' ),
+ 	 		'text' 		=> __( 'Text and icon color' ),
+ 	 		'handle' 	=> __( 'Background color of the volume and timeline slider' ),
+ 	 		'slider' 	=> __( 'Color of the volume and timeline handle' )
+ 	 	);
+
+ 	 	foreach ( $color_zones as $key => $label ) {
+ 		 	add_settings_field( 
+ 		 		$this->plugin_slug . '_custom_skin_colors['. $key .']',
+ 				$label,
+ 				array( $this, 'settings_field_custom_skin_colors_cb' ),
+ 				'progression',
+ 				$this->plugin_slug . '_skin',
+ 				array( 
+ 					'name' => 'custom_skin_colors', 
+ 					'key' => $key
+ 				)
+ 			);
+ 	 	}
+	 	
+ 	 	register_setting( 'progression', $this->plugin_slug . '_custom_skin_colors' );
 
 
  	 	add_settings_section( 
@@ -308,7 +322,7 @@ class Progression_Player {
  	 	add_settings_field( 
  	 		$this->plugin_slug . '_startvolume',
  			__( 'Start volume' ),
- 			array($this, 'settings_field_defaults_volume_cb'),
+ 			array( $this, 'settings_field_defaults_volume_cb' ),
  			'progression',
  			$this->plugin_slug . '_defaults' 
  		);
@@ -337,11 +351,11 @@ class Progression_Player {
 
 		// the list of available skins
 		$skins = array( 
-			'default' => __( 'Default Skin' ),
-			'default-dark' => __( 'Dark Skin' ),
-			'minimal-dark' => __( 'Minimal Dark Skin' ),
+			'default' 		=> __( 'Default Skin' ),
+			'default-dark' 	=> __( 'Dark Skin' ),
+			'minimal-dark' 	=> __( 'Minimal Dark Skin' ),
 			'minimal-light' => __( 'Minimal Light Skin' ),
-			'fancy' => __( 'Fancy Skin' )
+			'fancy' 		=> __( 'Fancy Skin' )
 		);
 
 		$value = get_option( $this->plugin_slug . '_active_skin', 'default' );
@@ -378,10 +392,10 @@ class Progression_Player {
 	 * @since    1.0.0
 	 */
 	
-	function settings_field_custom_skin_bg_cb() { 
-
-		echo '<input name="' . $this->plugin_slug . '_custom_skin_bg" type="text" value="' . get_option( $this->plugin_slug . '_custom_skin_bg' ) . '" class="progression-skincolor" />';
-
+	function settings_field_custom_skin_colors_cb( $args ) {
+		$option = get_option( $this->plugin_slug . '_'. $args['name'] );
+		$input = '<input name="%s" value="%s" class="%s" />';
+		echo sprintf( $input, $this->plugin_slug . '_'. $args['name'] .'[' . $args['key'] . ']', $option[$args['key']], 'progression-skincolor' );
 	}
 
 	/**
@@ -436,17 +450,78 @@ class Progression_Player {
 	 */
 	public function custom_skin_css( $class ) {
 
-		$c_bg = get_option( $this->plugin_slug . '_custom_skin_bg' );
+		$colors = get_option( $this->plugin_slug . '_custom_skin_colors', array() );
 
 		$html = '';
 		$html .= '<style type="text/css">';
-		
-		if ( ! empty( $c_bg ) ) 
-			$html .= "body .mejs-container.progression-skin.progression-custom .mejs-controls { background: $c_bg } ";
+
+		foreach ( $colors as $key => $color ) {
+			
+			if ( empty( $color ) ) continue;
+
+			if ( 'bg' === $key ) {
+				$html .= sprintf( 'body .mejs-container.progression-skin.progression-custom .mejs-controls { background: %s }', $color );
+				$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-nexttrack:hover, body .progression-skin.progression-custom .mejs-controls .mejs-prevtrack:hover,  body .progression-skin.progression-custom .mejs-controls .mejs-show-playlist:hover, body .progression-skin.progression-custom  .mejs-controls .mejs-hide-playlist:hover,  body .progression-skin.progression-custom .mejs-controls .mejs-mute button:hover,  body .progression-skin.progression-custom .mejs-controls .mejs-fullscreen-button:hover,  body .progression-skin.progression-custom .mejs-controls .mejs-hide-playlist, body .progression-skin.progression-custom .mejs-controls .mejs-playpause-button:hover { background: %s }', $this->brightness( $color, 20 ) );
+			}
+
+			if ( 'border' === $key ) {
+				$html .= sprintf( 'body .mejs-container.progression-skin.progression-custom, body .mejs-container.progression-skin.progression-custom .mejs-controls, body .progression-skin.progression-custom .mejs-controls .mejs-playpause-button, body .progression-skin.progression-custom .mejs-inner .mejs-controls .mejs-time, body .progression-skin.progression-custom .mejs-controls .mejs-fullscreen-button,  body .progression-skin.progression-custom .mejs-controls .mejs-show-playlist, body .progression-skin.progression-custom  .mejs-controls .mejs-hide-playlist, body .progression-skin.progression-custom .mejs-controls .mejs-prevtrack button,  body .progression-skin.progression-custom .mejs-controls .mejs-nexttrack button { border-color: %s }', $color );
+			}
+
+			if ( 'text' === $key ) {
+				$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls button  { color: %s }', $color );
+				$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls button:hover, body .progression-skin.progression-custom .mejs-inner .mejs-time .mejs-currenttime, body .progression-skin.progression-custom .mejs-inner .mejs-time .mejs-duration { color: %s }', $this->brightness( $color, 20 ) );
+			}
+
+			if ( 'handle' === $key ) {
+				$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-handle, body .progression-skin.progression-custom .mejs-controls .mejs-volume-button .mejs-volume-slider .mejs-volume-handle  { background: %s; border-color: %s }', $color, $color );
+			}
+
+			if ( 'slider' === $key ) {
+				$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-total, body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-loaded, body .progression-skin.progression-custom .mejs-controls .mejs-volume-button .mejs-volume-slider .mejs-volume-total { background: %s }', $color );
+				$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-current, body .progression-skin.progression-custom .mejs-controls .mejs-volume-button .mejs-volume-slider .mejs-volume-current { background: %s }', $this->brightness( $color, 30 ) );
+			}
+
+
+		}
 		    
 		$html .= '</style>';
 
 		echo $html;
+	}
+
+	/**
+	 * Change the brightness of the passed in color
+	 *
+	 * $diff should be negative to go darker, positive to go lighter and
+	 * is subtracted from the decimal (0-255) value of the color
+	 * 
+	 * Credits: http://lab.clearpixel.com.au/2008/06/darken-or-lighten-colours-dynamically-using-php/
+	 *
+	 * @param string $hex color to be modified
+	 * @param string $diff amount to change the color
+	 * @return string hex color
+	 *
+	 * @since    1.0.0
+	 */
+	
+	public function brightness( $hex, $diff ){
+		
+		$rgb = str_split(trim($hex, '# '), 2);
+		 
+			foreach ($rgb as &$hex) {
+				$dec = hexdec($hex);
+				if ($diff >= 0) {
+					$dec += $diff;
+				}
+				else {
+					$dec -= abs($diff);			
+				}
+				$dec = max(0, min(255, $dec));
+				$hex = str_pad(dechex($dec), 2, '0', STR_PAD_LEFT);
+			}
+		 
+			return '#'.implode($rgb);
 	}
 
 }
