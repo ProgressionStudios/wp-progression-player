@@ -372,7 +372,7 @@ class Progression_Player {
 	
 	function settings_field_custom_skin_cb() { 
 
-		echo '<label><input name="' . $this->plugin_slug . '_custom_skin" id="gv_thumbnails_insert_into_excerpt" type="checkbox" value="1" class="code" ' . checked( 1, get_option( $this->plugin_slug . '_custom_skin' ), 0 ) . ' /> Customize selected player skin</label>';
+		echo '<label><input name="' . $this->plugin_slug . '_custom_skin" id="progression_custom_skin" type="checkbox" value="1" class="code" ' . checked( 1, get_option( $this->plugin_slug . '_custom_skin' ), 0 ) . ' /> Customize selected player skin</label>';
 
 	}
 
