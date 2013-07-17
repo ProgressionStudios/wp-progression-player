@@ -218,6 +218,11 @@ class Progression_Player {
 		wp_deregister_script( 'wp-mediaelement' );	
 		wp_enqueue_script( $this->plugin_slug . '-mediaelement', plugins_url( 'js/pplayer-mediaelement.js', __FILE__ ), array( 'mediaelement' ), $this->version );
 
+		// build options array for mediaelement
+		$options = array(
+			'startvolume' => get_option( $this->plugin_slug . '_startvolume', 80 ) / 100
+		);
+		wp_localize_script( $this->plugin_slug . '-mediaelement', $this->plugin_slug, $options);
 	}
 
 	/**
@@ -255,33 +260,55 @@ class Progression_Player {
 	 */
 	public function settings_api_init() {
 
-	 	add_settings_section( $this->plugin_slug . '_skin',
-			'Player skin',
+	 	add_settings_section( 
+	 		$this->plugin_slug . '_skin',
+			__( 'Player skin' ),
 			array( $this, 'settings_section_skin_cb' ),
-			'pplayer');
+			'pplayer' 
+		);
 		 	
-	 	add_settings_field( $this->plugin_slug . '_active_skin',
-			'Selected player skin',
+	 	add_settings_field( 
+	 		$this->plugin_slug . '_active_skin',
+			__( 'Selected player skin' ),
 			array($this, 'settings_field_active_skin_cb'),
 			'pplayer',
-			$this->plugin_slug . '_skin');
+			$this->plugin_slug . '_skin' 
+		);
 	 	
 	 	register_setting('pplayer', $this->plugin_slug . '_active_skin');
+
+
+ 	 	add_settings_section( 
+ 	 		$this->plugin_slug . '_defaults',
+ 			__( 'Player default options' ),
+ 			array( $this, 'settings_section_defaults_cb' ),
+ 			'pplayer' 
+ 		);
+ 		 	
+ 	 	add_settings_field( 
+ 	 		$this->plugin_slug . '_startvolume',
+ 			__( 'Start volume' ),
+ 			array($this, 'settings_field_defaults_volume_cb'),
+ 			'pplayer',
+ 			$this->plugin_slug . '_defaults' 
+ 		);
+ 	 	
+ 	 	register_setting('pplayer', $this->plugin_slug . '_startvolume');
 		
 	}
 
 	/**
-	 * Settings section callback function
+	 * The intro text for the skin settings section of the admin panel.
 	 *
 	 * @since    1.0.0
 	 */
 	
 	function settings_section_skin_cb() {
-		echo '<p>These settings let you choose how Progression Player will look like.</p>';
+		echo '<p>'. __( 'These settings let you choose how Progression Player will look like.'). '</p>';
 	}
 
 	/**
-	 * Callback function for our example setting
+	 * The skin settings section of the admin panel.
 	 *
 	 * @since    1.0.0
 	 */
@@ -290,23 +317,51 @@ class Progression_Player {
 
 		// the list of available skins
 		$skins = array( 
-			'default',
-			'default-dark',
-			'minimal-dark',
-			'minimal-light', 
-			'fancy' );
+			'default' => __( 'Default Skin' ),
+			'default-dark' => __( 'Dark Skin' ),
+			'minimal-dark' => __( 'Minimal Dark Skin' ),
+			'minimal-light' => __( 'Minimal Light Skin' ),
+			'fancy' => __( 'Fancy Skin' )
+		);
+
+		$value = get_option( $this->plugin_slug . '_active_skin', 'default' );
+		$option_name = $this->plugin_slug . '_active_skin';
+		$html_option = '<option value="%s"%s>%s</option>';
 
 		$html = '';
-		$html .= '<select name="'. $this->plugin_slug . '_active_skin">';
+		$html .= "<select name='$option_name'>";
 
-		$option = '<option value="%s"%s>%s</option>';
-
-			foreach ($skins as $skin)
-				$html .= sprintf( $option, $skin, selected( get_option( $this->plugin_slug . '_active_skin', 'default' ), $skin, false ), $skin);
+			foreach ($skins as $skin => $skin_name)
+				$html .= sprintf( $html_option, $skin, selected( $value, $skin, false ), $skin_name);
 
 		$html .= '</select>';
 
 		echo $html;
+
+	}
+
+	/**
+	 * The intro text for the defaults settings section of the admin panel.
+	 *
+	 * @since    1.0.0
+	 */
+	
+	function settings_section_defaults_cb() {
+		echo '<p>'. __( 'These settings let you set the default behavior of Progression Player.'). '</p>';
+	}
+
+	/**
+	 * The skin defaults section of the admin panel.
+	 *
+	 * @since    1.0.0
+	 */
+	
+	function settings_field_defaults_volume_cb() { 
+
+		$value = get_option( $this->plugin_slug . '_startvolume', 80 );
+		$option_name = $this->plugin_slug . '_startvolume';
+
+		echo "<input name='$option_name' type='number' value='$value' min='0' max='100' step='5' /> <span>%<span>";
 
 	}
 
