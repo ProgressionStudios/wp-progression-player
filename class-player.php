@@ -291,8 +291,8 @@ class Progression_Player {
  	 		'bg' 		=> __( 'Background color' ),
  	 		'border' 	=> __( 'Border color' ),
  	 		'text' 		=> __( 'Text and icon color' ),
- 	 		'handle' 	=> __( 'Background color of the volume and timeline slider' ),
- 	 		'slider' 	=> __( 'Color of the volume and timeline handle' )
+ 	 		'slider' 	=> __( 'Background color of the volume and timeline slider' ),
+ 	 		'handle' 	=> __( 'Color of the volume and timeline handle' )
  	 	);
 
  	 	foreach ( $color_zones as $key => $label ) {
@@ -450,10 +450,18 @@ class Progression_Player {
 	 */
 	public function custom_skin_css( $class ) {
 
+		if ( ! get_option( $this->plugin_slug . '_custom_skin', array() ) ) {
+			return;
+		}
+
 		$colors = get_option( $this->plugin_slug . '_custom_skin_colors', array() );
 
 		$html = '';
 		$html .= '<style type="text/css">';
+
+		if ( empty( $colors ) ) {
+			return;
+		}
 
 		foreach ( $colors as $key => $color ) {
 			
