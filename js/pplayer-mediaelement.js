@@ -4,7 +4,9 @@
     mejs.plugins.silverlight[0].types.push('audio/x-ms-wma');
 
     $(function() {
-        $('.wp-audio-shortcode, .wp-video-shortcode').mediaelementplayer();
+        $('.wp-audio-shortcode, .wp-video-shortcode').mediaelementplayer({
+        	startVolume: window.pplayer.startvolume // initial volume when the player starts
+        });
     });
 
 }(jQuery)); 
