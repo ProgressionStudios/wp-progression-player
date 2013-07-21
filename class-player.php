@@ -32,7 +32,7 @@ class Progression_Player {
 	/**
 	 * Unique identifier of the plugin.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 *
 	 * @var      string
 	 */
@@ -41,7 +41,7 @@ class Progression_Player {
 	/**
 	 * Instance of this class.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 *
 	 * @var      object
 	 */
@@ -50,7 +50,7 @@ class Progression_Player {
 	/**
 	 * Slug of the plugin screen.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 *
 	 * @var      string
 	 */
@@ -86,6 +86,9 @@ class Progression_Player {
 		// Add inline CSS for custom player skin
 		add_action( 'wp_head', array( $this, 'custom_skin_css' ) );
 
+		// Overwrite native WordPress shortcode function to add our own
+		add_filter( 'wp_audio_shortcode_handler', array( $this, 'wp_audio_shortcode' ) );
+		add_filter( 'wp_video_shortcode_handler', array( $this, 'wp_video_shortcode' ) );
 
 		// hook into media library
 		add_action( 'print_media_templates', array( $this, 'print_media_templates' ) );
@@ -113,31 +116,33 @@ class Progression_Player {
 	/**
 	 * Fired when the plugin is activated.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 *
 	 * @param    boolean    $network_wide    True if WPMU superadmin uses "Network Activate" action, false if WPMU is disabled or plugin is activated on an individual blog.
 	 */
 	public static function activate( $network_wide ) {
 
-		
+		// add options
 		
 	}
 
 	/**
 	 * Fired when the plugin is deactivated.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 *
 	 * @param    boolean    $network_wide    True if WPMU superadmin uses "Network Deactivate" action, false if WPMU is disabled or plugin is deactivated on an individual blog.
 	 */
 	public static function deactivate( $network_wide ) {
-		// TODO: Define deactivation functionality here
+		
+		// remove options
+		// 
 	}
 
 	/**
 	 * Load the plugin text domain for translation.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	public function load_plugin_textdomain() {
 
@@ -156,14 +161,8 @@ class Progression_Player {
 	 * @return    null    Return early if no settings page is registered.
 	 */
 	public function enqueue_admin_styles() {
-
-		if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
-			return;
-		}
-
-		$screen = get_current_screen();
 		
-		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
+		if ( get_current_screen()->id == $this->plugin_screen_hook_suffix ) {
 			wp_enqueue_style( $this->plugin_slug .'-admin-styles', plugins_url( 'css/progression-admin.css', __FILE__ ), array( 'wp-color-picker'  ), $this->version );
 		}
 
@@ -178,12 +177,7 @@ class Progression_Player {
 	 */
 	public function enqueue_admin_scripts() {
 
-		if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
-			return;
-		}
-
-		$screen = get_current_screen();
-		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
+		if ( get_current_screen()->id == $this->plugin_screen_hook_suffix ) {
 			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/progression-admin.js', __FILE__ ), array( 'jquery', 'wp-color-picker' ), $this->version );
 		}
 
@@ -192,12 +186,12 @@ class Progression_Player {
 	/**
 	 * Register and enqueue public-facing style sheet.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	public function enqueue_styles() {
 
 		// remove WordPress specific style. We will use our own.
-		wp_deregister_style( 'mediaelement' ); 
+		wp_dequeue_style( 'mediaelement' ); 
 		wp_deregister_style( 'wp-mediaelement' ); 
 
 		wp_enqueue_style( $this->plugin_slug, plugins_url( 'assets/css/progression-player.css', __FILE__ ), array(), $this->version );
@@ -213,11 +207,11 @@ class Progression_Player {
 	/**
 	 * Register and enqueues public-facing JavaScript files.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	public function enqueue_scripts() {
 
-		// remove WordPress specific handling of mediaelement.js and define our own options.
+		// remove WordPress specific handling of mediaelement.js. This lets us define our own options.
 		wp_deregister_script( 'wp-mediaelement' );	
 		wp_enqueue_script( $this->plugin_slug . '-mediaelement', plugins_url( 'js/progression-mediaelement.js', __FILE__ ), array( 'jquery', 'mediaelement' ), $this->version );
 
@@ -231,7 +225,7 @@ class Progression_Player {
 	/**
 	 * Register the administration menu for this plugin into the WordPress Options menu.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	public function add_admin_menu() {
 
@@ -249,7 +243,7 @@ class Progression_Player {
 	/**
 	 * Render the settings page for this plugin.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	public function display_plugin_admin_page() {
 		include_once( 'views/admin.php' );
@@ -259,7 +253,7 @@ class Progression_Player {
 	/**
 	 * Initializing all settings to the admin panel
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	public function settings_api_init() {
 
@@ -339,7 +333,7 @@ class Progression_Player {
 	/**
 	 * The intro text for the skin settings section of the admin panel.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	
 	function settings_section_skin_cb() {
@@ -349,7 +343,7 @@ class Progression_Player {
 	/**
 	 * The skin settings section of the admin panel.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	
 	function settings_field_active_skin_cb() { 
@@ -382,7 +376,7 @@ class Progression_Player {
 	/**
 	 * The skin settings section of the admin panel.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	
 	function settings_field_custom_skin_cb() { 
@@ -394,7 +388,7 @@ class Progression_Player {
 	/**
 	 * The colorpicker for the background color of the skin
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	
 	function settings_field_custom_skin_colors_cb( $args ) {
@@ -406,7 +400,7 @@ class Progression_Player {
 	/**
 	 * The intro text for the defaults settings section of the admin panel.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	
 	function settings_section_defaults_cb() {
@@ -416,7 +410,7 @@ class Progression_Player {
 	/**
 	 * The skin defaults section of the admin panel.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	
 	function settings_field_defaults_volume_cb() { 
@@ -431,7 +425,7 @@ class Progression_Player {
 	/**
 	 * This is where we set the skin class of the video player
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	public function shortcode_class( $class ) {
 
@@ -449,11 +443,11 @@ class Progression_Player {
 	}
 
 	/**
-	 * Custom skin rules generated from user settings
+	 * Insert custom skin rules generated from user settings as inline CSS
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
-	public function custom_skin_css( $class ) {
+	public function custom_skin_css() {
 
 		if ( ! get_option( $this->plugin_slug . '_custom_skin', array() ) ) {
 			return;
@@ -515,26 +509,228 @@ class Progression_Player {
 	 * @param string $diff amount to change the color
 	 * @return string hex color
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	
 	public function brightness( $hex, $diff ){
 		
-		$rgb = str_split(trim($hex, '# '), 2);
+		$rgb = str_split( trim( $hex, '# ' ), 2 );
 		 
-			foreach ($rgb as &$hex) {
-				$dec = hexdec($hex);
-				if ($diff >= 0) {
+			foreach ( $rgb as &$hex ) {
+				$dec = hexdec( $hex );
+				if ( $diff >= 0 ) {
 					$dec += $diff;
 				}
 				else {
-					$dec -= abs($diff);			
+					$dec -= abs( $diff );			
 				}
-				$dec = max(0, min(255, $dec));
-				$hex = str_pad(dechex($dec), 2, '0', STR_PAD_LEFT);
+				$dec = max( 0, min( 255, $dec ));
+				$hex = str_pad( dechex( $dec ), 2, '0', STR_PAD_LEFT );
 			}
 		 
-			return '#'.implode($rgb);
+			return '#'.implode( $rgb );
+	}
+
+	/**
+	 * The Audio shortcode.
+	 *
+	 * This implements the functionality of the Audio Shortcode for displaying
+	 * WordPress mp3s in a post.
+	 *	
+	 * @param array $attr Attributes of the shortcode.
+	 * @return string HTML content to display audio.
+	 * @since 1.0.0
+	 */
+	function wp_audio_shortcode( $attr ) {
+		$post_id = get_post() ? get_the_ID() : 0;
+
+		static $instances = 0;
+		$instances++;
+
+		$audio = null;
+
+		$default_types = wp_get_audio_extensions();
+		$defaults_atts = array( 'src' => '' );
+		foreach ( $default_types as $type )
+			$defaults_atts[$type] = '';
+
+		$atts = shortcode_atts( $defaults_atts, $attr, 'audio' );
+		extract( $atts );
+
+		$primary = false;
+		if ( ! empty( $src ) ) {
+			$type = wp_check_filetype( $src );
+			if ( ! in_array( $type['ext'], $default_types ) )
+				return sprintf( '<a class="wp-post-format-link-audio" href="%s">%s</a>', esc_url( $src ), esc_html( $src ) );
+			$primary = true;
+			array_unshift( $default_types, 'src' );
+		} else {
+			foreach ( $default_types as $ext ) {
+				if ( ! empty( $$ext ) ) {
+					$type = wp_check_filetype( $$ext );
+					if ( $type['ext'] === $ext )
+						$primary = true;
+				}
+			}
+		}
+
+		if ( ! $primary ) {
+			$audios = get_attached_media( 'audio', $post_id );
+			if ( empty( $audios ) )
+				return;
+
+			$audio = reset( $audios );
+			$src = wp_get_attachment_url( $audio->ID );
+			if ( empty( $src ) )
+				return;
+
+			array_unshift( $default_types, 'src' );
+		}
+
+		$library = apply_filters( 'wp_audio_shortcode_library', 'mediaelement' );
+		if ( 'mediaelement' === $library && did_action( 'init' ) ) {
+			wp_enqueue_style( 'wp-mediaelement' );
+			wp_enqueue_script( 'wp-mediaelement' );
+		}
+
+		$atts = array(
+			sprintf( 'class="%s"', apply_filters( 'wp_audio_shortcode_class', 'wp-audio-shortcode' ) ),
+			sprintf( 'id="audio-%d-%d"', $post_id, $instances ),
+		);
+
+		$html = sprintf( '<audio %s controls="controls" preload="none">', join( ' ', $atts ) );
+
+		$fileurl = '';
+		$source = '<source type="%s" src="%s" />';
+		foreach ( $default_types as $fallback ) {
+			if ( ! empty( $$fallback ) ) {
+				if ( empty( $fileurl ) )
+					$fileurl = $$fallback;
+				$type = wp_check_filetype( $$fallback );
+				$html .= sprintf( $source, $type['type'], esc_url( $$fallback ) );
+			}
+		}
+
+		if ( 'mediaelement' === $library )
+			$html .= wp_mediaelement_fallback( $fileurl );
+		$html .= '</audio>';
+
+		return apply_filters( 'wp_audio_shortcode', $html, $atts, $audio, $post_id );
+	}
+
+	/**
+	 * The Video shortcode.
+	 *
+	 * This implements the functionality of the Video Shortcode for displaying
+	 * WordPress mp4s in a post.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param array $attr Attributes of the shortcode.
+	 * @return string HTML content to display video.
+	 */
+	function wp_video_shortcode( $attr ) {
+		global $content_width;
+		$post_id = get_post() ? get_the_ID() : 0;
+
+		static $instances = 0;
+		$instances++;
+
+		$video = null;
+
+		$default_types = wp_get_video_extensions();
+		$defaults_atts = array(
+			'src' => '',
+			'poster' => '',
+			'height' => 360,
+			'width' => empty( $content_width ) ? 640 : $content_width,
+		);
+
+		foreach ( $default_types as $type )
+			$defaults_atts[$type] = '';
+
+		$atts = shortcode_atts( $defaults_atts, $attr, 'video' );
+		extract( $atts );
+
+		$w = $width;
+		$h = $height;
+		if ( is_admin() && $width > 600 )
+			$w = 600;
+		elseif ( ! is_admin() && $w > $defaults_atts['width'] )
+			$w = $defaults_atts['width'];
+
+		if ( $w < $width )
+			$height = round( ( $h * $w ) / $width );
+
+		$width = $w;
+
+		$primary = false;
+		if ( ! empty( $src ) ) {
+			$type = wp_check_filetype( $src );
+			if ( ! in_array( $type['ext'], $default_types ) )
+				return sprintf( '<a class="wp-post-format-link-video" href="%s">%s</a>', esc_url( $src ), esc_html( $src ) );
+			$primary = true;
+			array_unshift( $default_types, 'src' );
+		} else {
+			foreach ( $default_types as $ext ) {
+				if ( ! empty( $$ext ) ) {
+					$type = wp_check_filetype( $$ext );
+					if ( $type['ext'] === $ext )
+						$primary = true;
+				}
+			}
+		}
+
+		if ( ! $primary ) {
+			$videos = get_attached_media( 'video', $post_id );
+			if ( empty( $videos ) )
+				return;
+
+			$video = reset( $videos );
+			$src = wp_get_attachment_url( $video->ID );
+			if ( empty( $src ) )
+				return;
+
+			array_unshift( $default_types, 'src' );
+		}
+
+		$library = apply_filters( 'wp_video_shortcode_library', 'mediaelement' );
+		if ( 'mediaelement' === $library && did_action( 'init' ) ) {
+			wp_enqueue_style( 'wp-mediaelement' );
+			wp_enqueue_script( 'wp-mediaelement' );
+		}
+
+		$atts = array(
+			sprintf( 'class="%s"', apply_filters( 'wp_video_shortcode_class', 'wp-video-shortcode' ) ),
+			sprintf( 'id="video-%d-%d"', $post_id, $instances ),
+			sprintf( 'width="%d"', $width ),
+			sprintf( 'height="%d"', $height ),
+		);
+
+		if ( ! empty( $poster ) )
+			$atts[] = sprintf( 'poster="%s"', esc_url( $poster ) );
+
+		$html = sprintf( '<video %s controls="controls" preload="none">', join( ' ', $atts ) );
+
+		$fileurl = '';
+		$source = '<source type="%s" src="%s" />';
+		foreach ( $default_types as $fallback ) {
+			if ( ! empty( $$fallback ) ) {
+				if ( empty( $fileurl ) )
+					$fileurl = $$fallback;
+				$type = wp_check_filetype( $$fallback );
+				// m4v sometimes shows up as video/mpeg which collides with mp4
+				if ( 'm4v' === $type['ext'] )
+					$type['type'] = 'video/m4v';
+				$html .= sprintf( $source, $type['type'], esc_url( $$fallback ) );
+			}
+		}
+		if ( 'mediaelement' === $library )
+			$html .= wp_mediaelement_fallback( $fileurl );
+		$html .= '</video>';
+
+		return apply_filters( 'wp_video_shortcode', $html, $atts, $video, $post_id );
+	}
 
 	/**
 	* Enqueues all scripts, styles, settings, and templates necessary to use
