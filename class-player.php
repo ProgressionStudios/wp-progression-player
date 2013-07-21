@@ -86,6 +86,9 @@ class Progression_Player {
 		// Add inline CSS for custom player skin
 		add_action( 'wp_head', array( $this, 'custom_skin_css' ) );
 
+
+		// hook into media library
+		add_action( 'print_media_templates', array( $this, 'print_media_templates' ) );
 	}
 
 	/**
@@ -530,6 +533,23 @@ class Progression_Player {
 			}
 		 
 			return '#'.implode($rgb);
+
+	/**
+	* Enqueues all scripts, styles, settings, and templates necessary to use
+	* all media JS APIs.
+	*
+	* @since 1.0.0
+	*/
+
+	public function wp_enqueue_media() {
+
+		if ( ! ( 'post' == get_current_screen()->base && 'page' == get_current_screen()->id ) )
+		    return;
+
+		wp_enqueue_style( $this->plugin_slug .'-admin-media-styles', plugins_url( 'css/progression-admin-media.css', __FILE__ ), array(), $this->version );
+
+	}
+
 	}
 
 }

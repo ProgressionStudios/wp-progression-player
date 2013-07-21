@@ -1,0 +1,10 @@
+.progression-label {
+	min-height: 22px;
+	padding-top: 7px;
+	line-height: 16px;
+	color: #333;
+	vertical-align: text-top;
+	display: inline-block;
+	font-weight: normal;
+	margin-left: 5px;
+}
