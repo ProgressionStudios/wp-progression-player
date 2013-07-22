@@ -5,18 +5,19 @@
 
     $(function() {
     	
-    	var options = window.progression;
+    	var options = window.progression,
+    		players = $('.wp-audio-shortcode, .wp-video-shortcode');
 
-        $('.wp-audio-shortcode, .wp-video-shortcode').mediaelementplayer({
+    	if ( "true" === options.autoplay ) {
+    		players.attr( 'autoplay', 'autoplay' );
+    	};
+
+    	players.attr( 'preload', options.preload );
+
+        players.mediaelementplayer({
         	startVolume: options.startvolume, // initial volume when the player starts
-        	alwaysShowControls: (options.controls === "true"), // Hide controls when playing and mouse is not over the video
-        	loop: (options.loop === "true"), // useful for <audio> player loops
-        	success: function(player, node) {
-        		if ( options.autoplay === "true" ) {
-        			$('.mejs-overlay-button').trigger('click');
-        		};
-        		
-        	}
+        	alwaysShowControls: ("true" === options.controls ), // Hide controls when playing and mouse is not over the video
+        	loop: ( "true" === options.loop ) // useful for <audio> player loops
         });
     });
 

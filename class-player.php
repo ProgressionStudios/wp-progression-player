@@ -354,7 +354,7 @@ class Progression_Player {
 
  	 	add_settings_section( 
  	 		$this->plugin_slug . '_defaults',
- 			__( 'Player default options' ),
+ 			__( 'Player options' ),
  			array( $this, 'settings_section_defaults_cb' ),
  			'progression' 
  		);
