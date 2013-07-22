@@ -11,10 +11,8 @@
 
 
 /**
- * Plugin class.
- *
- * TODO: Rename this class to a proper name for your plugin.
- *
+ * The main class of the player
+ * *
  * @package Progression_Player
  * @author  ProgressionStudios <contact@progressionstudios.com>
  */
@@ -25,7 +23,7 @@ class Progression_Player {
 	 *
 	 * @since   1.0.0
 	 *
-	 * @var     string
+	 * @var string
 	 */
 	protected $version = '1.0.0';
 
@@ -34,7 +32,7 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var      string
+	 * @var string
 	 */
 	protected $plugin_slug = 'progression';
 
@@ -43,7 +41,7 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var      object
+	 * @var object
 	 */
 	protected static $instance = null;
 
@@ -52,14 +50,51 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var      string
+	 * @var string
 	 */
 	protected $plugin_screen_hook_suffix = null;
 
 	/**
+	 * Returns all options of the plugin or specific option if parameter $key given
+	 *
+	 * @since 1.0.0
+	 * @param string $key
+	 * @var array
+	 */
+	protected function options( $key = null ){
+
+		$options = get_option( 
+			$this->plugin_slug, array(
+			
+				// return default options if db not available
+				'startvolume' => 80,
+				'autoplay' => false,
+				'preload' => 'none',
+				'always_show_controls' => false,
+				'loop' => false,
+				'active_skin' => 'default',
+				'custom_skin' => 0,
+				'colors' => array(
+					'bg' => '',
+					'border' => '',
+					'text' => '',
+					'handle' => '',
+					'slider' => ''
+				)
+			)
+		);
+
+		if ( ! empty( $key )) {
+			return $options[ $key ];
+		} else {
+			return $options;
+		}
+	}
+
+	/**
 	 * Initialize the plugin by setting localization, filters, and administration functions.
 	 *
-	 * @since     1.0.0
+	 * @since 1.0.0
 	 */
 	private function __construct() {
 
@@ -99,7 +134,7 @@ class Progression_Player {
 	/**
 	 * Return an instance of this class.
 	 *
-	 * @since     1.0.0
+	 * @since 1.0.0
 	 *
 	 * @return    object    A single instance of this class.
 	 */
@@ -122,8 +157,8 @@ class Progression_Player {
 	 */
 	public static function activate( $network_wide ) {
 
-		// add options
-		
+		// add default options
+		add_option( $this->plugin_slug .'_options', $this->options );
 	}
 
 	/**
@@ -136,7 +171,8 @@ class Progression_Player {
 	public static function deactivate( $network_wide ) {
 		
 		// remove options
-		// 
+		remove_option( $this->plugin_slug );
+		 
 	}
 
 	/**
@@ -156,7 +192,7 @@ class Progression_Player {
 	/**
 	 * Register and enqueue admin-specific style sheet.
 	 *
-	 * @since     1.0.0
+	 * @since 1.0.0
 	 *
 	 * @return    null    Return early if no settings page is registered.
 	 */
@@ -171,7 +207,7 @@ class Progression_Player {
 	/**
 	 * Register and enqueue admin-specific JavaScript.
 	 *
-	 * @since     1.0.0
+	 * @since 1.0.0
 	 *
 	 * @return    null    Return early if no settings page is registered.
 	 */
@@ -198,7 +234,7 @@ class Progression_Player {
 		wp_enqueue_style( $this->plugin_slug . '-icons', plugins_url( 'assets/font-awesome/css/font-awesome.min.css', __FILE__ ), array(), $this->version );
 
 		// load skin CSS
-		$skin = get_option( $this->plugin_slug . '_active_skin', 'default' );
+		$skin = $this->options( 'active_skin' );
 
 		wp_enqueue_style( $this->plugin_slug . '-skin-' . $skin, plugins_url( 'assets/css/skin-'. $skin .'.css', __FILE__ ), array(), $this->version );
 
@@ -215,12 +251,12 @@ class Progression_Player {
 		wp_deregister_script( 'wp-mediaelement' );	
 		wp_enqueue_script( $this->plugin_slug . '-mediaelement', plugins_url( 'js/progression-mediaelement.js', __FILE__ ), array( 'jquery', 'mediaelement' ), $this->version );
 
-		// build options array for mediaelement
-		$options = array(
-			'startvolume' => get_option( $this->plugin_slug . '_startvolume', 80 ) / 100
-		);
+		// hand over options to javascript output
+		$options = $this->options();
+		$options['startvolume'] = $options['startvolume'] / 100; // 80% => 0.8
 		wp_localize_script( $this->plugin_slug . '-mediaelement', $this->plugin_slug, $options);
 	}
+
 
 	/**
 	 * Register the administration menu for this plugin into the WordPress Options menu.
@@ -257,6 +293,8 @@ class Progression_Player {
 	 */
 	public function settings_api_init() {
 
+		register_setting( $this->plugin_slug, $this->plugin_slug );
+
 	 	add_settings_section( 
 	 		$this->plugin_slug . '_skin',
 			__( 'Player skin' ),
@@ -272,9 +310,6 @@ class Progression_Player {
 			$this->plugin_slug . '_skin' 
 		);
 	 	
-	 	register_setting( 'progression', $this->plugin_slug . '_active_skin' );
-
-
  	 	add_settings_field( 
  	 		$this->plugin_slug . '_custom_skin',
  			__( 'Custom skin' ),
@@ -282,9 +317,6 @@ class Progression_Player {
  			'progression',
  			$this->plugin_slug . '_skin' 
  		);
- 	 	
- 	 	register_setting( 'progression', $this->plugin_slug . '_custom_skin' );
-
 
  	 	$color_zones = array(
  	 		'bg' 		=> __( 'Background color' ),
@@ -307,9 +339,6 @@ class Progression_Player {
  				)
  			);
  	 	}
-	 	
- 	 	register_setting( 'progression', $this->plugin_slug . '_custom_skin_colors' );
-
 
  	 	add_settings_section( 
  	 		$this->plugin_slug . '_defaults',
@@ -321,10 +350,46 @@ class Progression_Player {
  	 	add_settings_field( 
  	 		$this->plugin_slug . '_startvolume',
  			__( 'Start volume' ),
- 			array( $this, 'settings_field_defaults_volume_cb' ),
+ 			array( $this, 'settings_field_defaults_cb' ),
  			'progression',
- 			$this->plugin_slug . '_defaults' 
+ 			$this->plugin_slug . '_defaults',
+			array( 
+				'key' => 'startvolume' 
+			)
  		);
+
+	 	add_settings_field( 
+	 		$this->plugin_slug . '_autoplay',
+			__( 'Enable autoplay' ),
+			array( $this, 'settings_field_defaults_cb' ),
+			'progression',
+			$this->plugin_slug . '_defaults',
+			array( 
+				'key' => 'autoplay' 
+			)
+		);
+
+	 	add_settings_field( 
+	 		$this->plugin_slug . '_controls',
+			__( 'Always show controls' ),
+			array( $this, 'settings_field_defaults_cb' ),
+			'progression',
+			$this->plugin_slug . '_defaults',
+			array( 
+				'key' => 'controls' 
+			) 
+		);
+
+	 	add_settings_field( 
+	 		$this->plugin_slug . '_preload',
+			__( 'Preload' ),
+			array( $this, 'settings_field_defaults_cb' ),
+			'progression',
+			$this->plugin_slug . '_defaults',
+			array( 
+				'key' => 'preload' 
+			) 
+		);
  	 	
  	 	register_setting( 'progression', $this->plugin_slug . '_startvolume' );
 		
@@ -357,15 +422,15 @@ class Progression_Player {
 			'fancy' 		=> __( 'Fancy Skin' )
 		);
 
-		$value = get_option( $this->plugin_slug . '_active_skin', 'default' );
-		$option_name = $this->plugin_slug . '_active_skin';
+		$active_skin = $this->options( 'active_skin' );
+		$option_name = $this->plugin_slug . '[active_skin]';
 		$html_option = '<option value="%s"%s>%s</option>';
 
 		$html = '';
 		$html .= "<select name='$option_name'>";
 
 			foreach ($skins as $skin => $skin_name)
-				$html .= sprintf( $html_option, $skin, selected( $value, $skin, false ), $skin_name);
+				$html .= sprintf( $html_option, $skin, selected( $active_skin, $skin, false ), $skin_name);
 
 		$html .= '</select>';
 
@@ -380,9 +445,7 @@ class Progression_Player {
 	 */
 	
 	function settings_field_custom_skin_cb() { 
-
-		echo '<label><input name="' . $this->plugin_slug . '_custom_skin" id="progression_custom_skin" type="checkbox" value="1" class="code" ' . checked( 1, get_option( $this->plugin_slug . '_custom_skin' ), 0 ) . ' /> Customize selected player skin</label>';
-
+		echo '<label><input name="' . $this->plugin_slug . '[custom_skin]" id="progression_custom_skin" type="checkbox" value="1" class="code" ' . checked( 1, $this->options( 'custom_skin' ), 0 ) . ' /> Customize selected player skin</label>';
 	}
 
 	/**
@@ -392,9 +455,13 @@ class Progression_Player {
 	 */
 	
 	function settings_field_custom_skin_colors_cb( $args ) {
-		$option = get_option( $this->plugin_slug . '_'. $args['name'] );
-		$input = '<input name="%s" value="%s" class="%s" />';
-		echo sprintf( $input, $this->plugin_slug . '_'. $args['name'] .'[' . $args['key'] . ']', $option[$args['key']], 'progression-skincolor' );
+		$options = $this->options();
+		$key = $args['key'];
+		$value = $options[ 'colors' ][ $key ];
+		$name = $this->plugin_slug . '[colors]['. $key .']';
+		$class = $this->plugin_slug . '-skincolor';
+
+		echo "<input name='$name' value='$value' class='$class' />";
 	}
 
 	/**
@@ -404,7 +471,7 @@ class Progression_Player {
 	 */
 	
 	function settings_section_defaults_cb() {
-		echo '<p>'. __( 'These settings let you set the default behavior of Progression Player.'). '</p>';
+		echo '<p>'. __( 'These settings let you set the behavior of Progression Player.'). '</p>';
 	}
 
 	/**
@@ -413,12 +480,31 @@ class Progression_Player {
 	 * @since 1.0.0
 	 */
 	
-	function settings_field_defaults_volume_cb() { 
+	function settings_field_defaults_cb( $args ) { 
 
-		$value = get_option( $this->plugin_slug . '_startvolume', 80 );
-		$option_name = $this->plugin_slug . '_startvolume';
+		$options = $this->options();
+		$key = $args['key'];
+		$name = $this->plugin_slug . '['. $key .']';		
+		$value = $options[ $key ];
 
-		echo "<input name='$option_name' type='number' value='$value' min='0' max='100' step='5' /> <span>%<span>";
+		if ( 'startvolume' === $key ) {
+			echo "<input name='$name' type='number' value='$value' min='0' max='100' step='5' /> <span>%<span>";
+		}
+
+		if ( 'preload' === $key ) { ?>
+
+			<select name="<?php echo $name ?>">
+				<option value="none" <?php selected( $value, 'none' ) ?>><?php _e( 'None (recommended)'); ?> </option>
+				<option value="metadata" <?php selected( $value, 'metadata' ) ?>><?php _e( 'Metadata'); ?> </option>        
+				<option value="auto" <?php selected( $value, 'auto' ) ?>><?php _e( 'Auto (browser setting)'); ?> </option>        
+			</select>
+
+		<?php }
+
+		if ( 'controls' === $key || 'autoplay' === $key ) {
+			$checked = checked( $value, 1, false );
+			echo "<input name='$name' type='checkbox' value='1' $checked />";
+		}
 
 	}
 
@@ -431,11 +517,11 @@ class Progression_Player {
 
 		$class .= ' progression-skin';
 
-		$skin = get_option( $this->plugin_slug . '_active_skin', 'default' );
+		$active_skin = $this->options( 'active_skin' );
 
 		$class .= " progression-$skin";
 
-		if ( get_option( $this->plugin_slug . '_custom_skin' ) ) {
+		if ( $this->options( 'custom_skin' )) {
 			$class .= " progression-custom";
 		}
 
@@ -449,11 +535,12 @@ class Progression_Player {
 	 */
 	public function custom_skin_css() {
 
-		if ( ! get_option( $this->plugin_slug . '_custom_skin', array() ) ) {
+		$options = $this->options();
+		$colors = $options[ 'colors' ];
+
+		if ( ! $options[ 'custom_skin' ] ) {
 			return;
 		}
-
-		$colors = get_option( $this->plugin_slug . '_custom_skin_colors', array() );
 
 		$html = '';
 		$html .= '<style type="text/css">';
@@ -512,7 +599,7 @@ class Progression_Player {
 	 * @since 1.0.0
 	 */
 	
-	public function brightness( $hex, $diff ){
+	private function brightness( $hex, $diff ){
 		
 		$rgb = str_split( trim( $hex, '# ' ), 2 );
 		 
@@ -541,7 +628,7 @@ class Progression_Player {
 	 * @return string HTML content to display audio.
 	 * @since 1.0.0
 	 */
-	function wp_audio_shortcode( $attr ) {
+	public function wp_audio_shortcode( $attr ) {
 		$post_id = get_post() ? get_the_ID() : 0;
 
 		static $instances = 0;
@@ -629,7 +716,7 @@ class Progression_Player {
 	 * @param array $attr Attributes of the shortcode.
 	 * @return string HTML content to display video.
 	 */
-	function wp_video_shortcode( $attr ) {
+	public function wp_video_shortcode( $attr ) {
 		global $content_width;
 		$post_id = get_post() ? get_the_ID() : 0;
 
@@ -759,7 +846,10 @@ class Progression_Player {
 		if ( ! ( 'post' == get_current_screen()->base && 'page' == get_current_screen()->id ) )
 		    return;
 
+		return;
 		?>
+
+
 
 		<script type="text/html" id="tmpl-progression-player-settings">
 
