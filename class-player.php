@@ -64,47 +64,6 @@ class Progression_Player {
 	protected $loaded_options = array();
 
 	/**
-	 * Returns all options of the plugin or specific option if parameter $key given
-	 *
-	 * @since 1.0.0
-	 * @param string $key
-	 * @var array
-	 */
-	protected function options( $key = false ){
-
-		$defaults = array(
-				
-			// return default options if db not available
-			'startvolume' => 80,
-			'autoplay' => 'false',
-			'preload' => 'none',
-			'loop' => 'false',
-			'controls' => 'false',
-			'active_skin' => 'default',
-			'custom_skin' => 'false',
-			'colors' => array(
-				'bg' => '',
-				'border' => '',
-				'text' => '',
-				'handle' => '',
-				'slider' => ''
-			)
-		);
-
-		// load plugin options just once per instance
-		if ( empty( $this->loaded_options )) {
-			$this->loaded_options = get_option( $this->plugin_slug, $defaults);
-		}
-
-		if ( $key ) {
-			return $this->loaded_options[ $key ];
-		} else {
-			return $this->loaded_options;
-		}
-		
-	}
-
-	/**
 	 * Initialize the plugin by setting localization, filters, and administration functions.
 	 *
 	 * @since 1.0.0
@@ -128,15 +87,15 @@ class Progression_Player {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
-		// change the class of the video shortcode
+		// change the class of the media shortcode
 		add_filter( 'wp_video_shortcode_class', array( $this, 'shortcode_class' ) );
+		add_filter( 'wp_audio_shortcode_class', array( $this, 'shortcode_class' ) );
 
 		// Add inline CSS for custom player skin
 		add_action( 'wp_head', array( $this, 'custom_skin_css' ) );
 
-		// Overwrite native WordPress shortcode function to add our own
-		add_filter( 'wp_audio_shortcode_handler', array( $this, 'wp_audio_shortcode' ) );
-		add_filter( 'wp_video_shortcode_handler', array( $this, 'wp_video_shortcode' ) );
+		// create shortcode for playlist
+		add_shortcode( 'playlist', array( $this, 'playlist_shortcode' ) );
 
 		// hook into media library
 		add_action( 'print_media_templates', array( $this, 'print_media_templates' ) );
@@ -184,6 +143,47 @@ class Progression_Player {
 		
 		delete_option( 'progression' );
 		 
+	}
+
+	/**
+	 * Returns all options of the plugin or specific option if parameter $key given
+	 *
+	 * @since 1.0.0
+	 * @param string $key
+	 * @var array
+	 */
+	protected function options( $key = false ){
+
+		$defaults = array(
+				
+			// return default options if db not available
+			'startvolume' => 80,
+			'autoplay' => 'false',
+			'preload' => 'none',
+			'loop' => 'false',
+			'controls' => 'false',
+			'active_skin' => 'default',
+			'custom_skin' => 'false',
+			'colors' => array(
+				'bg' => '',
+				'border' => '',
+				'text' => '',
+				'handle' => '',
+				'slider' => ''
+			)
+		);
+
+		// load plugin options just once per instance
+		if ( empty( $this->loaded_options )) {
+			$this->loaded_options = get_option( $this->plugin_slug, $defaults);
+		}
+
+		if ( $key ) {
+			return $this->loaded_options[ $key ];
+		} else {
+			return $this->loaded_options;
+		}
+		
 	}
 
 	/**
@@ -258,7 +258,7 @@ class Progression_Player {
 	 */
 	public function enqueue_scripts() {
 
-		// remove WordPress specific handling of mediaelement.js. This lets us define our own options.
+		// remove WordPress specific handling of mediaelement.js. We will use our own.
 		wp_deregister_script( 'wp-mediaelement' );	
 		wp_enqueue_script( $this->plugin_slug . '-mediaelement', plugins_url( 'js/progression-mediaelement.js', __FILE__ ), array( 'jquery', 'mediaelement' ), $this->version );
 
@@ -542,7 +542,7 @@ class Progression_Player {
 
 		$active_skin = $this->options( 'active_skin' );
 
-		$class .= " progression-$skin";
+		$class .= " progression-$active_skin";
 
 		if ( $this->options( 'custom_skin' )) {
 			$class .= " progression-custom";
@@ -642,204 +642,62 @@ class Progression_Player {
 	}
 
 	/**
-	 * The Audio shortcode.
+	 * Playlist Shortcode
 	 *
-	 * This implements the functionality of the Audio Shortcode for displaying
-	 * WordPress mp3s in a post.
-	 *	
-	 * @param array $attr Attributes of the shortcode.
-	 * @return string HTML content to display audio.
+	 * Works very similar to the [gallery] shortcode. 
+	 * 
 	 * @since 1.0.0
+	 *
 	 */
-	public function wp_audio_shortcode( $attr ) {
-		$post_id = get_post() ? get_the_ID() : 0;
+	public function playlist_shortcode( $attr ) {
+		
+		$post = get_post();
 
-		static $instances = 0;
-		$instances++;
+		static $instance = 0;
+		$instance++;
 
-		$audio = null;
+		if ( ! empty( $attr['ids'] ) ) {
+			// 'ids' is explicitly ordered, unless you specify otherwise.
+			if ( empty( $attr['orderby'] ) )
+				$attr['orderby'] = 'post__in';
+			$attr['include'] = $attr['ids'];
+		}
 
-		$default_types = wp_get_audio_extensions();
-		$defaults_atts = array( 'src' => '' );
-		foreach ( $default_types as $type )
-			$defaults_atts[$type] = '';
+		// We're trusting author input, so let's at least make sure it looks like a valid orderby statement
+		if ( isset( $attr['orderby'] ) ) {
+			$attr['orderby'] = sanitize_sql_orderby( $attr['orderby'] );
+			if ( !$attr['orderby'] )
+				unset( $attr['orderby'] );
+		}
 
-		$atts = shortcode_atts( $defaults_atts, $attr, 'audio' );
-		extract( $atts );
+		extract(shortcode_atts(array(
+			'order'      => 'ASC',
+			'orderby'    => 'menu_order ID',
+			'id'         => $post ? $post->ID : 0,
+			'include'    => '',
+			'exclude'    => ''
+		), $attr, 'gallery'));
 
-		$primary = false;
-		if ( ! empty( $src ) ) {
-			$type = wp_check_filetype( $src );
-			if ( ! in_array( $type['ext'], $default_types ) )
-				return sprintf( '<a class="wp-post-format-link-audio" href="%s">%s</a>', esc_url( $src ), esc_html( $src ) );
-			$primary = true;
-			array_unshift( $default_types, 'src' );
+		$id = intval($id);
+		if ( 'RAND' == $order )
+			$orderby = 'none';
+
+		if ( !empty($include) ) {
+			$_attachments = get_posts( array('include' => $include, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'audio', 'order' => $order, 'orderby' => $orderby) );
+
+			$attachments = array();
+			foreach ( $_attachments as $key => $val ) {
+				$attachments[$val->ID] = $_attachments[$key];
+			}
+		} elseif ( !empty($exclude) ) {
+			$attachments = get_children( array('post_parent' => $id, 'exclude' => $exclude, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'audio', 'order' => $order, 'orderby' => $orderby) );
 		} else {
-			foreach ( $default_types as $ext ) {
-				if ( ! empty( $$ext ) ) {
-					$type = wp_check_filetype( $$ext );
-					if ( $type['ext'] === $ext )
-						$primary = true;
-				}
-			}
+			$attachments = get_children( array('post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'audio', 'order' => $order, 'orderby' => $orderby) );
 		}
 
-		if ( ! $primary ) {
-			$audios = get_attached_media( 'audio', $post_id );
-			if ( empty( $audios ) )
-				return;
-
-			$audio = reset( $audios );
-			$src = wp_get_attachment_url( $audio->ID );
-			if ( empty( $src ) )
-				return;
-
-			array_unshift( $default_types, 'src' );
-		}
-
-		$library = apply_filters( 'wp_audio_shortcode_library', 'mediaelement' );
-		if ( 'mediaelement' === $library && did_action( 'init' ) ) {
-			wp_enqueue_style( 'wp-mediaelement' );
-			wp_enqueue_script( 'wp-mediaelement' );
-		}
-
-		$atts = array(
-			sprintf( 'class="%s"', apply_filters( 'wp_audio_shortcode_class', 'wp-audio-shortcode' ) ),
-			sprintf( 'id="audio-%d-%d"', $post_id, $instances ),
-		);
-
-		$html = sprintf( '<audio %s controls="controls" preload="none">', join( ' ', $atts ) );
-
-		$fileurl = '';
-		$source = '<source type="%s" src="%s" />';
-		foreach ( $default_types as $fallback ) {
-			if ( ! empty( $$fallback ) ) {
-				if ( empty( $fileurl ) )
-					$fileurl = $$fallback;
-				$type = wp_check_filetype( $$fallback );
-				$html .= sprintf( $source, $type['type'], esc_url( $$fallback ) );
-			}
-		}
-
-		if ( 'mediaelement' === $library )
-			$html .= wp_mediaelement_fallback( $fileurl );
-		$html .= '</audio>';
-
-		return apply_filters( 'wp_audio_shortcode', $html, $atts, $audio, $post_id );
-	}
-
-	/**
-	 * The Video shortcode.
-	 *
-	 * This implements the functionality of the Video Shortcode for displaying
-	 * WordPress mp4s in a post.
-	 *
-	 * @since 3.6.0
-	 *
-	 * @param array $attr Attributes of the shortcode.
-	 * @return string HTML content to display video.
-	 */
-	public function wp_video_shortcode( $attr ) {
-		global $content_width;
-		$post_id = get_post() ? get_the_ID() : 0;
-
-		static $instances = 0;
-		$instances++;
-
-		$video = null;
-
-		$default_types = wp_get_video_extensions();
-		$defaults_atts = array(
-			'src' => '',
-			'poster' => '',
-			'height' => 360,
-			'width' => empty( $content_width ) ? 640 : $content_width,
-		);
-
-		foreach ( $default_types as $type )
-			$defaults_atts[$type] = '';
-
-		$atts = shortcode_atts( $defaults_atts, $attr, 'video' );
-		extract( $atts );
-
-		$w = $width;
-		$h = $height;
-		if ( is_admin() && $width > 600 )
-			$w = 600;
-		elseif ( ! is_admin() && $w > $defaults_atts['width'] )
-			$w = $defaults_atts['width'];
-
-		if ( $w < $width )
-			$height = round( ( $h * $w ) / $width );
-
-		$width = $w;
-
-		$primary = false;
-		if ( ! empty( $src ) ) {
-			$type = wp_check_filetype( $src );
-			if ( ! in_array( $type['ext'], $default_types ) )
-				return sprintf( '<a class="wp-post-format-link-video" href="%s">%s</a>', esc_url( $src ), esc_html( $src ) );
-			$primary = true;
-			array_unshift( $default_types, 'src' );
-		} else {
-			foreach ( $default_types as $ext ) {
-				if ( ! empty( $$ext ) ) {
-					$type = wp_check_filetype( $$ext );
-					if ( $type['ext'] === $ext )
-						$primary = true;
-				}
-			}
-		}
-
-		if ( ! $primary ) {
-			$videos = get_attached_media( 'video', $post_id );
-			if ( empty( $videos ) )
-				return;
-
-			$video = reset( $videos );
-			$src = wp_get_attachment_url( $video->ID );
-			if ( empty( $src ) )
-				return;
-
-			array_unshift( $default_types, 'src' );
-		}
-
-		$library = apply_filters( 'wp_video_shortcode_library', 'mediaelement' );
-		if ( 'mediaelement' === $library && did_action( 'init' ) ) {
-			wp_enqueue_style( 'wp-mediaelement' );
-			wp_enqueue_script( 'wp-mediaelement' );
-		}
-
-		$atts = array(
-			sprintf( 'class="%s"', apply_filters( 'wp_video_shortcode_class', 'wp-video-shortcode' ) ),
-			sprintf( 'id="video-%d-%d"', $post_id, $instances ),
-			sprintf( 'width="%d"', $width ),
-			sprintf( 'height="%d"', $height ),
-		);
-
-		if ( ! empty( $poster ) )
-			$atts[] = sprintf( 'poster="%s"', esc_url( $poster ) );
-
-		$html = sprintf( '<video %s controls="controls" preload="none">', join( ' ', $atts ) );
-
-		$fileurl = '';
-		$source = '<source type="%s" src="%s" />';
-		foreach ( $default_types as $fallback ) {
-			if ( ! empty( $$fallback ) ) {
-				if ( empty( $fileurl ) )
-					$fileurl = $$fallback;
-				$type = wp_check_filetype( $$fallback );
-				// m4v sometimes shows up as video/mpeg which collides with mp4
-				if ( 'm4v' === $type['ext'] )
-					$type['type'] = 'video/m4v';
-				$html .= sprintf( $source, $type['type'], esc_url( $$fallback ) );
-			}
-		}
-		if ( 'mediaelement' === $library )
-			$html .= wp_mediaelement_fallback( $fileurl );
-		$html .= '</video>';
-
-		return apply_filters( 'wp_video_shortcode', $html, $atts, $video, $post_id );
+		if ( empty($attachments) )
+			return '';
+		 
 	}
 
 	/**
