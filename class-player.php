@@ -55,40 +55,53 @@ class Progression_Player {
 	protected $plugin_screen_hook_suffix = null;
 
 	/**
+	 * Holds the plugin options
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var string
+	 */
+	protected $loaded_options = array();
+
+	/**
 	 * Returns all options of the plugin or specific option if parameter $key given
 	 *
 	 * @since 1.0.0
 	 * @param string $key
 	 * @var array
 	 */
-	protected function options( $key = null ){
+	protected function options( $key = false ){
 
-		$options = get_option( 
-			$this->plugin_slug, array(
-			
-				// return default options if db not available
-				'startvolume' => 80,
-				'autoplay' => false,
-				'preload' => 'none',
-				'always_show_controls' => false,
-				'loop' => false,
-				'active_skin' => 'default',
-				'custom_skin' => 0,
-				'colors' => array(
-					'bg' => '',
-					'border' => '',
-					'text' => '',
-					'handle' => '',
-					'slider' => ''
-				)
+		$defaults = array(
+				
+			// return default options if db not available
+			'startvolume' => 80,
+			'autoplay' => 'false',
+			'preload' => 'none',
+			'loop' => 'false',
+			'controls' => 'false',
+			'active_skin' => 'default',
+			'custom_skin' => 'false',
+			'colors' => array(
+				'bg' => '',
+				'border' => '',
+				'text' => '',
+				'handle' => '',
+				'slider' => ''
 			)
 		);
 
-		if ( ! empty( $key )) {
-			return $options[ $key ];
-		} else {
-			return $options;
+		// load plugin options just once per instance
+		if ( empty( $this->loaded_options )) {
+			$this->loaded_options = get_option( $this->plugin_slug, $defaults);
 		}
+
+		if ( $key ) {
+			return $this->loaded_options[ $key ];
+		} else {
+			return $this->loaded_options;
+		}
+		
 	}
 
 	/**
@@ -157,8 +170,7 @@ class Progression_Player {
 	 */
 	public static function activate( $network_wide ) {
 
-		// add default options
-		add_option( $this->plugin_slug .'_options', $this->options );
+
 	}
 
 	/**
@@ -170,8 +182,7 @@ class Progression_Player {
 	 */
 	public static function deactivate( $network_wide ) {
 		
-		// remove options
-		remove_option( $this->plugin_slug );
+		delete_option( 'progression' );
 		 
 	}
 
@@ -251,9 +262,10 @@ class Progression_Player {
 		wp_deregister_script( 'wp-mediaelement' );	
 		wp_enqueue_script( $this->plugin_slug . '-mediaelement', plugins_url( 'js/progression-mediaelement.js', __FILE__ ), array( 'jquery', 'mediaelement' ), $this->version );
 
-		// hand over options to javascript output
 		$options = $this->options();
 		$options['startvolume'] = $options['startvolume'] / 100; // 80% => 0.8
+		
+		// hand over options to javascript object
 		wp_localize_script( $this->plugin_slug . '-mediaelement', $this->plugin_slug, $options);
 	}
 
@@ -381,6 +393,17 @@ class Progression_Player {
 		);
 
 	 	add_settings_field( 
+	 		$this->plugin_slug . '_loop',
+			__( 'Loop playback' ),
+			array( $this, 'settings_field_defaults_cb' ),
+			'progression',
+			$this->plugin_slug . '_defaults',
+			array( 
+				'key' => 'loop' 
+			) 
+		);
+
+	 	add_settings_field( 
 	 		$this->plugin_slug . '_preload',
 			__( 'Preload' ),
 			array( $this, 'settings_field_defaults_cb' ),
@@ -445,7 +468,7 @@ class Progression_Player {
 	 */
 	
 	function settings_field_custom_skin_cb() { 
-		echo '<label><input name="' . $this->plugin_slug . '[custom_skin]" id="progression_custom_skin" type="checkbox" value="1" class="code" ' . checked( 1, $this->options( 'custom_skin' ), 0 ) . ' /> Customize selected player skin</label>';
+		echo '<label><input name="' . $this->plugin_slug . '[custom_skin]" id="progression_custom_skin" type="checkbox" value="true" class="code" ' . checked( 1, $this->options( 'custom_skin' ), 0 ) . ' /> Customize selected player skin</label>';
 	}
 
 	/**
@@ -501,9 +524,9 @@ class Progression_Player {
 
 		<?php }
 
-		if ( 'controls' === $key || 'autoplay' === $key ) {
-			$checked = checked( $value, 1, false );
-			echo "<input name='$name' type='checkbox' value='1' $checked />";
+		if ( 'controls' === $key || 'autoplay' === $key || 'loop' === $key ) {
+			$checked = checked( $value, 'true', false );
+			echo "<input name='$name' type='checkbox' value='true' $checked />";
 		}
 
 	}
@@ -848,8 +871,6 @@ class Progression_Player {
 
 		return;
 		?>
-
-
 
 		<script type="text/html" id="tmpl-progression-player-settings">
 

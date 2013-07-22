@@ -9,8 +9,10 @@
 
         $('.wp-audio-shortcode, .wp-video-shortcode').mediaelementplayer({
         	startVolume: options.startvolume, // initial volume when the player starts
+        	alwaysShowControls: (options.controls === "true"), // Hide controls when playing and mouse is not over the video
+        	loop: (options.loop === "true"), // useful for <audio> player loops
         	success: function(player, node) {
-        		if ( options.autoplay === '1' ) {
+        		if ( options.autoplay === "true" ) {
         			$('.mejs-overlay-button').trigger('click');
         		};
         		
