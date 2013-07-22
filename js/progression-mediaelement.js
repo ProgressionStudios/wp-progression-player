@@ -19,6 +19,14 @@
         	alwaysShowControls: ("true" === options.controls ), // Hide controls when playing and mouse is not over the video
         	loop: ( "true" === options.loop ) // useful for <audio> player loops
         });
+
+        $('.progression-playlist').mediaelementplayer({
+        	startVolume: options.startvolume, // initial volume when the player starts
+        	loop: ( "true" === options.loop ), // useful for <audio> player loops
+        	features: ['playlistfeature', 'prevtrack', 'playpause', 'nexttrack','current', 'progress', 'duration', 'volume', 'playlist'],
+        	playlist: ( "true" === options.playlist ), // Playlist Show
+        	playlistposition: 'bottom' //Playlist Location
+        });
     });
 
 }(jQuery)); 
