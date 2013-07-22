@@ -11,10 +11,8 @@
 
 
 /**
- * Plugin class.
- *
- * TODO: Rename this class to a proper name for your plugin.
- *
+ * The main class of the player
+ * *
  * @package Progression_Player
  * @author  ProgressionStudios <contact@progressionstudios.com>
  */
@@ -25,41 +23,91 @@ class Progression_Player {
 	 *
 	 * @since   1.0.0
 	 *
-	 * @var     string
+	 * @var string
 	 */
 	protected $version = '1.0.0';
 
 	/**
 	 * Unique identifier of the plugin.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 *
-	 * @var      string
+	 * @var string
 	 */
 	protected $plugin_slug = 'progression';
 
 	/**
 	 * Instance of this class.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 *
-	 * @var      object
+	 * @var object
 	 */
 	protected static $instance = null;
 
 	/**
 	 * Slug of the plugin screen.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 *
-	 * @var      string
+	 * @var string
 	 */
 	protected $plugin_screen_hook_suffix = null;
 
 	/**
+	 * Holds the plugin options
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var string
+	 */
+	protected $loaded_options = array();
+
+	/**
+	 * Returns all options of the plugin or specific option if parameter $key given
+	 *
+	 * @since 1.0.0
+	 * @param string $key
+	 * @var array
+	 */
+	protected function options( $key = false ){
+
+		$defaults = array(
+				
+			// return default options if db not available
+			'startvolume' => 80,
+			'autoplay' => 'false',
+			'preload' => 'none',
+			'loop' => 'false',
+			'controls' => 'false',
+			'active_skin' => 'default',
+			'custom_skin' => 'false',
+			'colors' => array(
+				'bg' => '',
+				'border' => '',
+				'text' => '',
+				'handle' => '',
+				'slider' => ''
+			)
+		);
+
+		// load plugin options just once per instance
+		if ( empty( $this->loaded_options )) {
+			$this->loaded_options = get_option( $this->plugin_slug, $defaults);
+		}
+
+		if ( $key ) {
+			return $this->loaded_options[ $key ];
+		} else {
+			return $this->loaded_options;
+		}
+		
+	}
+
+	/**
 	 * Initialize the plugin by setting localization, filters, and administration functions.
 	 *
-	 * @since     1.0.0
+	 * @since 1.0.0
 	 */
 	private function __construct() {
 
@@ -86,12 +134,20 @@ class Progression_Player {
 		// Add inline CSS for custom player skin
 		add_action( 'wp_head', array( $this, 'custom_skin_css' ) );
 
+		// Overwrite native WordPress shortcode function to add our own
+		add_filter( 'wp_audio_shortcode_handler', array( $this, 'wp_audio_shortcode' ) );
+		add_filter( 'wp_video_shortcode_handler', array( $this, 'wp_video_shortcode' ) );
+
+		// hook into media library
+		add_action( 'print_media_templates', array( $this, 'print_media_templates' ) );
+		add_action( 'wp_enqueue_media', array( $this, 'wp_enqueue_media' ) );
+
 	}
 
 	/**
 	 * Return an instance of this class.
 	 *
-	 * @since     1.0.0
+	 * @since 1.0.0
 	 *
 	 * @return    object    A single instance of this class.
 	 */
@@ -108,31 +164,32 @@ class Progression_Player {
 	/**
 	 * Fired when the plugin is activated.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 *
 	 * @param    boolean    $network_wide    True if WPMU superadmin uses "Network Activate" action, false if WPMU is disabled or plugin is activated on an individual blog.
 	 */
 	public static function activate( $network_wide ) {
 
-		
-		
+
 	}
 
 	/**
 	 * Fired when the plugin is deactivated.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 *
 	 * @param    boolean    $network_wide    True if WPMU superadmin uses "Network Deactivate" action, false if WPMU is disabled or plugin is deactivated on an individual blog.
 	 */
 	public static function deactivate( $network_wide ) {
-		// TODO: Define deactivation functionality here
+		
+		delete_option( 'progression' );
+		 
 	}
 
 	/**
 	 * Load the plugin text domain for translation.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	public function load_plugin_textdomain() {
 
@@ -146,19 +203,13 @@ class Progression_Player {
 	/**
 	 * Register and enqueue admin-specific style sheet.
 	 *
-	 * @since     1.0.0
+	 * @since 1.0.0
 	 *
 	 * @return    null    Return early if no settings page is registered.
 	 */
 	public function enqueue_admin_styles() {
-
-		if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
-			return;
-		}
-
-		$screen = get_current_screen();
 		
-		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
+		if ( get_current_screen()->id == $this->plugin_screen_hook_suffix ) {
 			wp_enqueue_style( $this->plugin_slug .'-admin-styles', plugins_url( 'css/progression-admin.css', __FILE__ ), array( 'wp-color-picker'  ), $this->version );
 		}
 
@@ -167,18 +218,13 @@ class Progression_Player {
 	/**
 	 * Register and enqueue admin-specific JavaScript.
 	 *
-	 * @since     1.0.0
+	 * @since 1.0.0
 	 *
 	 * @return    null    Return early if no settings page is registered.
 	 */
 	public function enqueue_admin_scripts() {
 
-		if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
-			return;
-		}
-
-		$screen = get_current_screen();
-		if ( $screen->id == $this->plugin_screen_hook_suffix ) {
+		if ( get_current_screen()->id == $this->plugin_screen_hook_suffix ) {
 			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/progression-admin.js', __FILE__ ), array( 'jquery', 'wp-color-picker' ), $this->version );
 		}
 
@@ -187,19 +233,19 @@ class Progression_Player {
 	/**
 	 * Register and enqueue public-facing style sheet.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	public function enqueue_styles() {
 
 		// remove WordPress specific style. We will use our own.
-		wp_deregister_style( 'mediaelement' ); 
+		wp_dequeue_style( 'mediaelement' ); 
 		wp_deregister_style( 'wp-mediaelement' ); 
 
 		wp_enqueue_style( $this->plugin_slug, plugins_url( 'assets/css/progression-player.css', __FILE__ ), array(), $this->version );
 		wp_enqueue_style( $this->plugin_slug . '-icons', plugins_url( 'assets/font-awesome/css/font-awesome.min.css', __FILE__ ), array(), $this->version );
 
 		// load skin CSS
-		$skin = get_option( $this->plugin_slug . '_active_skin', 'default' );
+		$skin = $this->options( 'active_skin' );
 
 		wp_enqueue_style( $this->plugin_slug . '-skin-' . $skin, plugins_url( 'assets/css/skin-'. $skin .'.css', __FILE__ ), array(), $this->version );
 
@@ -208,25 +254,26 @@ class Progression_Player {
 	/**
 	 * Register and enqueues public-facing JavaScript files.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	public function enqueue_scripts() {
 
-		// remove WordPress specific handling of mediaelement.js and define our own options.
+		// remove WordPress specific handling of mediaelement.js. This lets us define our own options.
 		wp_deregister_script( 'wp-mediaelement' );	
 		wp_enqueue_script( $this->plugin_slug . '-mediaelement', plugins_url( 'js/progression-mediaelement.js', __FILE__ ), array( 'jquery', 'mediaelement' ), $this->version );
 
-		// build options array for mediaelement
-		$options = array(
-			'startvolume' => get_option( $this->plugin_slug . '_startvolume', 80 ) / 100
-		);
+		$options = $this->options();
+		$options['startvolume'] = $options['startvolume'] / 100; // 80% => 0.8
+		
+		// hand over options to javascript object
 		wp_localize_script( $this->plugin_slug . '-mediaelement', $this->plugin_slug, $options);
 	}
+
 
 	/**
 	 * Register the administration menu for this plugin into the WordPress Options menu.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	public function add_admin_menu() {
 
@@ -244,7 +291,7 @@ class Progression_Player {
 	/**
 	 * Render the settings page for this plugin.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	public function display_plugin_admin_page() {
 		include_once( 'views/admin.php' );
@@ -254,9 +301,11 @@ class Progression_Player {
 	/**
 	 * Initializing all settings to the admin panel
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	public function settings_api_init() {
+
+		register_setting( $this->plugin_slug, $this->plugin_slug );
 
 	 	add_settings_section( 
 	 		$this->plugin_slug . '_skin',
@@ -273,9 +322,6 @@ class Progression_Player {
 			$this->plugin_slug . '_skin' 
 		);
 	 	
-	 	register_setting( 'progression', $this->plugin_slug . '_active_skin' );
-
-
  	 	add_settings_field( 
  	 		$this->plugin_slug . '_custom_skin',
  			__( 'Custom skin' ),
@@ -283,9 +329,6 @@ class Progression_Player {
  			'progression',
  			$this->plugin_slug . '_skin' 
  		);
- 	 	
- 	 	register_setting( 'progression', $this->plugin_slug . '_custom_skin' );
-
 
  	 	$color_zones = array(
  	 		'bg' 		=> __( 'Background color' ),
@@ -308,13 +351,10 @@ class Progression_Player {
  				)
  			);
  	 	}
-	 	
- 	 	register_setting( 'progression', $this->plugin_slug . '_custom_skin_colors' );
-
 
  	 	add_settings_section( 
  	 		$this->plugin_slug . '_defaults',
- 			__( 'Player default options' ),
+ 			__( 'Player options' ),
  			array( $this, 'settings_section_defaults_cb' ),
  			'progression' 
  		);
@@ -322,10 +362,57 @@ class Progression_Player {
  	 	add_settings_field( 
  	 		$this->plugin_slug . '_startvolume',
  			__( 'Start volume' ),
- 			array( $this, 'settings_field_defaults_volume_cb' ),
+ 			array( $this, 'settings_field_defaults_cb' ),
  			'progression',
- 			$this->plugin_slug . '_defaults' 
+ 			$this->plugin_slug . '_defaults',
+			array( 
+				'key' => 'startvolume' 
+			)
  		);
+
+	 	add_settings_field( 
+	 		$this->plugin_slug . '_autoplay',
+			__( 'Enable autoplay' ),
+			array( $this, 'settings_field_defaults_cb' ),
+			'progression',
+			$this->plugin_slug . '_defaults',
+			array( 
+				'key' => 'autoplay' 
+			)
+		);
+
+	 	add_settings_field( 
+	 		$this->plugin_slug . '_controls',
+			__( 'Always show controls' ),
+			array( $this, 'settings_field_defaults_cb' ),
+			'progression',
+			$this->plugin_slug . '_defaults',
+			array( 
+				'key' => 'controls' 
+			) 
+		);
+
+	 	add_settings_field( 
+	 		$this->plugin_slug . '_loop',
+			__( 'Loop playback' ),
+			array( $this, 'settings_field_defaults_cb' ),
+			'progression',
+			$this->plugin_slug . '_defaults',
+			array( 
+				'key' => 'loop' 
+			) 
+		);
+
+	 	add_settings_field( 
+	 		$this->plugin_slug . '_preload',
+			__( 'Preload' ),
+			array( $this, 'settings_field_defaults_cb' ),
+			'progression',
+			$this->plugin_slug . '_defaults',
+			array( 
+				'key' => 'preload' 
+			) 
+		);
  	 	
  	 	register_setting( 'progression', $this->plugin_slug . '_startvolume' );
 		
@@ -334,7 +421,7 @@ class Progression_Player {
 	/**
 	 * The intro text for the skin settings section of the admin panel.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	
 	function settings_section_skin_cb() {
@@ -344,7 +431,7 @@ class Progression_Player {
 	/**
 	 * The skin settings section of the admin panel.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	
 	function settings_field_active_skin_cb() { 
@@ -358,15 +445,15 @@ class Progression_Player {
 			'fancy' 		=> __( 'Fancy Skin' )
 		);
 
-		$value = get_option( $this->plugin_slug . '_active_skin', 'default' );
-		$option_name = $this->plugin_slug . '_active_skin';
+		$active_skin = $this->options( 'active_skin' );
+		$option_name = $this->plugin_slug . '[active_skin]';
 		$html_option = '<option value="%s"%s>%s</option>';
 
 		$html = '';
 		$html .= "<select name='$option_name'>";
 
 			foreach ($skins as $skin => $skin_name)
-				$html .= sprintf( $html_option, $skin, selected( $value, $skin, false ), $skin_name);
+				$html .= sprintf( $html_option, $skin, selected( $active_skin, $skin, false ), $skin_name);
 
 		$html .= '</select>';
 
@@ -377,66 +464,87 @@ class Progression_Player {
 	/**
 	 * The skin settings section of the admin panel.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	
 	function settings_field_custom_skin_cb() { 
-
-		echo '<label><input name="' . $this->plugin_slug . '_custom_skin" id="progression_custom_skin" type="checkbox" value="1" class="code" ' . checked( 1, get_option( $this->plugin_slug . '_custom_skin' ), 0 ) . ' /> Customize selected player skin</label>';
-
+		echo '<label><input name="' . $this->plugin_slug . '[custom_skin]" id="progression_custom_skin" type="checkbox" value="true" class="code" ' . checked( 1, $this->options( 'custom_skin' ), 0 ) . ' /> Customize selected player skin</label>';
 	}
 
 	/**
 	 * The colorpicker for the background color of the skin
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	
 	function settings_field_custom_skin_colors_cb( $args ) {
-		$option = get_option( $this->plugin_slug . '_'. $args['name'] );
-		$input = '<input name="%s" value="%s" class="%s" />';
-		echo sprintf( $input, $this->plugin_slug . '_'. $args['name'] .'[' . $args['key'] . ']', $option[$args['key']], 'progression-skincolor' );
+		$options = $this->options();
+		$key = $args['key'];
+		$value = $options[ 'colors' ][ $key ];
+		$name = $this->plugin_slug . '[colors]['. $key .']';
+		$class = $this->plugin_slug . '-skincolor';
+
+		echo "<input name='$name' value='$value' class='$class' />";
 	}
 
 	/**
 	 * The intro text for the defaults settings section of the admin panel.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	
 	function settings_section_defaults_cb() {
-		echo '<p>'. __( 'These settings let you set the default behavior of Progression Player.'). '</p>';
+		echo '<p>'. __( 'These settings let you set the behavior of Progression Player.'). '</p>';
 	}
 
 	/**
 	 * The skin defaults section of the admin panel.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	
-	function settings_field_defaults_volume_cb() { 
+	function settings_field_defaults_cb( $args ) { 
 
-		$value = get_option( $this->plugin_slug . '_startvolume', 80 );
-		$option_name = $this->plugin_slug . '_startvolume';
+		$options = $this->options();
+		$key = $args['key'];
+		$name = $this->plugin_slug . '['. $key .']';		
+		$value = $options[ $key ];
 
-		echo "<input name='$option_name' type='number' value='$value' min='0' max='100' step='5' /> <span>%<span>";
+		if ( 'startvolume' === $key ) {
+			echo "<input name='$name' type='number' value='$value' min='0' max='100' step='5' /> <span>%<span>";
+		}
+
+		if ( 'preload' === $key ) { ?>
+
+			<select name="<?php echo $name ?>">
+				<option value="none" <?php selected( $value, 'none' ) ?>><?php _e( 'None (recommended)'); ?> </option>
+				<option value="metadata" <?php selected( $value, 'metadata' ) ?>><?php _e( 'Metadata'); ?> </option>        
+				<option value="auto" <?php selected( $value, 'auto' ) ?>><?php _e( 'Auto (browser setting)'); ?> </option>        
+			</select>
+
+		<?php }
+
+		if ( 'controls' === $key || 'autoplay' === $key || 'loop' === $key ) {
+			$checked = checked( $value, 'true', false );
+			echo "<input name='$name' type='checkbox' value='true' $checked />";
+		}
 
 	}
 
 	/**
 	 * This is where we set the skin class of the video player
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	public function shortcode_class( $class ) {
 
 		$class .= ' progression-skin';
 
-		$skin = get_option( $this->plugin_slug . '_active_skin', 'default' );
+		$active_skin = $this->options( 'active_skin' );
 
 		$class .= " progression-$skin";
 
-		if ( get_option( $this->plugin_slug . '_custom_skin' ) ) {
+		if ( $this->options( 'custom_skin' )) {
 			$class .= " progression-custom";
 		}
 
@@ -444,17 +552,18 @@ class Progression_Player {
 	}
 
 	/**
-	 * Custom skin rules generated from user settings
+	 * Insert custom skin rules generated from user settings as inline CSS
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
-	public function custom_skin_css( $class ) {
+	public function custom_skin_css() {
 
-		if ( ! get_option( $this->plugin_slug . '_custom_skin', array() ) ) {
+		$options = $this->options();
+		$colors = $options[ 'colors' ];
+
+		if ( ! $options[ 'custom_skin' ] ) {
 			return;
 		}
-
-		$colors = get_option( $this->plugin_slug . '_custom_skin_colors', array() );
 
 		$html = '';
 		$html .= '<style type="text/css">';
@@ -510,26 +619,319 @@ class Progression_Player {
 	 * @param string $diff amount to change the color
 	 * @return string hex color
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
 	 */
 	
-	public function brightness( $hex, $diff ){
+	private function brightness( $hex, $diff ){
 		
-		$rgb = str_split(trim($hex, '# '), 2);
+		$rgb = str_split( trim( $hex, '# ' ), 2 );
 		 
-			foreach ($rgb as &$hex) {
-				$dec = hexdec($hex);
-				if ($diff >= 0) {
+			foreach ( $rgb as &$hex ) {
+				$dec = hexdec( $hex );
+				if ( $diff >= 0 ) {
 					$dec += $diff;
 				}
 				else {
-					$dec -= abs($diff);			
+					$dec -= abs( $diff );			
 				}
-				$dec = max(0, min(255, $dec));
-				$hex = str_pad(dechex($dec), 2, '0', STR_PAD_LEFT);
+				$dec = max( 0, min( 255, $dec ));
+				$hex = str_pad( dechex( $dec ), 2, '0', STR_PAD_LEFT );
 			}
 		 
-			return '#'.implode($rgb);
+			return '#'.implode( $rgb );
+	}
+
+	/**
+	 * The Audio shortcode.
+	 *
+	 * This implements the functionality of the Audio Shortcode for displaying
+	 * WordPress mp3s in a post.
+	 *	
+	 * @param array $attr Attributes of the shortcode.
+	 * @return string HTML content to display audio.
+	 * @since 1.0.0
+	 */
+	public function wp_audio_shortcode( $attr ) {
+		$post_id = get_post() ? get_the_ID() : 0;
+
+		static $instances = 0;
+		$instances++;
+
+		$audio = null;
+
+		$default_types = wp_get_audio_extensions();
+		$defaults_atts = array( 'src' => '' );
+		foreach ( $default_types as $type )
+			$defaults_atts[$type] = '';
+
+		$atts = shortcode_atts( $defaults_atts, $attr, 'audio' );
+		extract( $atts );
+
+		$primary = false;
+		if ( ! empty( $src ) ) {
+			$type = wp_check_filetype( $src );
+			if ( ! in_array( $type['ext'], $default_types ) )
+				return sprintf( '<a class="wp-post-format-link-audio" href="%s">%s</a>', esc_url( $src ), esc_html( $src ) );
+			$primary = true;
+			array_unshift( $default_types, 'src' );
+		} else {
+			foreach ( $default_types as $ext ) {
+				if ( ! empty( $$ext ) ) {
+					$type = wp_check_filetype( $$ext );
+					if ( $type['ext'] === $ext )
+						$primary = true;
+				}
+			}
+		}
+
+		if ( ! $primary ) {
+			$audios = get_attached_media( 'audio', $post_id );
+			if ( empty( $audios ) )
+				return;
+
+			$audio = reset( $audios );
+			$src = wp_get_attachment_url( $audio->ID );
+			if ( empty( $src ) )
+				return;
+
+			array_unshift( $default_types, 'src' );
+		}
+
+		$library = apply_filters( 'wp_audio_shortcode_library', 'mediaelement' );
+		if ( 'mediaelement' === $library && did_action( 'init' ) ) {
+			wp_enqueue_style( 'wp-mediaelement' );
+			wp_enqueue_script( 'wp-mediaelement' );
+		}
+
+		$atts = array(
+			sprintf( 'class="%s"', apply_filters( 'wp_audio_shortcode_class', 'wp-audio-shortcode' ) ),
+			sprintf( 'id="audio-%d-%d"', $post_id, $instances ),
+		);
+
+		$html = sprintf( '<audio %s controls="controls" preload="none">', join( ' ', $atts ) );
+
+		$fileurl = '';
+		$source = '<source type="%s" src="%s" />';
+		foreach ( $default_types as $fallback ) {
+			if ( ! empty( $$fallback ) ) {
+				if ( empty( $fileurl ) )
+					$fileurl = $$fallback;
+				$type = wp_check_filetype( $$fallback );
+				$html .= sprintf( $source, $type['type'], esc_url( $$fallback ) );
+			}
+		}
+
+		if ( 'mediaelement' === $library )
+			$html .= wp_mediaelement_fallback( $fileurl );
+		$html .= '</audio>';
+
+		return apply_filters( 'wp_audio_shortcode', $html, $atts, $audio, $post_id );
+	}
+
+	/**
+	 * The Video shortcode.
+	 *
+	 * This implements the functionality of the Video Shortcode for displaying
+	 * WordPress mp4s in a post.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @param array $attr Attributes of the shortcode.
+	 * @return string HTML content to display video.
+	 */
+	public function wp_video_shortcode( $attr ) {
+		global $content_width;
+		$post_id = get_post() ? get_the_ID() : 0;
+
+		static $instances = 0;
+		$instances++;
+
+		$video = null;
+
+		$default_types = wp_get_video_extensions();
+		$defaults_atts = array(
+			'src' => '',
+			'poster' => '',
+			'height' => 360,
+			'width' => empty( $content_width ) ? 640 : $content_width,
+		);
+
+		foreach ( $default_types as $type )
+			$defaults_atts[$type] = '';
+
+		$atts = shortcode_atts( $defaults_atts, $attr, 'video' );
+		extract( $atts );
+
+		$w = $width;
+		$h = $height;
+		if ( is_admin() && $width > 600 )
+			$w = 600;
+		elseif ( ! is_admin() && $w > $defaults_atts['width'] )
+			$w = $defaults_atts['width'];
+
+		if ( $w < $width )
+			$height = round( ( $h * $w ) / $width );
+
+		$width = $w;
+
+		$primary = false;
+		if ( ! empty( $src ) ) {
+			$type = wp_check_filetype( $src );
+			if ( ! in_array( $type['ext'], $default_types ) )
+				return sprintf( '<a class="wp-post-format-link-video" href="%s">%s</a>', esc_url( $src ), esc_html( $src ) );
+			$primary = true;
+			array_unshift( $default_types, 'src' );
+		} else {
+			foreach ( $default_types as $ext ) {
+				if ( ! empty( $$ext ) ) {
+					$type = wp_check_filetype( $$ext );
+					if ( $type['ext'] === $ext )
+						$primary = true;
+				}
+			}
+		}
+
+		if ( ! $primary ) {
+			$videos = get_attached_media( 'video', $post_id );
+			if ( empty( $videos ) )
+				return;
+
+			$video = reset( $videos );
+			$src = wp_get_attachment_url( $video->ID );
+			if ( empty( $src ) )
+				return;
+
+			array_unshift( $default_types, 'src' );
+		}
+
+		$library = apply_filters( 'wp_video_shortcode_library', 'mediaelement' );
+		if ( 'mediaelement' === $library && did_action( 'init' ) ) {
+			wp_enqueue_style( 'wp-mediaelement' );
+			wp_enqueue_script( 'wp-mediaelement' );
+		}
+
+		$atts = array(
+			sprintf( 'class="%s"', apply_filters( 'wp_video_shortcode_class', 'wp-video-shortcode' ) ),
+			sprintf( 'id="video-%d-%d"', $post_id, $instances ),
+			sprintf( 'width="%d"', $width ),
+			sprintf( 'height="%d"', $height ),
+		);
+
+		if ( ! empty( $poster ) )
+			$atts[] = sprintf( 'poster="%s"', esc_url( $poster ) );
+
+		$html = sprintf( '<video %s controls="controls" preload="none">', join( ' ', $atts ) );
+
+		$fileurl = '';
+		$source = '<source type="%s" src="%s" />';
+		foreach ( $default_types as $fallback ) {
+			if ( ! empty( $$fallback ) ) {
+				if ( empty( $fileurl ) )
+					$fileurl = $$fallback;
+				$type = wp_check_filetype( $$fallback );
+				// m4v sometimes shows up as video/mpeg which collides with mp4
+				if ( 'm4v' === $type['ext'] )
+					$type['type'] = 'video/m4v';
+				$html .= sprintf( $source, $type['type'], esc_url( $$fallback ) );
+			}
+		}
+		if ( 'mediaelement' === $library )
+			$html .= wp_mediaelement_fallback( $fileurl );
+		$html .= '</video>';
+
+		return apply_filters( 'wp_video_shortcode', $html, $atts, $video, $post_id );
+	}
+
+	/**
+	* Enqueues all scripts, styles, settings, and templates necessary to use
+	* all media JS APIs.
+	*
+	* @since 1.0.0
+	*/
+
+	public function wp_enqueue_media() {
+
+		if ( ! ( 'post' == get_current_screen()->base && 'page' == get_current_screen()->id ) )
+		    return;
+
+		wp_enqueue_style( $this->plugin_slug .'-admin-media-styles', plugins_url( 'css/progression-admin-media.css', __FILE__ ), array(), $this->version );
+
+	}
+
+	/**
+	 * Extends the media library to display additional options to video attachments
+	 *	 *
+	 * @since 1.0.0
+	 */
+	
+	public function print_media_templates() {
+
+		if ( ! ( 'post' == get_current_screen()->base && 'page' == get_current_screen()->id ) )
+		    return;
+
+		return;
+		?>
+
+		<script type="text/html" id="tmpl-progression-player-settings">
+
+		  <# if ( 'video' === data.type || 'audio' === data.type ) { #>
+
+		    <label class="setting">
+		      <span><?php _e('Autoplay'); ?></span>
+		      <input data-setting="autoplay" type="checkbox"> 
+		      <b class="progression-label">Start video on pageload  </b>
+		      </select>
+		    </label>
+
+		    <label class="setting">
+		      <span><?php _e('Preload'); ?></span>
+      	      <select data-setting="controls">
+				<option value="none"><?php _e( 'None (recommended)'); ?> </option>
+				<option value="metadata"><?php _e( 'Metadata'); ?> </option>        
+				<option value="auto"><?php _e( 'Auto (browser setting)'); ?> </option>        
+              </select>
+		      </select>
+		    </label>
+
+		    <label class="setting">
+		      <span><?php _e('Controls'); ?></span>
+		      <input data-setting="controls" type="checkbox">  
+		      <b class="progression-label"><?php _e( 'Always show them' ); ?></b>
+		      </select>
+		    </label>
+
+		    <label class="setting">
+		      <span><?php _e('Playlist'); ?></span>
+		      <input data-setting="playlist" type="checkbox">     
+		      <b class="progression-label"><?php _e( 'Collapsed by default' ); ?></b>
+		      </select>
+		    </label>
+
+		  <# } #>
+		  </script>
+
+		  <script>
+
+		    jQuery(document).ready(function(){
+
+		      // add your shortcode attribute and its default value to the
+		      // gallery settings list; $.extend should work as well...
+		      _.extend(wp.media.view.settings.defaultProps, {
+		        my_custom_attr: 'default_val'
+		      });
+
+		      // merge default gallery settings template with ours
+		      wp.media.view.Settings.AttachmentDisplay = wp.media.view.Settings.AttachmentDisplay.extend({
+		        template: function(view){
+		          return wp.media.template('attachment-display-settings')(view)
+		               + wp.media.template('progression-player-settings')(view);
+		        }
+		      });
+
+		    });
+
+		  </script>
+		<?php
 	}
 
 }
