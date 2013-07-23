@@ -97,9 +97,6 @@ class Progression_Player {
 		// create shortcode for playlist
 		add_shortcode( 'playlist', array( $this, 'playlist_shortcode' ) );
 
-		// hook into media library
-		add_action( 'print_media_templates', array( $this, 'print_media_templates' ) );
-		add_action( 'wp_enqueue_media', array( $this, 'wp_enqueue_media' ) );
 
 	}
 
@@ -750,95 +747,9 @@ class Progression_Player {
 	}
 
 	/**
-	* Enqueues all scripts, styles, settings, and templates necessary to use
-	* all media JS APIs.
-	*
-	* @since 1.0.0
-	*/
-
-	public function wp_enqueue_media() {
-
-		if ( ! ( 'post' == get_current_screen()->base && 'page' == get_current_screen()->id ) )
-		    return;
-
-		wp_enqueue_style( $this->plugin_slug .'-admin-media-styles', plugins_url( 'css/progression-admin-media.css', __FILE__ ), array(), $this->version );
-
-	}
-
-	/**
-	 * Extends the media library to display additional options to video attachments
-	 *	 *
 	 * @since 1.0.0
 	 */
 	
-	public function print_media_templates() {
-
-		if ( ! ( 'post' == get_current_screen()->base && 'page' == get_current_screen()->id ) )
-		    return;
-
-		return;
-		?>
-
-		<script type="text/html" id="tmpl-progression-player-settings">
-
-		  <# if ( 'video' === data.type || 'audio' === data.type ) { #>
-
-		    <label class="setting">
-		      <span><?php _e('Autoplay'); ?></span>
-		      <input data-setting="autoplay" type="checkbox"> 
-		      <b class="progression-label">Start video on pageload  </b>
-		      </select>
-		    </label>
-
-		    <label class="setting">
-		      <span><?php _e('Preload'); ?></span>
-      	      <select data-setting="controls">
-				<option value="none"><?php _e( 'None (recommended)'); ?> </option>
-				<option value="metadata"><?php _e( 'Metadata'); ?> </option>        
-				<option value="auto"><?php _e( 'Auto (browser setting)'); ?> </option>        
-              </select>
-		      </select>
-		    </label>
-
-		    <label class="setting">
-		      <span><?php _e('Controls'); ?></span>
-		      <input data-setting="controls" type="checkbox">  
-		      <b class="progression-label"><?php _e( 'Always show them' ); ?></b>
-		      </select>
-		    </label>
-
-		    <label class="setting">
-		      <span><?php _e('Playlist'); ?></span>
-		      <input data-setting="playlist" type="checkbox">     
-		      <b class="progression-label"><?php _e( 'Collapsed by default' ); ?></b>
-		      </select>
-		    </label>
-
-		  <# } #>
-		  </script>
-
-		  <script>
-
-		    jQuery(document).ready(function(){
-
-		      // add your shortcode attribute and its default value to the
-		      // gallery settings list; $.extend should work as well...
-		      _.extend(wp.media.view.settings.defaultProps, {
-		        my_custom_attr: 'default_val'
-		      });
-
-		      // merge default gallery settings template with ours
-		      wp.media.view.Settings.AttachmentDisplay = wp.media.view.Settings.AttachmentDisplay.extend({
-		        template: function(view){
-		          return wp.media.template('attachment-display-settings')(view)
-		               + wp.media.template('progression-player-settings')(view);
-		        }
-		      });
-
-		    });
-
-		  </script>
-		<?php
 	}
 
 }
