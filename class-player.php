@@ -91,6 +91,10 @@ class Progression_Player {
 		add_filter( 'wp_video_shortcode_class', array( $this, 'shortcode_class' ) );
 		add_filter( 'wp_audio_shortcode_class', array( $this, 'shortcode_class' ) );
 
+		// Modify shortcode output
+		add_filter( 'wp_audio_shortcode', array( $this, 'modify_audio_shortcode_output' ) );
+		add_filter( 'wp_video_shortcode', array( $this, 'modify_video_shortcode_output' ) );
+
 		// Add inline CSS for custom player skin
 		add_action( 'wp_head', array( $this, 'custom_skin_css' ) );
 
@@ -567,7 +571,12 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 */
+	
 	public function shortcode_class( $class ) {
+
+		if ( strpos( $class, 'wp-audio-shortcode' )  !== false ) {
+			$class .= ' progression-audio-player';
+		}
 
 		$class .= ' progression-skin';
 
@@ -583,10 +592,32 @@ class Progression_Player {
 	}
 
 	/**
+	 * Wraps the default shortcode output in html necessary for responsive player
+	 *
+	 * @since 1.0.0
+	 */
+	
+	public function modify_audio_shortcode_output( $html ) {
+		return '<div class="responsive-wrapper responsive-audio">' . $html . '</div><!-- close .responsive-wrapper -->';
+	}
+
+	/**
+	 * Wraps the default shortcode output in html necessary for responsive player
+	 *
+	 * @since 1.0.0
+	 */
+	
+	public function modify_video_shortcode_output( $html ) {
+		$html = str_replace('<video', '<video style="width: 100%; height: 100%;" ', $html);
+		return '<div class="responsive-wrapper">' . $html . '</div><!-- close .responsive-wrapper -->';
+	}
+
+	/**
 	 * Insert custom skin rules generated from user settings as inline CSS
 	 *
 	 * @since 1.0.0
 	 */
+	
 	public function custom_skin_css() {
 
 		$options = $this->options();
@@ -680,6 +711,7 @@ class Progression_Player {
 	 * @since 1.0.0
 	 *
 	 */
+	
 	public function playlist_shortcode( $attr ) {
 		
 		$post = get_post();
