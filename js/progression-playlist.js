@@ -69,7 +69,7 @@
             shortcode = wp.shortcode.string({
                 tag: 'playlist',
                 attrs: attrs,
-                type: 'self-closing'
+                type: 'single'
             });
 
             // send shortcode back to editor
