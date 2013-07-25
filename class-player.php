@@ -70,6 +70,46 @@ class Progression_Player {
 	 */
 	private function __construct() {
 
+		$defaults = array(
+				
+			// return default options if db not available
+			'startvolume' => 80,
+			'autoplay' => 'false',
+			'preload' => 'none',
+			'loop' => 'false',
+			'controls' => 'false',
+			'playlist' => 'true',
+			'active_skin' => 'default',
+			'custom_skin' => 'false',
+			'colors' => array(
+				'bg' => '',
+				'border' => '',
+				'text' => '',
+				'handle' => '',
+				'slider' => ''
+			)
+		);
+
+		// load plugin options just once per instance
+		if ( empty( $this->loaded_options )) {
+
+			$db_options = get_option( $this->plugin_slug );
+			
+			if ( empty( $db_options ) ) {
+				update_option( $this->plugin_slug, $defaults );
+				$this->loaded_options = $defaults;
+			} else {
+				$this->loaded_options = wp_parse_args( $db_options, $defaults );
+			}
+			
+		}
+
+		
+
+		
+		
+		
+
 		// Load plugin text domain
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
@@ -91,15 +131,15 @@ class Progression_Player {
 		add_filter( 'wp_video_shortcode_class', array( $this, 'shortcode_class' ) );
 		add_filter( 'wp_audio_shortcode_class', array( $this, 'shortcode_class' ) );
 
+		// Modify shortcode output
+		add_filter( 'wp_audio_shortcode', array( $this, 'modify_audio_shortcode_output' ) );
+		add_filter( 'wp_video_shortcode', array( $this, 'modify_video_shortcode_output' ) );
+
 		// Add inline CSS for custom player skin
 		add_action( 'wp_head', array( $this, 'custom_skin_css' ) );
 
 		// create shortcode for playlist
 		add_shortcode( 'playlist', array( $this, 'playlist_shortcode' ) );
-
-		// hook into media library
-		add_action( 'print_media_templates', array( $this, 'print_media_templates' ) );
-		add_action( 'wp_enqueue_media', array( $this, 'wp_enqueue_media' ) );
 
 	}
 
@@ -153,32 +193,7 @@ class Progression_Player {
 	 * @var array
 	 */
 	protected function options( $key = false ){
-
-		$defaults = array(
-				
-			// return default options if db not available
-			'startvolume' => 80,
-			'autoplay' => 'false',
-			'preload' => 'none',
-			'loop' => 'false',
-			'controls' => 'false',
-			'playlist' => 'true',
-			'active_skin' => 'default',
-			'custom_skin' => 'false',
-			'colors' => array(
-				'bg' => '',
-				'border' => '',
-				'text' => '',
-				'handle' => '',
-				'slider' => ''
-			)
-		);
-
-		// load plugin options just once per instance
-		if ( empty( $this->loaded_options )) {
-			$this->loaded_options = get_option( $this->plugin_slug, $defaults);
-		}
-
+		
 		if ( $key ) {
 			return $this->loaded_options[ $key ];
 		} else {
@@ -213,7 +228,6 @@ class Progression_Player {
 		if ( get_current_screen()->id == $this->plugin_screen_hook_suffix ) {
 			wp_enqueue_style( $this->plugin_slug .'-admin-styles', plugins_url( 'css/progression-admin.css', __FILE__ ), array( 'wp-color-picker'  ), $this->version );
 		}
-
 	}
 
 	/**
@@ -225,10 +239,27 @@ class Progression_Player {
 	 */
 	public function enqueue_admin_scripts() {
 
+
 		if ( get_current_screen()->id == $this->plugin_screen_hook_suffix ) {
 			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/progression-admin.js', __FILE__ ), array( 'jquery', 'wp-color-picker' ), $this->version );
 		}
+	
+		if ( ! ( 'post' == get_current_screen()->base && 'page' == get_current_screen()->id ) )
+		    return;
 
+		// This function loads in the required media files for the media manager.
+		wp_enqueue_media();
+
+		// Register, localize and enqueue our custom JS.
+		wp_enqueue_script( $this->plugin_slug . '-admin-playlist', plugins_url( 'js/progression-playlist.js', __FILE__ ), array( 'media-views', 'media-upload' ), $this->version );
+		
+		wp_localize_script( $this->plugin_slug . '-admin-playlist', $this->plugin_slug,
+		    array(
+		        'title'     => __( 'Upload or Choose Audio Files to Create a Playlist' ),
+		        'button'    => __( 'Insert Playlist' ),
+		        'menuitem'  => __( 'Create Playlist' )
+		    )
+		);
 	}
 
 	/**
@@ -488,7 +519,7 @@ class Progression_Player {
 	 */
 	
 	function settings_field_custom_skin_cb() { 
-		echo '<label><input name="' . $this->plugin_slug . '[custom_skin]" id="progression_custom_skin" type="checkbox" value="true" class="code" ' . checked( 1, $this->options( 'custom_skin' ), 0 ) . ' /> Customize selected player skin</label>';
+		echo '<label><input name="' . $this->plugin_slug . '[custom_skin]" id="progression_custom_skin" type="checkbox" value="true" class="code" ' . checked( $this->options( 'custom_skin' ), 'true', false) . ' /> Customize selected player skin</label>';
 	}
 
 	/**
@@ -570,7 +601,12 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 */
+	
 	public function shortcode_class( $class ) {
+
+		if ( strpos( $class, 'wp-audio-shortcode' )  !== false ) {
+			$class .= ' progression-audio-player';
+		}
 
 		$class .= ' progression-skin';
 
@@ -586,10 +622,32 @@ class Progression_Player {
 	}
 
 	/**
+	 * Wraps the default shortcode output in html necessary for responsive player
+	 *
+	 * @since 1.0.0
+	 */
+	
+	public function modify_audio_shortcode_output( $html ) {
+		return '<div class="responsive-wrapper responsive-audio">' . $html . '</div><!-- close .responsive-wrapper -->';
+	}
+
+	/**
+	 * Wraps the default shortcode output in html necessary for responsive player
+	 *
+	 * @since 1.0.0
+	 */
+	
+	public function modify_video_shortcode_output( $html ) {
+		$html = str_replace('<video', '<video style="width: 100%; height: 100%;" ', $html);
+		return '<div class="responsive-wrapper">' . $html . '</div><!-- close .responsive-wrapper -->';
+	}
+
+	/**
 	 * Insert custom skin rules generated from user settings as inline CSS
 	 *
 	 * @since 1.0.0
 	 */
+	
 	public function custom_skin_css() {
 
 		$options = $this->options();
@@ -625,12 +683,12 @@ class Progression_Player {
 			}
 
 			if ( 'handle' === $key ) {
-				$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-handle, body .progression-skin.progression-custom .mejs-controls .mejs-volume-button .mejs-volume-slider .mejs-volume-handle  { background: %s; border-color: %s }', $color, $color );
+				$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-handle, body .progression-skin.progression-custom .mejs-controls .mejs-volume-button .mejs-volume-slider .mejs-volume-handle, body .progression-skin.progression-custom .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-handle  { background: %s; border-color: %s }', $color, $color );
 			}
 
 			if ( 'slider' === $key ) {
-				$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-total, body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-loaded, body .progression-skin.progression-custom .mejs-controls .mejs-volume-button .mejs-volume-slider .mejs-volume-total { background: %s }', $color );
-				$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-current, body .progression-skin.progression-custom .mejs-controls .mejs-volume-button .mejs-volume-slider .mejs-volume-current { background: %s }', $this->brightness( $color, 30 ) );
+				$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-total, body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-loaded, body .progression-skin.progression-custom .mejs-controls .mejs-volume-button .mejs-volume-slider .mejs-volume-total, body .progression-skin.progression-custom .mejs-controls .mejs-horizontal-volume-slider  .mejs-horizontal-volume-total { background: %s }', $color );
+				$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-current, body .progression-skin.progression-custom .mejs-controls .mejs-volume-button .mejs-volume-slider .mejs-volume-current, body .progression-skin.progression-custom .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-current { background: %s }', $this->brightness( $color, 30 ) );
 			}
 
 
@@ -683,6 +741,7 @@ class Progression_Player {
 	 * @since 1.0.0
 	 *
 	 */
+	
 	public function playlist_shortcode( $attr ) {
 		
 		$post = get_post();
@@ -735,7 +794,6 @@ class Progression_Player {
 		$skin = $this->shortcode_class( 'progression-skin' );
 		
 		$html = '';
-		$html .= '<div class="progression-playlist-height responsive-wrapper responsive-audio" style="padding-bottom:174px;">';
 		$html .= "<audio id='playlist-{$instance}' class='progression-playlist $skin progression-audio-player playlistid-{$id}'>";
 
 		foreach ($attachments as $attachment) {
@@ -743,102 +801,9 @@ class Progression_Player {
 		}
 		
 		$html .= '</audio>';
-		$html .= '</div>';
 		
 		return $html;
 		 
-	}
-
-	/**
-	* Enqueues all scripts, styles, settings, and templates necessary to use
-	* all media JS APIs.
-	*
-	* @since 1.0.0
-	*/
-
-	public function wp_enqueue_media() {
-
-		if ( ! ( 'post' == get_current_screen()->base && 'page' == get_current_screen()->id ) )
-		    return;
-
-		wp_enqueue_style( $this->plugin_slug .'-admin-media-styles', plugins_url( 'css/progression-admin-media.css', __FILE__ ), array(), $this->version );
-
-	}
-
-	/**
-	 * Extends the media library to display additional options to video attachments
-	 *	 *
-	 * @since 1.0.0
-	 */
-	
-	public function print_media_templates() {
-
-		if ( ! ( 'post' == get_current_screen()->base && 'page' == get_current_screen()->id ) )
-		    return;
-
-		return;
-		?>
-
-		<script type="text/html" id="tmpl-progression-player-settings">
-
-		  <# if ( 'video' === data.type || 'audio' === data.type ) { #>
-
-		    <label class="setting">
-		      <span><?php _e('Autoplay'); ?></span>
-		      <input data-setting="autoplay" type="checkbox"> 
-		      <b class="progression-label">Start video on pageload  </b>
-		      </select>
-		    </label>
-
-		    <label class="setting">
-		      <span><?php _e('Preload'); ?></span>
-      	      <select data-setting="controls">
-				<option value="none"><?php _e( 'None (recommended)'); ?> </option>
-				<option value="metadata"><?php _e( 'Metadata'); ?> </option>        
-				<option value="auto"><?php _e( 'Auto (browser setting)'); ?> </option>        
-              </select>
-		      </select>
-		    </label>
-
-		    <label class="setting">
-		      <span><?php _e('Controls'); ?></span>
-		      <input data-setting="controls" type="checkbox">  
-		      <b class="progression-label"><?php _e( 'Always show them' ); ?></b>
-		      </select>
-		    </label>
-
-		    <label class="setting">
-		      <span><?php _e('Playlist'); ?></span>
-		      <input data-setting="playlist" type="checkbox">     
-		      <b class="progression-label"><?php _e( 'Collapsed by default' ); ?></b>
-		      </select>
-		    </label>
-
-		  <# } #>
-		  </script>
-
-		  <script>
-
-		    jQuery(document).ready(function(){
-
-		      // add your shortcode attribute and its default value to the
-		      // gallery settings list; $.extend should work as well...
-		      _.extend(wp.media.view.settings.defaultProps, {
-		        my_custom_attr: 'default_val'
-		      });
-
-		      // merge default gallery settings template with ours
-		      wp.media.view.Settings.AttachmentDisplay = wp.media.view.Settings.AttachmentDisplay.extend({
-		        template: function(view){
-		          return wp.media.template('attachment-display-settings')(view)
-		               + wp.media.template('progression-player-settings')(view);
-		        }
-		      });
-
-		    });
-
-		  </script>
-		<?php
 	}
 
 }
