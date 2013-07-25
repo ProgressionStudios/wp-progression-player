@@ -513,9 +513,10 @@ class Progression_Player {
 	 * @since 1.0.0
 	 */
 	
-	function settings_field_custom_skin_cb() { 
-		echo '<label><input name="' . $this->plugin_slug . '[custom_skin]" id="progression_custom_skin" type="checkbox" value="true" class="code" ' . checked( $this->options( 'custom_skin' ), 'true', false) . ' /> Customize selected player skin</label>';
-	}
+	function settings_field_custom_skin_cb() { ?>
+		<input type='hidden' value='false' name='<?php echo $this->plugin_slug ?>[custom_skin]'>
+		<label><input name="<?php echo $this->plugin_slug ?>[custom_skin]" id="progression_custom_skin" type="checkbox" value="true" class="code" <?php echo checked( $this->options( 'custom_skin' ), 'true', false)?> /> <?php _e( 'Customize selected player skin' ); ?></label>
+	<?php }
 
 	/**
 	 * The colorpicker for the background color of the skin
@@ -609,7 +610,7 @@ class Progression_Player {
 
 		$class .= " progression-$active_skin";
 
-		if ( $this->options( 'custom_skin' )) {
+		if ( $this->options( 'custom_skin' ) === 'true') {
 			$class .= " progression-custom";
 		}
 
@@ -787,6 +788,10 @@ class Progression_Player {
 			return '';
 
 		$skin = $this->shortcode_class( 'progression-skin' );
+
+		if ( $this->options( 'custom_skin' ) === 'true') {
+			$skin .= " progression-custom";
+		}
 		
 		$html = '<div class="progression-playlist-height responsive-wrapper responsive-audio" style="padding-bottom:174px;">';
 		$html .= "<audio id='playlist-{$instance}' class='progression-playlist $skin progression-audio-player playlistid-{$id}'>";
