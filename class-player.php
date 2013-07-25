@@ -793,7 +793,7 @@ class Progression_Player {
 
 		$skin = $this->shortcode_class( 'progression-skin' );
 		
-		$html = '';
+		$html = '<div class="progression-playlist-height responsive-wrapper responsive-audio" style="padding-bottom:174px;">';
 		$html .= "<audio id='playlist-{$instance}' class='progression-playlist $skin progression-audio-player playlistid-{$id}'>";
 
 		foreach ($attachments as $attachment) {
@@ -801,6 +801,7 @@ class Progression_Player {
 		}
 		
 		$html .= '</audio>';
+		$html .= '</div>';
 		
 		return $html;
 		 
