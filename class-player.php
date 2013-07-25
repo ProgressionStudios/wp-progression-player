@@ -55,11 +55,11 @@ class Progression_Player {
 	protected $plugin_screen_hook_suffix = null;
 
 	/**
-	 * Holds the plugin options
+	 * Holds all the plugin options
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var string
+	 * @var array
 	 */
 	protected $loaded_options = array();
 
@@ -104,11 +104,6 @@ class Progression_Player {
 			
 		}
 
-		
-
-		
-		
-		
 
 		// Load plugin text domain
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
@@ -169,7 +164,7 @@ class Progression_Player {
 	 */
 	public static function activate( $network_wide ) {
 
-
+		// usually we would add the options array here but we are doing that on init to create our options array with defaults
 	}
 
 	/**
