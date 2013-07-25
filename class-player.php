@@ -226,10 +226,27 @@ class Progression_Player {
 	 */
 	public function enqueue_admin_scripts() {
 
+
 		if ( get_current_screen()->id == $this->plugin_screen_hook_suffix ) {
 			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/progression-admin.js', __FILE__ ), array( 'jquery', 'wp-color-picker' ), $this->version );
 		}
+	
+		if ( ! ( 'post' == get_current_screen()->base && 'page' == get_current_screen()->id ) )
+		    return;
 
+		// This function loads in the required media files for the media manager.
+		wp_enqueue_media();
+
+		// Register, localize and enqueue our custom JS.
+		wp_enqueue_script( $this->plugin_slug . '-admin-playlist', plugins_url( 'js/progression-playlist.js', __FILE__ ), array( 'media-views', 'media-upload' ), $this->version );
+		
+		wp_localize_script( $this->plugin_slug . '-admin-playlist', $this->plugin_slug,
+		    array(
+		        'title'     => __( 'Upload or Choose Audio Files to Create a Playlist' ),
+		        'button'    => __( 'Insert Playlist' ),
+		        'menuitem'  => __( 'Create Playlist' )
+		    )
+		);
 	}
 
 	/**
