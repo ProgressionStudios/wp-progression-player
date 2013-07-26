@@ -78,6 +78,7 @@ class Progression_Player {
 			'preload' => 'none',
 			'loop' => 'false',
 			'controls' => 'false',
+			'size' => 'normal',
 			'playlist' => 'true',
 			'active_skin' => 'default',
 			'custom_skin' => 'false',
@@ -380,6 +381,17 @@ class Progression_Player {
  			);
  	 	}
 
+ 	 	add_settings_field( 
+ 	 		$this->plugin_slug . 'size',
+ 			__( 'Size' ),
+ 			array( $this, 'settings_field_defaults_cb' ),
+ 			'progression',
+ 			$this->plugin_slug . '_skin',
+ 			array( 
+ 				'key' => 'size' 
+ 			) 
+ 		);
+
  	 	add_settings_section( 
  	 		$this->plugin_slug . '_defaults',
  			__( 'Player options' ),
@@ -581,6 +593,13 @@ class Progression_Player {
 			echo "<input name='$name' type='checkbox' value='true' $checked />";
 		}
 
+		if ( 
+			'size' === $key) { 
+			?>
+			<label><input name='<?php echo $name; ?>' type='radio' value='normal' <?php checked( $value, 'normal' ) ?> /> <span><?php _e( 'normal (default)' ); ?></span></label><br>
+			<label><input name='<?php echo $name; ?>' type='radio' value='small' <?php checked( $value, 'small' ) ?> /> <span><?php _e( 'small' ); ?></span></label>
+		<?php }
+
 	}
 
 	/**
@@ -625,7 +644,13 @@ class Progression_Player {
 	 */
 	
 	public function modify_audio_shortcode_output( $html ) {
-		return '<div class="responsive-wrapper responsive-audio">' . $html . '</div><!-- close .responsive-wrapper -->';
+		$html = '<div class="responsive-wrapper responsive-audio">' . $html . '</div><!-- close .responsive-wrapper -->';
+
+		if ( $this->options( 'size' ) === 'small') {
+			$html = '<div class="progression-small">' . $html . '</div>';
+		}
+
+		return $html;
 	}
 
 	/**
@@ -636,7 +661,13 @@ class Progression_Player {
 	
 	public function modify_video_shortcode_output( $html ) {
 		$html = str_replace('<video', '<video style="width: 100%; height: 100%;" ', $html);
-		return '<div class="responsive-wrapper">' . $html . '</div><!-- close .responsive-wrapper -->';
+		$html = '<div class="responsive-wrapper">' . $html . '</div><!-- close .responsive-wrapper -->';
+
+		if ( $this->options( 'size' ) === 'small') {
+			$html = '<div class="progression-small">' . $html . '</div>';
+		}
+		
+		return $html;
 	}
 
 	/**
@@ -803,6 +834,10 @@ class Progression_Player {
 		
 		$html .= '</audio>';
 		$html .= '</div>';
+
+		if ( $this->options( 'size' ) === 'small') {
+			$html = '<div class="progression-small">' . $html . '</div>';
+		}
 		
 		return $html;
 		 
