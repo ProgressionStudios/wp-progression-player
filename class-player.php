@@ -514,7 +514,7 @@ class Progression_Player {
 	 */
 	
 	function settings_field_custom_skin_cb() { ?>
-		<input type='hidden' value='false' name='<?php echo $this->plugin_slug ?>[custom_skin]'>
+		<input type="hidden" value="false" name="<?php echo $this->plugin_slug ?>[custom_skin]">
 		<label><input name="<?php echo $this->plugin_slug ?>[custom_skin]" id="progression_custom_skin" type="checkbox" value="true" class="code" <?php echo checked( $this->options( 'custom_skin' ), 'true', false)?> /> <?php _e( 'Customize selected player skin' ); ?></label>
 	<?php }
 
@@ -577,6 +577,7 @@ class Progression_Player {
 			'playlist' === $key || 
 			'loop' === $key ) {
 			$checked = checked( $value, 'true', false );
+			echo "<input type='hidden' value='false' name='$name'>";
 			echo "<input name='$name' type='checkbox' value='true' $checked />";
 		}
 
