@@ -137,6 +137,9 @@ class Progression_Player {
 		// create shortcode for playlist
 		add_shortcode( 'playlist', array( $this, 'playlist_shortcode' ) );
 
+		// make shortcodes work in widgets
+		add_filter( 'widget_text', 'do_shortcode' );
+
 	}
 
 	/**
