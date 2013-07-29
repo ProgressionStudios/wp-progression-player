@@ -690,6 +690,11 @@ class Progression_Player {
 
 		$html = '';
 
+		if ( ! isset( $content_width ) )
+			$content_width = 600;
+
+		$html .= sprintf( '.responsive-wrapper  { max-width: %s !important }', $content_width . 'px' );
+
 		if ( !empty( $colors ) ) {
 			
 			foreach ( $colors as $key => $color ) {
