@@ -107,7 +107,7 @@ class Progression_Player {
 
 
 		// Load plugin text domain
-		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
+		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 
 		// Add the options page and menu item.
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
@@ -207,12 +207,7 @@ class Progression_Player {
 	 * @since 1.0.0
 	 */
 	public function load_plugin_textdomain() {
-
-		$domain = $this->plugin_slug;
-		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
-
-		load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
-		load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
+		load_plugin_textdomain( 'progression', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 	}
 
 	/**
