@@ -11,7 +11,7 @@
 
 
 /**
- * The main class of the player
+ * The main class of the player plugin
  * *
  * @package Progression_Player
  * @author  ProgressionStudios <contact@progressionstudios.com>
@@ -55,7 +55,7 @@ class Progression_Player {
 	protected $plugin_screen_hook_suffix = null;
 
 	/**
-	 * Holds all the plugin options
+	 * Holds all the plugin options to avoid db queries
 	 *
 	 * @since 1.0.0
 	 *
@@ -71,8 +71,6 @@ class Progression_Player {
 	private function __construct() {
 
 		$defaults = array(
-				
-			// return default options if db not available
 			'startvolume' => 80,
 			'autoplay' => 'false',
 			'preload' => 'none',
@@ -97,6 +95,7 @@ class Progression_Player {
 			$db_options = get_option( $this->plugin_slug );
 			
 			if ( empty( $db_options ) ) {
+				// return default options if db not available
 				update_option( $this->plugin_slug, $defaults );
 				$this->loaded_options = $defaults;
 			} else {
@@ -105,7 +104,6 @@ class Progression_Player {
 			
 		}
 
-
 		// Load plugin text domain
 		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 
@@ -113,7 +111,7 @@ class Progression_Player {
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
 
 		// Register the settings page for the options of this plugin
-		add_action('admin_init', array( $this, 'settings_api_init'));
+		add_action( 'admin_init', array( $this, 'settings_api_init'));
 
 		// Load admin style sheet and JavaScript.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
@@ -207,7 +205,7 @@ class Progression_Player {
 	 * @since 1.0.0
 	 */
 	public function load_plugin_textdomain() {
-		load_plugin_textdomain( 'progression', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
+		load_plugin_textdomain( $this->plugin_slug, false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 	}
 
 	/**
@@ -233,13 +231,12 @@ class Progression_Player {
 	 */
 	public function enqueue_admin_scripts() {
 
-
 		if ( get_current_screen()->id == $this->plugin_screen_hook_suffix ) {
 			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/progression-admin.js', __FILE__ ), array( 'jquery', 'wp-color-picker' ), $this->version );
 		}
 	
 		if ( ! ( 'post' == get_current_screen()->base && 'page' == get_current_screen()->id ) )
-		    return;
+			return;
 
 		// This function loads in the required media files for the media manager.
 		wp_enqueue_media();
@@ -248,11 +245,11 @@ class Progression_Player {
 		wp_enqueue_script( $this->plugin_slug . '-admin-playlist', plugins_url( 'js/progression-playlist.js', __FILE__ ), array( 'media-views', 'media-upload' ), $this->version );
 		
 		wp_localize_script( $this->plugin_slug . '-admin-playlist', $this->plugin_slug,
-		    array(
-		        'title'     => __( 'Upload or Choose Audio Files to Create a Playlist' ),
-		        'button'    => __( 'Insert Playlist' ),
-		        'menuitem'  => __( 'Create Playlist' )
-		    )
+			array(
+				'title'		=> __( 'Upload or Choose Audio Files to Create a Playlist' ),
+				'button'	=> __( 'Insert Playlist' ),
+				'menuitem'  => __( 'Create Playlist' )
+			)
 		);
 	}
 
@@ -323,7 +320,6 @@ class Progression_Player {
 	public function display_plugin_admin_page() {
 		include_once( 'views/admin.php' );
 	}
-
 
 	/**
 	 * Initializing all settings to the admin panel
@@ -575,8 +571,8 @@ class Progression_Player {
 
 			<select name="<?php echo $name ?>">
 				<option value="none" <?php selected( $value, 'none' ) ?>><?php _e( 'None (recommended)'); ?> </option>
-				<option value="metadata" <?php selected( $value, 'metadata' ) ?>><?php _e( 'Metadata'); ?> </option>        
-				<option value="auto" <?php selected( $value, 'auto' ) ?>><?php _e( 'Auto (browser setting)'); ?> </option>        
+				<option value="metadata" <?php selected( $value, 'metadata' ) ?>><?php _e( 'Metadata'); ?> </option>
+				<option value="auto" <?php selected( $value, 'auto' ) ?>><?php _e( 'Auto (browser setting)'); ?> </option>
 			</select>
 
 		<?php }
@@ -658,10 +654,10 @@ class Progression_Player {
 	 */
 	
 	public function modify_video_shortcode_output( $html ) {
-		$html = str_replace('<video', '<video style="width: 100%; height: 100%;" ', $html);
+		$html = str_replace( '<video', '<video style="width: 100%; height: 100%;" ', $html );
 		$html = '<div class="responsive-wrapper">' . $html . '</div><!-- close .responsive-wrapper -->';
 
-		if ( $this->options( 'size' ) === 'small') {
+		if ( $this->options( 'size' ) === 'small' ) {
 			$html = '<div class="progression-small">' . $html . '</div>';
 		}
 		
@@ -793,11 +789,11 @@ class Progression_Player {
 		}
 
 		extract(shortcode_atts(array(
-			'order'      => 'ASC',
-			'orderby'    => 'menu_order ID',
-			'id'         => $post ? $post->ID : 0,
-			'include'    => '',
-			'exclude'    => ''
+			'order'		=> 'ASC',
+			'orderby'	=> 'menu_order ID',
+			'id'		=> $post ? $post->ID : 0,
+			'include'	=> '',
+			'exclude'	=> ''
 		), $attr, 'gallery'));
 
 		$id = intval($id);
@@ -805,16 +801,16 @@ class Progression_Player {
 			$orderby = 'none';
 
 		if ( !empty($include) ) {
-			$_attachments = get_posts( array('include' => $include, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'audio', 'order' => $order, 'orderby' => $orderby) );
+			$_attachments = get_posts( array( 'include' => $include, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'audio', 'order' => $order, 'orderby' => $orderby ) );
 
 			$attachments = array();
 			foreach ( $_attachments as $key => $val ) {
 				$attachments[$val->ID] = $_attachments[$key];
 			}
 		} elseif ( !empty($exclude) ) {
-			$attachments = get_children( array('post_parent' => $id, 'exclude' => $exclude, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'audio', 'order' => $order, 'orderby' => $orderby) );
+			$attachments = get_children( array( 'post_parent' => $id, 'exclude' => $exclude, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'audio', 'order' => $order, 'orderby' => $orderby) );
 		} else {
-			$attachments = get_children( array('post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'audio', 'order' => $order, 'orderby' => $orderby) );
+			$attachments = get_children( array( 'post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'audio', 'order' => $order, 'orderby' => $orderby) );
 		}
 
 		if ( empty($attachments) )
