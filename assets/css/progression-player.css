@@ -55,6 +55,7 @@ Author URI: http://progressionstudios.com/themeforest
 */
 .responsive-wrapper {max-width:100%;} /* Responsive Player Maximum Width */
 .active-progression {padding-bottom:0px !important;  }
+.playlist-height-adjust .progression-playlist-height {padding-bottom:0px !important;}
 .playlist-height-adjust .active-progression {padding-bottom:174px !important;  }
 .progression-single-title {
 	max-width:100%;   margin:0 1px;

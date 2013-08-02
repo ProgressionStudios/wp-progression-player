@@ -826,7 +826,7 @@ class Progression_Player {
 		$html .= "<audio id='playlist-{$instance}' class='progression-playlist $skin progression-audio-player playlistid-{$id}'>";
 
 		foreach ($attachments as $attachment) {
-			$html .= "<source src='{$attachment->guid}' title='{$attachment->post_title}' type='{$attachment->post_mime_type}'>";
+			$html .= "<source src='{$attachment->guid}' title='{$attachment->post_title}' type='{$attachment->post_mime_type}'/>";
 		}
 		
 		$html .= '</audio>';
