@@ -53,8 +53,9 @@ Author URI: http://progressionstudios.com/themeforest
 /*
 =============================================== 02. Easy Customization ===============================================
 */
-.responsive-wrapper {max-width:550px;} /* Responsive Player Maximum Width */
+.responsive-wrapper {max-width:100%;} /* Responsive Player Maximum Width */
 .active-progression {padding-bottom:0px !important;  }
+.playlist-height-adjust .active-progression {padding-bottom:174px !important;  }
 .progression-single-title {
 	max-width:100%;   margin:0 1px;
 	padding:5px 15px; 
@@ -511,12 +512,15 @@ body .progression-skin .mejs-controls .mejs-horizontal-volume-slider .mejs-horiz
 }
 .progression-skin .mejs-overlay-button:before {
 	color:#ffffff;
+	line-height:1;
 	font-size:30px;
 	content: "\f04b";
 	text-decoration: inherit;
 	display: inline-block;
 	left:20px;
 	top:15px;
+	margin:0px;
+	padding:0px;
 	position:relative;
 }
 
@@ -639,6 +643,10 @@ body .progression-skin .mejs-controls .mejs-horizontal-volume-slider .mejs-horiz
 .progression-skin .mejs-playlist, .progression-skin .mejs-playlist ul {
 	position: absolute; left: 0;
 	background: #ffffff;
+	top:41px;
+}
+.progression-small .progression-skin .mejs-playlist, .progression-small .progression-skin .mejs-playlist ul {
+	top:31px;
 }
 .progression-skin .mejs-playlist ul {
 	max-height: 174px !important;

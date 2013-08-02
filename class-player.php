@@ -836,6 +836,10 @@ class Progression_Player {
 			$html = '<div class="progression-small">' . $html . '</div>';
 		}
 		
+		if ( $this->options( 'playlist' ) === 'false') {
+			$html = '<div class="playlist-height-adjust">' . $html . '</div>';
+		}
+		
 		return $html;
 		 
 	}
