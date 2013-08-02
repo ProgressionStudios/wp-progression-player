@@ -672,6 +672,8 @@ class Progression_Player {
 	
 	public function custom_skin_css() {
 
+		global $content_width;
+
 		$options = $this->options();
 		$colors = $options[ 'colors' ];
 
