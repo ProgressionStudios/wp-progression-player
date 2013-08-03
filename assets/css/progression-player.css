@@ -851,47 +851,33 @@ body .progression-large .progression-skin .mejs-controls .mejs-prevtrack button:
 
 
 /*
-=============================================== 09. Live Preview Styles ===============================================
+=============================================== 10. Sidebar Styles ===============================================
 */
-body#progression-player-preview .progression-skin {
-	-webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.18);
-	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.18);
-}
+/* Remove volume controls in Sidebar */
+#sidebar .progression-skin .mejs-controls .mejs-unmute, #sidebar .progression-skin .mejs-controls .mejs-mute,
+#sidebar .progression-skin .mejs-controls .mejs-horizontal-volume-slider,
+#custom-div .progression-skin .mejs-controls .mejs-unmute, #custom-div .progression-skin .mejs-controls .mejs-mute,
+#custom-div .progression-skin .mejs-controls .mejs-horizontal-volume-slider,
+.widget-area .progression-skin .mejs-controls .mejs-unmute, .widget-area .progression-skin .mejs-controls .mejs-mute,
+.widget-area .progression-skin .mejs-controls .mejs-horizontal-volume-slider  {display:none !important;}
 
-body#progression-player-preview {background: url(../build/cream_pixels.png); max-width:800px; margin:0 auto; padding:20px 20px 50px 20px; font-family:"Helvetica Neue", Helvetica, Arial, Sans-Serif;}
-body#progression-player-preview ul#prog-page-navigation { margin:25px auto 35px auto; padding:0px;  list-style:none; text-align:center; font-weight:bold; font-size:13px; border-bottom:1px solid #dddddd;}
-body#progression-player-preview ul#prog-page-navigation li {display:inline;  padding:0px; margin:0px;}
-body#progression-player-preview ul#prog-page-navigation li a {
-	position:relative; top:5px;
-	text-decoration:none;display:inline-block;  
-	background:#dddddd; 
-	background-image: linear-gradient(bottom, #dddddd 0%, #eeeeee 59%);
-	background-image: -o-linear-gradient(bottom, #dddddd 0%, #eeeeee 59%);
-	background-image: -moz-linear-gradient(bottom, #dddddd 0%, #eeeeee 59%);
-	background-image: -webkit-linear-gradient(bottom, #dddddd 0%, #eeeeee 59%);
-	background-image: -ms-linear-gradient(bottom, #dddddd 0%, #eeeeee 59%);
-	background-image: -webkit-gradient( linear, left bottom, left top, color-stop(0, #dddddd),color-stop(0.59, #eeeeee) );
-	color:#999999; 
-	text-shadow: 1px 1px 1px rgba(250, 250, 250, 0.5);
-	padding:7px 8px;
-	margin-bottom:5px;
-	-webkit-border-top-left-radius: 3px; -webkit-border-top-right-radius: 3px; -moz-border-radius-topleft: 3px; -moz-border-radius-topright: 3px; border-top-left-radius: 3px; border-top-right-radius: 3px;
-}
-body#progression-player-preview ul#prog-page-navigation li a:hover, body#progression-player-preview ul#prog-page-navigation li.current-menu-item a { 
-	background:#aaaaaa; 
-	background-image: linear-gradient(bottom, #aaaaaa 0%, #bbbbbb 59%);
-	background-image: -o-linear-gradient(bottom, #aaaaaa 0%, #bbbbbb 59%);
-	background-image: -moz-linear-gradient(bottom, #aaaaaa 0%, #bbbbbb 59%);
-	background-image: -webkit-linear-gradient(bottom, #aaaaaa 0%, #bbbbbb 59%);
-	background-image: -ms-linear-gradient(bottom, #aaaaaa 0%, #bbbbbb 59%);
-	background-image: -webkit-gradient( linear, left bottom, left top, color-stop(0, #aaaaaa),color-stop(0.59, #bbbbbb) );
-	color:#ffffff;
-	text-shadow:none;
-}
+#sidebar .progression-skin .mejs-inner .mejs-controls .mejs-time.mejs-duration-container,
+#custom-div .progression-skin .mejs-inner .mejs-controls .mejs-time.mejs-duration-container,
+ .widget-area .progression-skin .mejs-inner .mejs-controls .mejs-time.mejs-duration-container {margin-right:0px !important; border-right:0px !important;}
 
-body#progression-player-preview hr {background:transparent; border-bottom:1px solid #dddddd; border-top:none; margin:30px 0px;}
-ul#progression-options li {font-size:14px; padding-bottom:4px;}
-ul#progression-options li span {font-size:13px;}
-body#progression-player-preview pre {background:#e8e8e8; border:1px solid #c5c5c5; overflow-x:auto;}
+#sidebar .progression-skin .mejs-playlist ul, #custom-div .progression-skin .mejs-playlist ul, .widget-area .progression-skin .mejs-playlist ul {overflow-x:hidden;}
 
 
+/* Remove Playlist Next/Previous Buttons in Sidebar */
+#sidebar .progression-skin .mejs-controls .mejs-nexttrack, #sidebar .progression-skin .mejs-controls .mejs-prevtrack,
+#custom-div .progression-skin .mejs-controls .mejs-nexttrack, #custom-div .progression-skin .mejs-controls .mejs-prevtrack,
+.widget-area .progression-skin .mejs-controls .mejs-nexttrack, .widget-area .progression-skin .mejs-controls .mejs-prevtrack {display:none !important;}
+
+
+/* Adjusting PLylist Size in Sidebar */
+#sidebar .progression-skin .mejs-playlist ul li, #custom-div .progression-skin .mejs-playlist ul li, .widget-area .progression-skin .mejs-playlist ul li {margin-left:0px; padding:8px 15px; font-size:11px;}
+
+/* Adjusting Video Play Button in Sidebar */
+#sidebar .progression-skin .mejs-overlay-button, #custom-div .progression-skin .mejs-overlay-button, .widget-area .progression-skin .mejs-overlay-button {width:40px; height:40px; margin:-20px 0 0 -20px;}
+
+#sidebar .progression-skin .mejs-overlay-button:before, #custom-div .progression-skin .mejs-overlay-button:before, .widget-area .progression-skin .mejs-overlay-button:before { font-size:20px; top:11px; left:13px;}
