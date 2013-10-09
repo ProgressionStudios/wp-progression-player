@@ -201,7 +201,7 @@ $(".progression-playlist-height").toggleClass('active-progression');
           player.playTrack($(this));
         }
         else {
-          player.play();
+          
         }
       });
 
