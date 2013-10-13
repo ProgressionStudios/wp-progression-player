@@ -234,9 +234,6 @@ class Progression_Player {
 		if ( get_current_screen()->id == $this->plugin_screen_hook_suffix ) {
 			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/progression-admin.js', __FILE__ ), array( 'jquery', 'wp-color-picker' ), $this->version );
 		}
-	
-		if ( ! ( 'post' == get_current_screen()->base && 'page' == get_current_screen()->id ) )
-			return;
 
 		// This function loads in the required media files for the media manager.
 		wp_enqueue_media();
