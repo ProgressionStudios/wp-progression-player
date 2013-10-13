@@ -773,6 +773,18 @@ class Progression_Player {
 		static $instance = 0;
 		$instance++;
 
+		$external_urls = array();
+		$attachments = array();
+
+		if ( ! empty( $attr['urls'] ) ) {
+			// filter out all urls
+			foreach ( explode(',', $attr['urls']) as $id ) {
+				if ( filter_var( $id, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED) !== FALSE ) {
+					$external_urls[] = $id;
+				} 
+			}
+		}
+
 		if ( ! empty( $attr['ids'] ) ) {
 			// 'ids' is explicitly ordered, unless you specify otherwise.
 			if ( empty( $attr['orderby'] ) )
@@ -793,7 +805,7 @@ class Progression_Player {
 			'id'		=> $post ? $post->ID : 0,
 			'include'	=> '',
 			'exclude'	=> ''
-		), $attr, 'gallery'));
+		), $attr, 'playlist'));
 
 		$id = intval($id);
 		if ( 'RAND' == $order )
@@ -806,13 +818,13 @@ class Progression_Player {
 			foreach ( $_attachments as $key => $val ) {
 				$attachments[$val->ID] = $_attachments[$key];
 			}
-		} elseif ( !empty($exclude) ) {
+		} elseif ( !empty($exclude)) {
 			$attachments = get_children( array( 'post_parent' => $id, 'exclude' => $exclude, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'audio', 'order' => $order, 'orderby' => $orderby) );
-		} else {
+		} elseif ( empty($external_urls) ) {
 			$attachments = get_children( array( 'post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'audio', 'order' => $order, 'orderby' => $orderby) );
 		}
 
-		if ( empty($attachments) )
+		if ( empty($attachments) && empty($external_urls) )
 			return '';
 
 		$skin = $this->shortcode_class( 'progression-skin' );
@@ -826,6 +838,11 @@ class Progression_Player {
 
 		foreach ($attachments as $attachment) {
 			$html .= "<source src='{$attachment->guid}' title='{$attachment->post_title}' type='{$attachment->post_mime_type}'/>";
+		}
+
+		foreach ($external_urls as $url) {
+			$ext = pathinfo($url, PATHINFO_EXTENSION); // lazy mime-type detection
+			$html .= "<source src='{$url}' title='{$url}' type='audio/{$ext}'/>";
 		}
 		
 		$html .= '</audio>';
