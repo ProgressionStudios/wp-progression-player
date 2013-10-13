@@ -16,8 +16,7 @@
 
         players.mediaelementplayer({
         	startVolume: options.startvolume, // initial volume when the player starts
-        	alwaysShowControls: ("true" === options.controls ), // Hide controls when playing and mouse is not over the video
-        	loop: ( "true" === options.loop ) // useful for <audio> player loops
+        	alwaysShowControls: ("true" === options.controls ) // Hide controls when playing and mouse is not over the video
         });
 
         $('.progression-playlist').mediaelementplayer({

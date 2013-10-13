@@ -428,7 +428,7 @@ class Progression_Player {
 
 	 	add_settings_field( 
 	 		$this->plugin_slug . '_loop',
-			__( 'Loop playback' ),
+			sprintf( '%s <br><small>(%s)</small>', __( 'Loop playback' ), __( 'applies to playlists only' )),
 			array( $this, 'settings_field_defaults_cb' ),
 			'progression',
 			$this->plugin_slug . '_defaults',
