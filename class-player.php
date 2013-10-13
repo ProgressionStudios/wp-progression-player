@@ -842,7 +842,8 @@ class Progression_Player {
 
 		foreach ($external_urls as $url) {
 			$ext = pathinfo($url, PATHINFO_EXTENSION); // lazy mime-type detection
-			$html .= "<source src='{$url}' title='{$url}' type='audio/{$ext}'/>";
+			$filename = pathinfo($url, PATHINFO_FILENAME); // lazy file name detection
+			$html .= "<source src='{$url}' title='{$filename}' type='audio/{$ext}'/>";
 		}
 		
 		$html .= '</audio>';
