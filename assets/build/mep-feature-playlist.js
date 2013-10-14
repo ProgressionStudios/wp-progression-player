@@ -7,14 +7,6 @@
  * Dual licensed under the MIT or GPL Version 2 licenses.
  */
 
-	jQuery(document).ready(function($) {  
-	$('#progression-toggle-tada').click(function() {
-	    $(".progression-playlist-height").toggleClass('active-progression');
-	});
-	});
-	
-
-
 (function($) {
   $.extend(mejs.MepDefaults, {
     loopText: 'Repeat On/Off',
@@ -129,7 +121,7 @@
         .appendTo(controls)
         .click(function(e) {
           player.options.playlist = !player.options.playlist;
-$(".progression-playlist-height").toggleClass('active-progression');
+          $(this).closest('.progression-playlist-height').toggleClass('active-progression');
           $(media).trigger('mep-playlisttoggle', [player.options.playlist]);
           if (player.options.playlist) {
             layers.children('.mejs-playlist').show();
