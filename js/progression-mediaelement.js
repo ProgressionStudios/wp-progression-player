@@ -4,12 +4,12 @@
     mejs.plugins.silverlight[0].types.push('audio/x-ms-wma');
 
     $(function() {
-    	
+
     	var options = window.progression,
     		players = $('.wp-audio-shortcode, .wp-video-shortcode');
 
     	if ( "true" === options.autoplay ) {
-    		players.attr( 'autoplay', 'autoplay' );
+    		$('.progression-playlist .wp-audio-shortcode, .wp-video-shortcode').attr( 'autoplay', 'autoplay' );
     	};
 
     	players.attr( 'preload', options.preload );
@@ -28,4 +28,4 @@
         });
     });
 
-}(jQuery)); 
+}(jQuery));
