@@ -93,7 +93,7 @@ class Progression_Player {
 		if ( empty( $this->loaded_options )) {
 
 			$db_options = get_option( $this->plugin_slug );
-			
+
 			if ( empty( $db_options ) ) {
 				// return default options if db not available
 				update_option( $this->plugin_slug, $defaults );
@@ -101,7 +101,7 @@ class Progression_Player {
 			} else {
 				$this->loaded_options = wp_parse_args( $db_options, $defaults );
 			}
-			
+
 		}
 
 		// Load plugin text domain
@@ -177,9 +177,9 @@ class Progression_Player {
 	 * @param    boolean    $network_wide    True if WPMU superadmin uses "Network Deactivate" action, false if WPMU is disabled or plugin is deactivated on an individual blog.
 	 */
 	public static function deactivate( $network_wide ) {
-		
+
 		delete_option( 'progression' );
-		 
+
 	}
 
 	/**
@@ -190,13 +190,13 @@ class Progression_Player {
 	 * @var array
 	 */
 	protected function options( $key = false ){
-		
+
 		if ( $key ) {
 			return $this->loaded_options[ $key ];
 		} else {
 			return $this->loaded_options;
 		}
-		
+
 	}
 
 	/**
@@ -216,7 +216,7 @@ class Progression_Player {
 	 * @return    null    Return early if no settings page is registered.
 	 */
 	public function enqueue_admin_styles() {
-		
+
 		if ( get_current_screen()->id == $this->plugin_screen_hook_suffix ) {
 			wp_enqueue_style( $this->plugin_slug .'-admin-styles', plugins_url( 'css/progression-admin.css', __FILE__ ), array( 'wp-color-picker'  ), $this->version );
 		}
@@ -240,7 +240,7 @@ class Progression_Player {
 
 		// Register, localize and enqueue our custom JS.
 		wp_enqueue_script( $this->plugin_slug . '-admin-playlist', plugins_url( 'js/progression-playlist.js', __FILE__ ), array( 'media-views', 'media-upload' ), $this->version );
-		
+
 		wp_localize_script( $this->plugin_slug . '-admin-playlist', $this->plugin_slug,
 			array(
 				'title'		=> __( 'Upload or Choose Audio Files to Create a Playlist' ),
@@ -258,8 +258,8 @@ class Progression_Player {
 	public function enqueue_styles() {
 
 		// remove WordPress specific style. We will use our own.
-		wp_dequeue_style( 'mediaelement' ); 
-		wp_deregister_style( 'wp-mediaelement' ); 
+		wp_dequeue_style( 'mediaelement' );
+		wp_deregister_style( 'wp-mediaelement' );
 
 		wp_enqueue_style( $this->plugin_slug, plugins_url( 'assets/css/progression-player.css', __FILE__ ), array(), $this->version );
 		wp_enqueue_style( $this->plugin_slug . '-icons', plugins_url( 'assets/font-awesome/css/font-awesome.min.css', __FILE__ ), array(), $this->version );
@@ -279,13 +279,13 @@ class Progression_Player {
 	public function enqueue_scripts() {
 
 		// remove WordPress specific handling of mediaelement.js. We will use our own.
-		wp_deregister_script( 'wp-mediaelement' );	
+		wp_deregister_script( 'wp-mediaelement' );
 		wp_enqueue_script( $this->plugin_slug . '-mediaelement', plugins_url( 'js/progression-mediaelement.js', __FILE__ ), array( 'jquery', 'mediaelement' ), $this->version );
 		wp_enqueue_script( $this->plugin_slug . '-playlist', plugins_url( 'assets/build/mep-feature-playlist.js', __FILE__ ), array( 'jquery', 'mediaelement' ), $this->version );
 
 		$options = $this->options();
 		$options['startvolume'] = $options['startvolume'] / 100; // 80% => 0.8
-		
+
 		// hand over options to javascript object
 		wp_localize_script( $this->plugin_slug . '-mediaelement', $this->plugin_slug, $options);
 	}
@@ -327,27 +327,27 @@ class Progression_Player {
 
 		register_setting( $this->plugin_slug, $this->plugin_slug );
 
-	 	add_settings_section( 
+	 	add_settings_section(
 	 		$this->plugin_slug . '_skin',
 			__( 'Player skin' ),
 			array( $this, 'settings_section_skin_cb' ),
-			'progression' 
+			'progression'
 		);
-		 	
-	 	add_settings_field( 
+
+	 	add_settings_field(
 	 		$this->plugin_slug . '_active_skin',
 			__( 'Selected player skin' ),
 			array( $this, 'settings_field_active_skin_cb' ),
 			'progression',
-			$this->plugin_slug . '_skin' 
+			$this->plugin_slug . '_skin'
 		);
-	 	
- 	 	add_settings_field( 
+
+ 	 	add_settings_field(
  	 		$this->plugin_slug . '_custom_skin',
  			__( 'Custom skin' ),
  			array( $this, 'settings_field_custom_skin_cb' ),
  			'progression',
- 			$this->plugin_slug . '_skin' 
+ 			$this->plugin_slug . '_skin'
  		);
 
  	 	$color_zones = array(
@@ -359,112 +359,112 @@ class Progression_Player {
  	 	);
 
  	 	foreach ( $color_zones as $key => $label ) {
- 		 	add_settings_field( 
+ 		 	add_settings_field(
  		 		$this->plugin_slug . '_custom_skin_colors['. $key .']',
  				$label,
  				array( $this, 'settings_field_custom_skin_colors_cb' ),
  				'progression',
  				$this->plugin_slug . '_skin',
- 				array( 
- 					'name' => 'custom_skin_colors', 
+ 				array(
+ 					'name' => 'custom_skin_colors',
  					'key' => $key
  				)
  			);
  	 	}
 
- 	 	add_settings_field( 
+ 	 	add_settings_field(
  	 		$this->plugin_slug . 'size',
  			__( 'Size' ),
  			array( $this, 'settings_field_defaults_cb' ),
  			'progression',
  			$this->plugin_slug . '_skin',
- 			array( 
- 				'key' => 'size' 
- 			) 
+ 			array(
+ 				'key' => 'size'
+ 			)
  		);
 
- 	 	add_settings_section( 
+ 	 	add_settings_section(
  	 		$this->plugin_slug . '_defaults',
  			__( 'Player options' ),
  			array( $this, 'settings_section_defaults_cb' ),
- 			'progression' 
+ 			'progression'
  		);
- 		 	
- 	 	add_settings_field( 
+
+ 	 	add_settings_field(
  	 		$this->plugin_slug . '_startvolume',
  			__( 'Start volume' ),
  			array( $this, 'settings_field_defaults_cb' ),
  			'progression',
  			$this->plugin_slug . '_defaults',
-			array( 
-				'key' => 'startvolume' 
+			array(
+				'key' => 'startvolume'
 			)
  		);
 
-	 	add_settings_field( 
+	 	add_settings_field(
 	 		$this->plugin_slug . '_autoplay',
 			__( 'Enable autoplay' ),
 			array( $this, 'settings_field_defaults_cb' ),
 			'progression',
 			$this->plugin_slug . '_defaults',
-			array( 
-				'key' => 'autoplay' 
+			array(
+				'key' => 'autoplay'
 			)
 		);
 
-	 	add_settings_field( 
+	 	add_settings_field(
 	 		$this->plugin_slug . '_controls',
 			__( 'Always show controls' ),
 			array( $this, 'settings_field_defaults_cb' ),
 			'progression',
 			$this->plugin_slug . '_defaults',
-			array( 
-				'key' => 'controls' 
-			) 
+			array(
+				'key' => 'controls'
+			)
 		);
 
-	 	add_settings_field( 
+	 	add_settings_field(
 	 		$this->plugin_slug . '_loop',
 			sprintf( '%s <br><small>(%s)</small>', __( 'Loop playback' ), __( 'applies to playlists only' )),
 			array( $this, 'settings_field_defaults_cb' ),
 			'progression',
 			$this->plugin_slug . '_defaults',
-			array( 
-				'key' => 'loop' 
-			) 
+			array(
+				'key' => 'loop'
+			)
 		);
 
-	 	add_settings_field( 
+	 	add_settings_field(
 	 		$this->plugin_slug . '_preload',
 			__( 'Preload' ),
 			array( $this, 'settings_field_defaults_cb' ),
 			'progression',
 			$this->plugin_slug . '_defaults',
-			array( 
-				'key' => 'preload' 
-			) 
+			array(
+				'key' => 'preload'
+			)
 		);
 
-	 	add_settings_section( 
+	 	add_settings_section(
 	 		$this->plugin_slug . '_playlist',
 			__( 'Playlist options' ),
 			array( $this, 'settings_section_playlist_cb' ),
-			'progression' 
+			'progression'
 		);
 
-	 	add_settings_field( 
+	 	add_settings_field(
 	 		$this->plugin_slug . '_playlist',
 			__( 'Show playlist' ),
 			array( $this, 'settings_field_defaults_cb' ),
 			'progression',
 			$this->plugin_slug . '_playlist',
-			array( 
-				'key' => 'playlist' 
-			) 
+			array(
+				'key' => 'playlist'
+			)
 		);
- 	 	
+
  	 	register_setting( 'progression', $this->plugin_slug . '_startvolume' );
-		
+
 	}
 
 	/**
@@ -472,7 +472,7 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 */
-	
+
 	function settings_section_skin_cb() {
 		echo '<p>'. __( 'These settings let you choose how Progression Player will look like.'). '</p>';
 	}
@@ -482,11 +482,11 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 */
-	
-	function settings_field_active_skin_cb() { 
+
+	function settings_field_active_skin_cb() {
 
 		// the list of available skins
-		$skins = array( 
+		$skins = array(
 			'default' 		=> __( 'Default Skin' ),
 			'default-dark' 	=> __( 'Dark Skin' ),
 			'minimal-dark' 	=> __( 'Minimal Dark Skin' ),
@@ -515,7 +515,7 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 */
-	
+
 	function settings_field_custom_skin_cb() { ?>
 		<input type="hidden" value="false" name="<?php echo $this->plugin_slug ?>[custom_skin]">
 		<label><input name="<?php echo $this->plugin_slug ?>[custom_skin]" id="progression_custom_skin" type="checkbox" value="true" class="code" <?php echo checked( $this->options( 'custom_skin' ), 'true', false)?> /> <?php _e( 'Customize selected player skin' ); ?></label>
@@ -526,7 +526,7 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 */
-	
+
 	function settings_field_custom_skin_colors_cb( $args ) {
 		$options = $this->options();
 		$key = $args['key'];
@@ -542,7 +542,7 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 */
-	
+
 	function settings_section_defaults_cb() {
 		echo '<p>'. __( 'These settings set the behavior of Progression Player.'). '</p>';
 	}
@@ -552,12 +552,12 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 */
-	
-	function settings_field_defaults_cb( $args ) { 
+
+	function settings_field_defaults_cb( $args ) {
 
 		$options = $this->options();
 		$key = $args['key'];
-		$name = $this->plugin_slug . '['. $key .']';		
+		$name = $this->plugin_slug . '['. $key .']';
 		$value = $options[ $key ];
 
 		if ( 'startvolume' === $key ) {
@@ -574,18 +574,18 @@ class Progression_Player {
 
 		<?php }
 
-		if ( 
-			'controls' === $key || 
-			'autoplay' === $key || 
-			'playlist' === $key || 
+		if (
+			'controls' === $key ||
+			'autoplay' === $key ||
+			'playlist' === $key ||
 			'loop' === $key ) {
 			$checked = checked( $value, 'true', false );
 			echo "<input type='hidden' value='false' name='$name'>";
 			echo "<input name='$name' type='checkbox' value='true' $checked />";
 		}
 
-		if ( 
-			'size' === $key) { 
+		if (
+			'size' === $key) {
 			?>
 			<label><input name='<?php echo $name; ?>' type='radio' value='normal' <?php checked( $value, 'normal' ) ?> /> <span><?php _e( 'normal (default)' ); ?></span></label><br>
 			<label><input name='<?php echo $name; ?>' type='radio' value='small' <?php checked( $value, 'small' ) ?> /> <span><?php _e( 'small' ); ?></span></label>
@@ -598,7 +598,7 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 */
-	
+
 	function settings_section_playlist_cb() {
 		echo '<p>'. __( 'These settings set the behavior of the playlist feature.'). '</p>';
 	}
@@ -608,7 +608,7 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 */
-	
+
 	public function shortcode_class( $class ) {
 
 		if ( strpos( $class, 'wp-audio-shortcode' )  !== false ) {
@@ -633,7 +633,7 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 */
-	
+
 	public function modify_audio_shortcode_output( $html ) {
 		$html = '<div class="responsive-wrapper responsive-audio">' . $html . '</div><!-- close .responsive-wrapper -->';
 
@@ -649,7 +649,7 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 */
-	
+
 	public function modify_video_shortcode_output( $html ) {
 		$html = str_replace( '<video', '<video style="width: 100%; height: 100%;" ', $html );
 		$html = '<div class="responsive-wrapper">' . $html . '</div><!-- close .responsive-wrapper -->';
@@ -657,7 +657,7 @@ class Progression_Player {
 		if ( $this->options( 'size' ) === 'small' ) {
 			$html = '<div class="progression-small">' . $html . '</div>';
 		}
-		
+
 		return $html;
 	}
 
@@ -666,7 +666,7 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 */
-	
+
 	public function custom_skin_css() {
 
 		global $content_width;
@@ -686,9 +686,9 @@ class Progression_Player {
 		$html .= sprintf( '.responsive-wrapper  { max-width: %s !important }', $content_width . 'px' );
 
 		if ( !empty( $colors ) ) {
-			
+
 			foreach ( $colors as $key => $color ) {
-				
+
 				if ( empty( $color ) ) continue;
 
 				if ( 'bg' === $key ) {
@@ -728,7 +728,7 @@ class Progression_Player {
 	 *
 	 * $diff should be negative to go darker, positive to go lighter and
 	 * is subtracted from the decimal (0-255) value of the color
-	 * 
+	 *
 	 * Credits: http://lab.clearpixel.com.au/2008/06/darken-or-lighten-colours-dynamically-using-php/
 	 *
 	 * @param string $hex color to be modified
@@ -737,37 +737,37 @@ class Progression_Player {
 	 *
 	 * @since 1.0.0
 	 */
-	
+
 	private function brightness( $hex, $diff ){
-		
+
 		$rgb = str_split( trim( $hex, '# ' ), 2 );
-		 
+
 			foreach ( $rgb as &$hex ) {
 				$dec = hexdec( $hex );
 				if ( $diff >= 0 ) {
 					$dec += $diff;
 				}
 				else {
-					$dec -= abs( $diff );			
+					$dec -= abs( $diff );
 				}
 				$dec = max( 0, min( 255, $dec ));
 				$hex = str_pad( dechex( $dec ), 2, '0', STR_PAD_LEFT );
 			}
-		 
+
 			return '#'.implode( $rgb );
 	}
 
 	/**
 	 * Playlist Shortcode
 	 *
-	 * Works very similar to the [gallery] shortcode. 
-	 * 
+	 * Works very similar to the [gallery] shortcode.
+	 *
 	 * @since 1.0.0
 	 *
 	 */
-	
+
 	public function playlist_shortcode( $attr ) {
-		
+
 		$post = get_post();
 
 		static $instance = 0;
@@ -781,7 +781,7 @@ class Progression_Player {
 			foreach ( explode(',', $attr['urls']) as $id ) {
 				if ( filter_var( $id, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED) !== FALSE ) {
 					$external_urls[] = $id;
-				} 
+				}
 			}
 		}
 
@@ -804,7 +804,8 @@ class Progression_Player {
 			'orderby'	=> 'menu_order ID',
 			'id'		=> $post ? $post->ID : 0,
 			'include'	=> '',
-			'exclude'	=> ''
+			'exclude'	=> '',
+			'autoplay'  => 'false'
 		), $attr, 'playlist'));
 
 		$id = intval($id);
@@ -832,9 +833,10 @@ class Progression_Player {
 		if ( $this->options( 'custom_skin' ) === 'true') {
 			$skin .= " progression-custom";
 		}
-		
+		$autoplay = ( $autoplay == 'true' ? ' autoplay="autoplay"' : '');
+
 		$html = '<div class="progression-playlist-height responsive-wrapper responsive-audio" style="padding-bottom:174px;">';
-		$html .= "<audio id='playlist-{$instance}' class='progression-playlist $skin progression-audio-player playlistid-{$id}'>";
+		$html .= "<audio id='playlist-{$instance}' class='progression-playlist $skin progression-audio-player playlistid-{$id}' $autoplay>";
 
 		foreach ($attachments as $attachment) {
 			$html .= "<source src='{$attachment->guid}' title='{$attachment->post_title}' type='{$attachment->post_mime_type}'/>";
@@ -845,20 +847,20 @@ class Progression_Player {
 			$filename = pathinfo($url, PATHINFO_FILENAME); // lazy file name detection
 			$html .= "<source src='{$url}' title='{$filename}' type='audio/{$ext}'/>";
 		}
-		
+
 		$html .= '</audio>';
 		$html .= '</div>';
 
 		if ( $this->options( 'size' ) === 'small') {
 			$html = '<div class="progression-small">' . $html . '</div>';
 		}
-		
+
 		if ( $this->options( 'playlist' ) === 'false') {
 			$html = '<div class="playlist-height-adjust">' . $html . '</div>';
 		}
-		
+
 		return $html;
-		 
+
 	}
 
 }
