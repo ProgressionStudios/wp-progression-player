@@ -9,7 +9,7 @@
     		players = $('.wp-audio-shortcode, .wp-video-shortcode');
 
     	if ( "true" === options.autoplay ) {
-    		$('.progression-playlist .wp-audio-shortcode, .wp-video-shortcode').attr( 'autoplay', 'autoplay' );
+    		$('.progression-playlist, .wp-audio-shortcode, .wp-video-shortcode').attr( 'autoplay', 'autoplay' );
     	};
 
     	players.attr( 'preload', options.preload );
