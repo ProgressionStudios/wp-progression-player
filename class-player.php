@@ -74,7 +74,6 @@ class Progression_Player {
 			'startvolume' => 80,
 			'autoplay' => 'false',
 			'preload' => 'none',
-			'loop' => 'false',
 			'controls' => 'false',
 			'size' => 'normal',
 			'playlist' => 'true',
@@ -121,19 +120,16 @@ class Progression_Player {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
-		// change the class of the media shortcode
-		add_filter( 'wp_video_shortcode_class', array( $this, 'shortcode_class' ) );
-		add_filter( 'wp_audio_shortcode_class', array( $this, 'shortcode_class' ) );
-
 		// Modify shortcode output
-		add_filter( 'wp_audio_shortcode', array( $this, 'modify_audio_shortcode_output' ) );
-		add_filter( 'wp_video_shortcode', array( $this, 'modify_video_shortcode_output' ) );
+		add_filter( 'wp_audio_shortcode', array( $this, 'modify_shortcode_output' ) );
+		add_filter( 'wp_video_shortcode', array( $this, 'modify_shortcode_output' ) );
+		add_filter( 'wp_playlist_shortcode', array( $this, 'modify_shortcode_output' ) );
+		
+		add_filter( 'post_playlist', array( $this, 'wp_playlist_shortcode' ), 10, 2 );
+		add_action( 'wp_playlist_scripts', array( $this, 'wp_playlist_scripts' ) );
 
 		// Add inline CSS for custom player skin
 		add_action( 'wp_head', array( $this, 'custom_skin_css' ) );
-
-		// create shortcode for playlist
-		add_shortcode( 'playlist', array( $this, 'playlist_shortcode' ) );
 
 		// make shortcodes work in widgets
 		add_filter( 'widget_text', 'do_shortcode' );
@@ -238,16 +234,6 @@ class Progression_Player {
 		// This function loads in the required media files for the media manager.
 		wp_enqueue_media();
 
-		// Register, localize and enqueue our custom JS.
-		wp_enqueue_script( $this->plugin_slug . '-admin-playlist', plugins_url( 'js/progression-playlist.js', __FILE__ ), array( 'media-views', 'media-upload' ), $this->version );
-
-		wp_localize_script( $this->plugin_slug . '-admin-playlist', $this->plugin_slug,
-			array(
-				'title'		=> __( 'Upload or Choose Audio Files to Create a Playlist' ),
-				'button'	=> __( 'Insert Playlist' ),
-				'menuitem'  => __( 'Create Playlist' )
-			)
-		);
 	}
 
 	/**
@@ -257,18 +243,13 @@ class Progression_Player {
 	 */
 	public function enqueue_styles() {
 
+		wp_enqueue_style( 'wp-mediaelement' );
 		// remove WordPress specific style. We will use our own.
-		wp_dequeue_style( 'mediaelement' );
-		wp_deregister_style( 'wp-mediaelement' );
+		//wp_dequeue_style( 'mediaelement' );
+		//wp_deregister_style( 'wp-mediaelement' );
 
-		wp_enqueue_style( $this->plugin_slug, plugins_url( 'assets/css/progression-player.css', __FILE__ ), array(), $this->version );
-		wp_enqueue_style( $this->plugin_slug . '-icons', plugins_url( 'assets/font-awesome/css/font-awesome.min.css', __FILE__ ), array(), $this->version );
-
-		// load skin CSS
-		$skin = $this->options( 'active_skin' );
-
-		wp_enqueue_style( $this->plugin_slug . '-skin-' . $skin, plugins_url( 'assets/css/skin-'. $skin .'.css', __FILE__ ), array(), $this->version );
-
+		wp_enqueue_style( $this->plugin_slug, plugins_url( 'assets/css/progression-player.css', __FILE__ ), array('wp-mediaelement'), $this->version );
+		wp_enqueue_style( $this->plugin_slug . '-icons', plugins_url( 'assets/font-awesome/css/font-awesome.min.css', __FILE__ ), array('wp-mediaelement'), $this->version );
 	}
 
 	/**
@@ -278,16 +259,18 @@ class Progression_Player {
 	 */
 	public function enqueue_scripts() {
 
-		// remove WordPress specific handling of mediaelement.js. We will use our own.
 		wp_deregister_script( 'wp-mediaelement' );
-		wp_enqueue_script( $this->plugin_slug . '-mediaelement', plugins_url( 'js/progression-mediaelement.js', __FILE__ ), array( 'jquery', 'mediaelement' ), $this->version );
-		wp_enqueue_script( $this->plugin_slug . '-playlist', plugins_url( 'assets/build/mep-feature-playlist.js', __FILE__ ), array( 'jquery', 'mediaelement' ), $this->version );
+		wp_register_script( 'wp-mediaelement', plugins_url( 'js/progression-mediaelement.js', __FILE__ ), array( 'mediaelement' ), false, true );
 
 		$options = $this->options();
 		$options['startvolume'] = $options['startvolume'] / 100; // 80% => 0.8
+		$options['features'] = array( 'playpause','current','progress','duration','volume','togglePlaylist' ); // 80% => 0.8
 
 		// hand over options to javascript object
-		wp_localize_script( $this->plugin_slug . '-mediaelement', $this->plugin_slug, $options);
+		wp_localize_script( 'wp-mediaelement', '_wpmejsProgressionSettings', $options);
+		
+		wp_deregister_script( 'wp-playlist' );
+		wp_register_script( 'wp-playlist', plugins_url( 'js/progression-playlist.js', __FILE__ ), array( 'wp-util', 'backbone', 'mediaelement' ), false, true );
 	}
 
 
@@ -420,17 +403,6 @@ class Progression_Player {
 			$this->plugin_slug . '_defaults',
 			array(
 				'key' => 'controls'
-			)
-		);
-
-	 	add_settings_field(
-	 		$this->plugin_slug . '_loop',
-			sprintf( '%s <br><small>(%s)</small>', __( 'Loop playback' ), __( 'applies to playlists only' )),
-			array( $this, 'settings_field_defaults_cb' ),
-			'progression',
-			$this->plugin_slug . '_defaults',
-			array(
-				'key' => 'loop'
 			)
 		);
 
@@ -577,8 +549,7 @@ class Progression_Player {
 		if (
 			'controls' === $key ||
 			'autoplay' === $key ||
-			'playlist' === $key ||
-			'loop' === $key ) {
+			'playlist' === $key ) {
 			$checked = checked( $value, 'true', false );
 			echo "<input type='hidden' value='false' name='$name'>";
 			echo "<input name='$name' type='checkbox' value='true' $checked />";
@@ -604,59 +575,27 @@ class Progression_Player {
 	}
 
 	/**
-	 * This is where we set the skin class of the video player
+	 * Wraps the default shortcode output in html necessary for responsive player
 	 *
 	 * @since 1.0.0
 	 */
 
-	public function shortcode_class( $class ) {
+	public function modify_shortcode_output( $html ) {
 
-		if ( strpos( $class, 'wp-audio-shortcode' )  !== false ) {
-			$class .= ' progression-audio-player';
+		if ( $this->options( 'size' ) === 'small') {
+			$html = '<div class="pro-small-player">' . $html . '</div>';
 		}
-
-		$class .= ' progression-skin';
 
 		$active_skin = $this->options( 'active_skin' );
 
+		$class = "progression-skin";
 		$class .= " progression-$active_skin";
 
 		if ( $this->options( 'custom_skin' ) === 'true') {
 			$class .= " progression-custom";
 		}
 
-		return $class;
-	}
-
-	/**
-	 * Wraps the default shortcode output in html necessary for responsive player
-	 *
-	 * @since 1.0.0
-	 */
-
-	public function modify_audio_shortcode_output( $html ) {
-		$html = '<div class="responsive-wrapper responsive-audio">' . $html . '</div><!-- close .responsive-wrapper -->';
-
-		if ( $this->options( 'size' ) === 'small') {
-			$html = '<div class="progression-small">' . $html . '</div>';
-		}
-
-		return $html;
-	}
-
-	/**
-	 * Wraps the default shortcode output in html necessary for responsive player
-	 *
-	 * @since 1.0.0
-	 */
-
-	public function modify_video_shortcode_output( $html ) {
-		$html = str_replace( '<video', '<video style="width: 100%; height: 100%;" ', $html );
-		$html = '<div class="responsive-wrapper">' . $html . '</div><!-- close .responsive-wrapper -->';
-
-		if ( $this->options( 'size' ) === 'small' ) {
-			$html = '<div class="progression-small">' . $html . '</div>';
-		}
+		$html = '<div class="'. $class .'">' . $html . '</div>';
 
 		return $html;
 	}
@@ -692,12 +631,12 @@ class Progression_Player {
 				if ( empty( $color ) ) continue;
 
 				if ( 'bg' === $key ) {
-					$html .= sprintf( 'body .mejs-container.progression-skin.progression-custom .mejs-controls { background: %s }', $color );
+					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls { background: %s }', $color );
 					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-nexttrack:hover, body .progression-skin.progression-custom .mejs-controls .mejs-prevtrack:hover,  body .progression-skin.progression-custom .mejs-controls .mejs-show-playlist:hover, body .progression-skin.progression-custom  .mejs-controls .mejs-hide-playlist:hover,  body .progression-skin.progression-custom .mejs-controls .mejs-mute button:hover,  body .progression-skin.progression-custom .mejs-controls .mejs-fullscreen-button:hover,  body .progression-skin.progression-custom .mejs-controls .mejs-hide-playlist, body .progression-skin.progression-custom .mejs-controls .mejs-playpause-button:hover { background: %s }', $this->brightness( $color, 20 ) );
 				}
 
 				if ( 'border' === $key ) {
-					$html .= sprintf( 'body .mejs-container.progression-skin.progression-custom, body .mejs-container.progression-skin.progression-custom .mejs-controls, body .progression-skin.progression-custom .mejs-controls .mejs-playpause-button, body .progression-skin.progression-custom .mejs-inner .mejs-controls .mejs-time, body .progression-skin.progression-custom .mejs-controls .mejs-fullscreen-button,  body .progression-skin.progression-custom .mejs-controls .mejs-show-playlist, body .progression-skin.progression-custom  .mejs-controls .mejs-hide-playlist, body .progression-skin.progression-custom .mejs-controls .mejs-prevtrack button,  body .progression-skin.progression-custom .mejs-controls .mejs-nexttrack button { border-color: %s }', $color );
+					$html .= sprintf( 'body .progression-skin.progression-custom, body .progression-skin.progression-custom .mejs-controls, body .progression-skin.progression-custom .mejs-controls .mejs-playpause-button, body .progression-skin.progression-custom .mejs-inner .mejs-controls .mejs-time, body .progression-skin.progression-custom .mejs-controls .mejs-fullscreen-button,  body .progression-skin.progression-custom .mejs-controls .mejs-show-playlist, body .progression-skin.progression-custom  .mejs-controls .mejs-hide-playlist, body .progression-skin.progression-custom .mejs-controls .mejs-prevtrack button,  body .progression-skin.progression-custom .mejs-controls .mejs-nexttrack button { border-color: %s }', $color );
 				}
 
 				if ( 'text' === $key ) {
@@ -757,110 +696,201 @@ class Progression_Player {
 			return '#'.implode( $rgb );
 	}
 
-	/**
-	 * Playlist Shortcode
-	 *
-	 * Works very similar to the [gallery] shortcode.
-	 *
-	 * @since 1.0.0
-	 *
-	 */
+	function wp_playlist_scripts() {
+		wp_enqueue_script( $this->plugin_slug . '-playlist' );
+	}
 
-	public function playlist_shortcode( $attr ) {
-
+	function wp_playlist_shortcode( $output, $attr ) {
+		global $content_width;
 		$post = get_post();
 
 		static $instance = 0;
 		$instance++;
 
-		$external_urls = array();
-		$attachments = array();
 
-		if ( ! empty( $attr['urls'] ) ) {
-			// filter out all urls
-			foreach ( explode(',', $attr['urls']) as $id ) {
-				if ( filter_var( $id, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED) !== FALSE ) {
-					$external_urls[] = $id;
-				}
-			}
-		}
-
-		if ( ! empty( $attr['ids'] ) ) {
-			// 'ids' is explicitly ordered, unless you specify otherwise.
-			if ( empty( $attr['orderby'] ) )
-				$attr['orderby'] = 'post__in';
-			$attr['include'] = $attr['ids'];
-		}
-
-		// We're trusting author input, so let's at least make sure it looks like a valid orderby statement
+		/*
+		 * We're trusting author input, so let's at least make sure it looks
+		 * like a valid orderby statement.
+		 */
 		if ( isset( $attr['orderby'] ) ) {
 			$attr['orderby'] = sanitize_sql_orderby( $attr['orderby'] );
-			if ( !$attr['orderby'] )
+			if ( ! $attr['orderby'] )
 				unset( $attr['orderby'] );
 		}
 
-		extract(shortcode_atts(array(
+		extract( shortcode_atts( array(
+			'type'		=> 'audio',
 			'order'		=> 'ASC',
 			'orderby'	=> 'menu_order ID',
 			'id'		=> $post ? $post->ID : 0,
 			'include'	=> '',
-			'exclude'	=> '',
-			'autoplay'  => 'false'
-		), $attr, 'playlist'));
+			'exclude'   => '',
+			'style'		=> 'light',
+			'tracklist' => true,
+			'tracknumbers' => true,
+			'images'	=> true,
+			'artists'	=> true
+		), $attr, 'playlist' ) );
 
-		$id = intval($id);
-		if ( 'RAND' == $order )
+		$id = intval( $id );
+		if ( 'RAND' == $order ) {
 			$orderby = 'none';
+		}
 
-		if ( !empty($include) ) {
-			$_attachments = get_posts( array( 'include' => $include, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'audio', 'order' => $order, 'orderby' => $orderby ) );
+		$args = array(
+			'post_status' => 'inherit',
+			'post_type' => 'attachment',
+			'post_mime_type' => $type,
+			'order' => $order,
+			'orderby' => $orderby
+		);
+
+		if ( ! empty( $include ) ) {
+			$args['include'] = $include;
+			$_attachments = get_posts( $args );
 
 			$attachments = array();
 			foreach ( $_attachments as $key => $val ) {
 				$attachments[$val->ID] = $_attachments[$key];
 			}
-		} elseif ( !empty($exclude)) {
-			$attachments = get_children( array( 'post_parent' => $id, 'exclude' => $exclude, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'audio', 'order' => $order, 'orderby' => $orderby) );
-		} elseif ( empty($external_urls) ) {
-			$attachments = get_children( array( 'post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'audio', 'order' => $order, 'orderby' => $orderby) );
+		} elseif ( ! empty( $exclude ) ) {
+			$args['post_parent'] = $id;
+			$args['exclude'] = $exclude;
+			$attachments = get_children( $args );
+		} else {
+			$args['post_parent'] = $id;
+			$attachments = get_children( $args );
 		}
 
-		if ( empty($attachments) && empty($external_urls) )
+		if ( empty( $attachments ) ) {
 			return '';
-
-		$skin = $this->shortcode_class( 'progression-skin' );
-
-		if ( $this->options( 'custom_skin' ) === 'true') {
-			$skin .= " progression-custom";
-		}
-		$autoplay = ( $autoplay == 'true' ? ' autoplay="autoplay"' : '');
-
-		$html = '<div class="progression-playlist-height responsive-wrapper responsive-audio" style="padding-bottom:174px;">';
-		$html .= "<audio id='playlist-{$instance}' class='progression-playlist $skin progression-audio-player playlistid-{$id}' $autoplay>";
-
-		foreach ($attachments as $attachment) {
-			$html .= "<source src='{$attachment->guid}' title='{$attachment->post_title}' type='{$attachment->post_mime_type}'/>";
 		}
 
-		foreach ($external_urls as $url) {
-			$ext = pathinfo($url, PATHINFO_EXTENSION); // lazy mime-type detection
-			$filename = pathinfo($url, PATHINFO_FILENAME); // lazy file name detection
-			$html .= "<source src='{$url}' title='{$filename}' type='audio/{$ext}'/>";
+		if ( is_feed() ) {
+			$output = "\n";
+			foreach ( $attachments as $att_id => $attachment ) {
+				$output .= wp_get_attachment_link( $att_id ) . "\n";
+			}
+			return $output;
 		}
 
-		$html .= '</audio>';
-		$html .= '</div>';
+		$outer = 22; // default padding and border of wrapper
 
-		if ( $this->options( 'size' ) === 'small') {
-			$html = '<div class="progression-small">' . $html . '</div>';
+		$default_width = 640;
+		$default_height = 360;
+
+		$theme_width = empty( $content_width ) ? $default_width : ( $content_width - $outer );
+		$theme_height = empty( $content_width ) ? $default_height : round( ( $default_height * $theme_width ) / $default_width );
+
+		$data = compact( 'type' );
+
+		// don't pass strings to JSON, will be truthy in JS
+		foreach ( array( 'tracklist', 'tracknumbers', 'images', 'artists' ) as $key ) {
+			$data[$key] = filter_var( $$key, FILTER_VALIDATE_BOOLEAN );
 		}
 
-		if ( $this->options( 'playlist' ) === 'false') {
-			$html = '<div class="playlist-height-adjust">' . $html . '</div>';
+		$tracks = array();
+		foreach ( $attachments as $attachment ) {
+			$url = wp_get_attachment_url( $attachment->ID );
+			$ftype = wp_check_filetype( $url, wp_get_mime_types() );
+			$track = array(
+				'src' => $url,
+				'type' => $ftype['type'],
+				'title' => $attachment->post_title,
+				'caption' => $attachment->post_excerpt,
+				'description' => $attachment->post_content
+			);
+
+			$track['meta'] = array();
+			$meta = wp_get_attachment_metadata( $attachment->ID );
+			if ( ! empty( $meta ) ) {
+
+				foreach ( wp_get_attachment_id3_keys( $attachment ) as $key => $label ) {
+					if ( ! empty( $meta[ $key ] ) ) {
+						$track['meta'][ $key ] = $meta[ $key ];
+					}
+				}
+
+				if ( 'video' === $type ) {
+					if ( ! empty( $meta['width'] ) && ! empty( $meta['height'] ) ) {
+						$width = $meta['width'];
+						$height = $meta['height'];
+						$theme_height = round( ( $height * $theme_width ) / $width );
+					} else {
+						$width = $default_width;
+						$height = $default_height;
+					}
+
+					$track['dimensions'] = array(
+						'original' => compact( 'width', 'height' ),
+						'resized' => array(
+							'width' => $theme_width,
+							'height' => $theme_height
+						)
+					);
+				}
+			}
+
+			if ( $images ) {
+				$id = get_post_thumbnail_id( $attachment->ID );
+				if ( ! empty( $id ) ) {
+					list( $src, $width, $height ) = wp_get_attachment_image_src( $id, 'full' );
+					$track['image'] = compact( 'src', 'width', 'height' );
+					list( $src, $width, $height ) = wp_get_attachment_image_src( $id, 'thumbnail' );
+					$track['thumb'] = compact( 'src', 'width', 'height' );
+				} else {
+					$src = wp_mime_type_icon( $attachment->ID );
+					$width = 48;
+					$height = 64;
+					$track['image'] = compact( 'src', 'width', 'height' );
+					$track['thumb'] = compact( 'src', 'width', 'height' );
+				}
+			}
+
+			$tracks[] = $track;
 		}
+		$data['tracks'] = $tracks;
 
-		return $html;
+		$safe_type = esc_attr( $type );
+		$safe_style = esc_attr( $style );
 
+		ob_start();
+
+		if ( 1 === $instance ) {
+			/**
+			 * Print and enqueue playlist scripts, styles, and JavaScript templates.
+			 *
+			 * @since 3.9.0
+			 *
+			 * @param string $type  Type of playlist. Possible values are 'audio' or 'video'.
+			 * @param string $style The 'theme' for the playlist. Core provides 'light' and 'dark'.
+			 */
+			do_action( 'wp_playlist_scripts', $type, $style );
+		} ?>
+	<div class="wp-playlist wp-<?php echo $safe_type ?>-playlist wp-playlist-<?php echo $safe_style ?> hide-playlist-meta-pro">
+		<?php if ( 'audio' === $type ): ?>
+		<div class="wp-playlist-current-item"></div>
+		<?php endif ?>
+		<<?php echo $safe_type ?> controls="controls" preload="none" width="<?php
+			echo (int) $theme_width;
+		?>"<?php if ( 'video' === $safe_type ):
+			echo ' height="', (int) $theme_height, '"';
+		else:
+			echo ' style="visibility: hidden"';
+		endif; ?>></<?php echo $safe_type ?>>
+		<div class="wp-playlist-next"></div>
+		<div class="wp-playlist-prev"></div>
+		<noscript>
+		<ol><?php
+		foreach ( $attachments as $att_id => $attachment ) {
+			printf( '<li>%s</li>', wp_get_attachment_link( $att_id ) );
+		}
+		?></ol>
+		</noscript>
+		<script type="application/json"><?php echo json_encode( $data ) ?></script>
+	</div>
+		<?php
+		return apply_filters( 'wp_playlist_shortcode', ob_get_clean() );
 	}
 
 }

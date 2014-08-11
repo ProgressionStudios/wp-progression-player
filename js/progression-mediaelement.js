@@ -1,31 +1,39 @@
-(function($) {
-    // add mime-type aliases to MediaElement plugin support
-    mejs.plugins.silverlight[0].types.push('video/x-ms-wmv');
-    mejs.plugins.silverlight[0].types.push('audio/x-ms-wma');
+/* global mejs, _wpmejsSettings */
+(function ($) {
+	// add mime-type aliases to MediaElement plugin support
+	mejs.plugins.silverlight[0].types.push('video/x-ms-wmv');
+	mejs.plugins.silverlight[0].types.push('audio/x-ms-wma');
 
-    $(function() {
+	$(function () {
+		var settings = _wpmejsProgressionSettings || {},
+			players = $('.wp-audio-shortcode, .wp-video-shortcode');
 
-    	var options = window.progression,
-    		players = $('.wp-audio-shortcode, .wp-video-shortcode');
+		settings.startVolume = parseFloat(settings.startVolume, 10);
+		settings.alwaysShowControls = "true" === settings.controls;
 
-    	if ( "true" === options.autoplay ) {
-    		$('.progression-playlist, .wp-audio-shortcode, .wp-video-shortcode').attr( 'autoplay', 'autoplay' );
+		if ( $( document.body ).hasClass( 'mce-content-body' ) ) {
+			return;
+		}
+
+		if ( typeof _wpmejsSettings !== 'undefined' ) {
+			settings.pluginPath = _wpmejsSettings.pluginPath;
+		}
+
+		settings.success = function (mejs) {
+			var autoplay = mejs.attributes.autoplay && 'false' !== mejs.attributes.autoplay;
+			if ( 'flash' === mejs.pluginType && autoplay ) {
+				mejs.addEventListener( 'canplay', function () {
+					mejs.play();
+				}, false );
+			}
+		};
+
+		players.mediaelementplayer( settings ).attr( 'preload', "true" === settings.preload );
+
+		if ( "true" === settings.autoplay ) {
+    		$players.attr( 'autoplay', 'autoplay' );
     	};
 
-    	players.attr( 'preload', options.preload );
-
-        players.mediaelementplayer({
-        	startVolume: options.startvolume, // initial volume when the player starts
-        	alwaysShowControls: ("true" === options.controls ) // Hide controls when playing and mouse is not over the video
-        });
-
-        $('.progression-playlist').mediaelementplayer({
-        	startVolume: options.startvolume, // initial volume when the player starts
-        	loop: ( "true" === options.loop ), // useful for <audio> player loops
-        	features: ['playlistfeature', 'prevtrack', 'playpause', 'nexttrack','current', 'progress', 'duration', 'volume', 'playlist'],
-        	playlist: ( "true" === options.playlist ), // Playlist Show
-        	playlistposition: 'bottom' //Playlist Location
-        });
-    });
+	});
 
 }(jQuery));

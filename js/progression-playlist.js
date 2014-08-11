@@ -1,83 +1,226 @@
-(function($) {
+/*globals window, document, jQuery, _, Backbone, _wpmejsSettings */
 
-    // supersede the default MediaFrame.Post view
-    var oldMediaFrame = wp.media.view.MediaFrame.Post;
-    wp.media.view.MediaFrame.Post = wp.media.view.MediaFrame.Post.extend({
+(function ($, _, Backbone) {
+	"use strict";
 
-        initialize: function() {
-            oldMediaFrame.prototype.initialize.apply(this, arguments);
+	var WPPlaylistView = Backbone.View.extend({
+		initialize : function (options) {
+			this.index = 0;
+			this.settings = _wpmejsProgressionSettings || {};
+			this.compatMode = $( 'body' ).hasClass( 'wp-admin' ) && $( '#content_ifr' ).length;
+			this.data = options.metadata || $.parseJSON( this.$('script').html() );
+			this.playerNode = this.$( this.data.type );
 
-            var strings = window.progression;
+			this.tracks = new Backbone.Collection( this.data.tracks );
+			this.current = this.tracks.first();
 
-            this.states.add([
-                new wp.media.controller.Library({
-                    id: 'playlist-library',
-                    filterable: 'uploaded', // allows the user to show only the files uploaded to the current post
-                    multiple: true, // selecting more than one file makes sense for a playlist
-                    menu: 'default', // extend the default menu
-                    editable: true, // allow selection to be edited via drag & drop
-                    toolbar: 'playlist', // select our custom toolbar
-                    library: wp.media.query(_.defaults({
-                        type: 'audio' // allow audio files only
-                    }, {})),
-                    title: window.progression.menuitem,
-                    priority: 100,
-                })]
-            );
+			if ( 'audio' === this.data.type ) {
+				this.currentTemplate = wp.template( 'wp-playlist-current-item' );
+				this.currentNode = this.$( '.wp-playlist-current-item' );
+			}
 
-            // event binding
-            this.on('playlist:insert', this.insert, this);
-            this.on('toolbar:create:playlist', this.createToolbar, this);
-            this.on('toolbar:render:playlist', this.renderToolbar, this);
+			this.renderCurrent();
 
-        },
+			if ( this.data.tracklist ) {
+				this.itemTemplate = wp.template( 'wp-playlist-item' );
+				this.playingClass = 'wp-playlist-playing';
+				this.renderTracks();
+			}
 
-        renderToolbar: function(view) {
-            var controller = this;
+			if ( this.isCompatibleSrc() ) {
+				this.playerNode.attr( 'src', this.current.get( 'src' ) );
+			}
 
-            // add the little view where we can edit the selection
-            this.selectionStatusToolbar(view);
+			_.bindAll( this, 'bindPlayer', 'bindResetPlayer', 'setPlayer', 'ended', 'clickTrack' );
 
-            view.set('playlist-insert', {
-                style: 'primary',
-                text: window.progression.button,
-                priority: 60,
-                requires: {
-                    selection: true
-                },
+			if ( ! _.isUndefined( window._wpmejsSettings ) ) {
+				this.settings.pluginPath = _wpmejsSettings.pluginPath;
+			}
+			this.settings.enableAutosize = false;
+			this.settings.success = this.bindPlayer;
+			this.setPlayer();
+		},
 
-                click: function() {
-                    var state = controller.state(),
-                        selection = state.get('selection');
+		bindPlayer : function (mejs) {
+			this.mejs = mejs;
+			this.mejs.addEventListener( 'ended', this.ended );
+		},
 
-                    controller.close(); // should close the window after we have selected
-                    state.trigger('playlist:insert', selection).reset();
-                }
-            });
-        },
+		bindResetPlayer : function (mejs) {
+			this.bindPlayer( mejs );
+			if ( this.isCompatibleSrc() ) {
+				this.playCurrentSrc();
+			}
+		},
 
-        // triggered when "insert" button is clicked
-        insert: function() {
+		isCompatibleSrc: function () {
+			var testNode;
 
-            var attrs = {},
-                shortcode = '';
+			if ( this.compatMode ) {
+				testNode = $( '<span><source type="' + this.current.get( 'type' ) + '" /></span>' );
 
-            // get the ids of all selected audio files
-            attrs.ids = this.state().get('selection').pluck('id');
+				if ( ! wp.media.mixin.isCompatible( testNode ) ) {
+					this.playerNode.removeAttr( 'src' );
+					this.playerNode.removeAttr( 'poster' );
+					return;
+				}
+			}
 
-            // construct playlist shortcode
-            shortcode = wp.shortcode.string({
-                tag: 'playlist',
-                attrs: attrs,
-                type: 'single'
-            });
+			return true;
+		},
 
-            // send shortcode back to editor
-            // used to be send_to_editor()
-            wp.media.editor.insert(shortcode);
+		setPlayer: function (force) {
+			if ( this.player ) {
+				this.player.pause();
+				this.player.remove();
+				this.playerNode = this.$( this.data.type );
+			}
 
-        }
+			if (force) {
+				if ( this.isCompatibleSrc() ) {
+					this.playerNode.attr( 'src', this.current.get( 'src' ) );
+				}
+				this.settings.success = this.bindResetPlayer;
+			}
 
+			/**
+			 * This is also our bridge to the outside world
+			 */
+			this.player = new MediaElementPlayer( this.playerNode.get(0), this.settings );
+		},
+
+		playCurrentSrc : function () {
+			this.renderCurrent();
+			this.mejs.setSrc( this.playerNode.attr( 'src' ) );
+			this.mejs.load();
+			this.mejs.play();
+		},
+
+		renderCurrent : function () {
+			var dimensions, defaultImage = 'wp-includes/images/media/video.png';
+			if ( 'video' === this.data.type ) {
+				if ( this.data.images && this.current.get( 'image' ) && -1 === this.current.get( 'image' ).src.indexOf( defaultImage ) ) {
+					this.playerNode.attr( 'poster', this.current.get( 'image' ).src );
+				}
+				dimensions = this.current.get( 'dimensions' ).resized;
+				this.playerNode.attr( dimensions );
+			} else {
+				if ( ! this.data.images ) {
+					this.current.set( 'image', false );
+				}
+				this.currentNode.html( this.currentTemplate( this.current.toJSON() ) );
+			}
+		},
+
+		renderTracks : function () {
+			var self = this, i = 1, tracklist = $( '<div class="wp-playlist-tracks"></div>' );
+			this.tracks.each(function (model) {
+				if ( ! self.data.images ) {
+					model.set( 'image', false );
+				}
+				model.set( 'artists', self.data.artists );
+				model.set( 'index', self.data.tracknumbers ? i : false );
+				tracklist.append( self.itemTemplate( model.toJSON() ) );
+				i += 1;
+			});
+			this.$el.append( tracklist );
+
+			this.$( '.wp-playlist-item' ).eq(0).addClass( this.playingClass );
+		},
+
+		events : {
+			'click .wp-playlist-item' : 'clickTrack',
+			'click .wp-playlist-next' : 'next',
+			'click .wp-playlist-prev' : 'prev'
+		},
+
+		clickTrack : function (e) {
+			e.preventDefault();
+
+			this.index = this.$( '.wp-playlist-item' ).index( e.currentTarget );
+			this.setCurrent();
+		},
+
+		ended : function () {
+			if ( this.index + 1 < this.tracks.length ) {
+				this.next();
+			} else {
+				this.index = 0;
+				this.current = this.tracks.at( this.index );
+				this.loadCurrent();
+			}
+		},
+
+		next : function () {
+			this.index = this.index + 1 >= this.tracks.length ? 0 : this.index + 1;
+			this.setCurrent();
+		},
+
+		prev : function () {
+			this.index = this.index - 1 < 0 ? this.tracks.length - 1 : this.index - 1;
+			this.setCurrent();
+		},
+
+		loadCurrent : function () {
+			var last = this.playerNode.attr( 'src' ) && this.playerNode.attr( 'src' ).split('.').pop(),
+				current = this.current.get( 'src' ).split('.').pop();
+
+			this.mejs && this.mejs.pause();
+
+			if ( last !== current ) {
+				this.setPlayer( true );
+			} else if ( this.isCompatibleSrc() ) {
+				this.playerNode.attr( 'src', this.current.get( 'src' ) );
+				this.playCurrentSrc();
+			}
+		},
+
+		setCurrent : function () {
+			this.current = this.tracks.at( this.index );
+
+			if ( this.data.tracklist ) {
+				this.$( '.wp-playlist-item' )
+					.removeClass( this.playingClass )
+					.eq( this.index )
+						.addClass( this.playingClass );
+			}
+
+			this.loadCurrent();
+		}
+	});
+
+    $(document).ready(function () {
+		if ( ! $( 'body' ).hasClass( 'wp-admin' ) || $( 'body' ).hasClass( 'about-php' ) ) {
+			$('.wp-playlist').each(function () {
+				return new WPPlaylistView({ el: this });
+			});
+		}
     });
 
-}(jQuery));
+	window.WPPlaylistView = WPPlaylistView;
+
+}(jQuery, _, Backbone));
+
+(function($) {
+    // loop toggle
+    MediaElementPlayer.prototype.buildtogglePlaylist = function(player, controls, layers, media) {
+        var
+        	playlist = controls.closest('.wp-playlist').find('.wp-playlist-tracks');
+
+            if (playlist.length) {
+            	// create the loop button
+            	var loop =  
+	            $('<div class="mejs-button mejs-playlist mejs-playlist-button"><button type="button" aria-controls="mep_0" title="Play/Pause" aria-label="Play/Pause"></button></div>' +
+	            '</div>')
+            	// append it to the toolbar
+	            .appendTo(controls)
+	            // add a click toggle event
+	            .click(function() {
+	            	playlist.toggle();
+	            });
+
+            };
+            
+            
+    }
+})(jQuery);
