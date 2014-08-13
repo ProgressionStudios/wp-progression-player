@@ -21,11 +21,9 @@
 
 			this.renderCurrent();
 
-			if ( this.data.tracklist ) {
-				this.itemTemplate = wp.template( 'wp-playlist-item' );
-				this.playingClass = 'wp-playlist-playing';
-				this.renderTracks();
-			}
+			this.itemTemplate = wp.template( 'wp-playlist-item' );
+			this.playingClass = 'wp-playlist-playing';
+			this.renderTracks();
 
 			if ( this.isCompatibleSrc() ) {
 				this.playerNode.attr( 'src', this.current.get( 'src' ) );
@@ -178,12 +176,10 @@
 		setCurrent : function () {
 			this.current = this.tracks.at( this.index );
 
-			if ( this.data.tracklist ) {
-				this.$( '.wp-playlist-item' )
+			this.$( '.wp-playlist-item' )
 					.removeClass( this.playingClass )
 					.eq( this.index )
 						.addClass( this.playingClass );
-			}
 
 			this.loadCurrent();
 		}
@@ -204,8 +200,9 @@
 (function($) {
     // loop toggle
     MediaElementPlayer.prototype.buildtogglePlaylist = function(player, controls, layers, media) {
-        var
-        	playlist = controls.closest('.wp-playlist').find('.wp-playlist-tracks');
+        var wpPlaylist = controls.closest('.wp-playlist'),
+        	playlist = wpPlaylist.find('.wp-playlist-tracks'),
+        	data = $.parseJSON( wpPlaylist.find('script').html() );
 
             if (playlist.length) {
             	// create the loop button
@@ -218,6 +215,11 @@
 	            .click(function() {
 	            	playlist.toggle();
 	            });
+
+	            if ( false == data.tracklist || typeof _wpmejsProgressionSettings !== 'undefined' && _wpmejsProgressionSettings.playlist !== "true"  ) {
+					playlist.hide();
+				}
+
 
             };
             
