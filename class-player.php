@@ -264,10 +264,10 @@ class Progression_Player {
 
 		$options = $this->options();
 		$options['startvolume'] = $options['startvolume'] / 100; // 80% => 0.8
-		$options['features'] = array( 'playpause','current','progress','duration','volume','togglePlaylist' ); // 80% => 0.8
+		$options['features'] = array( 'playpause', 'current', 'progress', 'duration', 'volume', 'togglePlaylist' ); // 80% => 0.8
 
 		// hand over options to javascript object
-		wp_localize_script( 'wp-mediaelement', '_wpmejsProgressionSettings', $options);
+		wp_localize_script( 'mediaelement', '_wpmejsProgressionSettings', $options);
 		
 		wp_deregister_script( 'wp-playlist' );
 		wp_register_script( 'wp-playlist', plugins_url( 'js/progression-playlist.js', __FILE__ ), array( 'wp-util', 'backbone', 'mediaelement' ), false, true );
