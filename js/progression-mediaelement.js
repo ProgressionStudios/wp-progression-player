@@ -8,7 +8,8 @@
 		var settings = _wpmejsProgressionSettings || {},
 			players = $('.wp-audio-shortcode, .wp-video-shortcode');
 
-		settings.startVolume = parseFloat(settings.startVolume, 10);
+		settings.startVolume = parseFloat(settings.startvolume, 10);
+
 		settings.alwaysShowControls = "true" === settings.controls;
 
 		if ( $( document.body ).hasClass( 'mce-content-body' ) ) {
