@@ -77,6 +77,7 @@ class Progression_Player {
 			'controls' => 'false',
 			'size' => 'normal',
 			'playlist' => 'true',
+			'playlist_meta' => 'true',
 			'active_skin' => 'default',
 			'custom_skin' => 'false',
 			'colors' => array(
@@ -385,17 +386,6 @@ class Progression_Player {
  		);
 
 	 	add_settings_field(
-	 		$this->plugin_slug . '_autoplay',
-			__( 'Enable autoplay' ),
-			array( $this, 'settings_field_defaults_cb' ),
-			'progression',
-			$this->plugin_slug . '_defaults',
-			array(
-				'key' => 'autoplay'
-			)
-		);
-
-	 	add_settings_field(
 	 		$this->plugin_slug . '_controls',
 			__( 'Always show controls' ),
 			array( $this, 'settings_field_defaults_cb' ),
@@ -432,6 +422,17 @@ class Progression_Player {
 			$this->plugin_slug . '_playlist',
 			array(
 				'key' => 'playlist'
+			)
+		);
+
+		add_settings_field(
+	 		$this->plugin_slug . '_playlist_meta',
+			__( 'Show playlist meta information' ),
+			array( $this, 'settings_field_defaults_cb' ),
+			'progression',
+			$this->plugin_slug . '_playlist',
+			array(
+				'key' => 'playlist_meta'
 			)
 		);
 
@@ -548,8 +549,8 @@ class Progression_Player {
 
 		if (
 			'controls' === $key ||
-			'autoplay' === $key ||
-			'playlist' === $key ) {
+			'playlist' === $key ||
+			'playlist_meta' === $key ) {
 			$checked = checked( $value, 'true', false );
 			echo "<input type='hidden' value='false' name='$name'>";
 			echo "<input name='$name' type='checkbox' value='true' $checked />";
@@ -853,6 +854,7 @@ class Progression_Player {
 
 		$safe_type = esc_attr( $type );
 		$safe_style = esc_attr( $style );
+		$playlist_meta = 'true' == $this->options( 'playlist_meta' ) ? "" : " hide-playlist-meta-pro ";
 
 		ob_start();
 
@@ -867,7 +869,7 @@ class Progression_Player {
 			 */
 			do_action( 'wp_playlist_scripts', $type, $style );
 		} ?>
-	<div class="wp-playlist wp-<?php echo $safe_type ?>-playlist wp-playlist-<?php echo $safe_style ?> hide-playlist-meta-pro">
+	<div class="wp-playlist wp-<?php echo $safe_type ?>-playlist wp-playlist-<?php echo $safe_style ?> <?php echo $playlist_meta ?>">
 		<?php if ( 'audio' === $type ): ?>
 		<div class="wp-playlist-current-item"></div>
 		<?php endif ?>
