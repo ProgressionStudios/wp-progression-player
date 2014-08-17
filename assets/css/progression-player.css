@@ -1399,67 +1399,67 @@ body .progression-skin.progression-default-dark .mejs-controls .mejs-horizontal-
 =============================================== 15. MINIMAL DARK SKIN  ===============================================
 */
 /* Main Button Color */
-.progression-skin.progression-dark-light .mejs-controls button, body .progression-skin.progression-dark-light .wp-playlist-prev, body .progression-skin.progression-dark-light .wp-playlist-next {
+.progression-skin.progression-minimal-dark .mejs-controls button, body .progression-skin.progression-minimal-dark .wp-playlist-prev, body .progression-skin.progression-minimal-dark .wp-playlist-next {
 	color:#eeeeee;
 }
 
 /* Main Button Hover Color */
-body .progression-skin.progression-dark-light .mejs-controls .mejs-fullscreen-button:hover,
-.progression-skin.progression-dark-light .mejs-controls button:hover, body .progression-skin.progression-dark-light .wp-playlist-prev:hover, body .progression-skin.progression-dark-light .wp-playlist-next:hover {
+body .progression-skin.progression-minimal-dark .mejs-controls .mejs-fullscreen-button:hover,
+.progression-skin.progression-minimal-dark .mejs-controls button:hover, body .progression-skin.progression-minimal-dark .wp-playlist-prev:hover, body .progression-skin.progression-minimal-dark .wp-playlist-next:hover {
 	color:#ffffff;
 }
 
-body .progression-skin.progression-dark-light .mejs-inner .mejs-time .mejs-currenttime, body .progression-skin.progression-dark-light .mejs-inner .mejs-time  .mejs-duration {
+body .progression-skin.progression-minimal-dark .mejs-inner .mejs-time .mejs-currenttime, body .progression-skin.progression-minimal-dark .mejs-inner .mejs-time  .mejs-duration {
 	color:#ffffff;
 }
 
-body .progression-skin.progression-dark-light .mejs-container .mejs-controls {
+body .progression-skin.progression-minimal-dark .mejs-container .mejs-controls {
 	background:#202020;
 }
 
 
-body .progression-skin.progression-dark-light .mejs-controls .mejs-fullscreen-button:hover,
-body .progression-skin.progression-dark-light .wp-audio-playlist .wp-playlist-prev:hover, body .progression-skin.progression-dark-light .wp-playlist-next:hover,
-body .progression-skin.progression-dark-light .mejs-controls .mejs-playpause-button:hover {
+body .progression-skin.progression-minimal-dark .mejs-controls .mejs-fullscreen-button:hover,
+body .progression-skin.progression-minimal-dark .wp-audio-playlist .wp-playlist-prev:hover, body .progression-skin.progression-minimal-dark .wp-playlist-next:hover,
+body .progression-skin.progression-minimal-dark .mejs-controls .mejs-playpause-button:hover {
 	background:#2a2a2a; /* IE Fall-Back */
 }
 
 
 
-body .progression-skin.progression-dark-light .mejs-container {
+body .progression-skin.progression-minimal-dark .mejs-container {
 	border:1px solid #202020;
 }
 
 
-body .progression-skin.progression-dark-light .wp-playlist-prev, body .progression-skin.progression-dark-light .wp-playlist-next,
-.progression-skin.progression-dark-light .mejs-controls .mejs-playpause-button, .progression-skin.progression-dark-light .mejs-controls .mejs-playpause-button  button,
-.progression-skin.progression-dark-light .mejs-controls .mejs-mute button, .progression-skin.progression-dark-light .mejs-controls .mejs-unmute button
+body .progression-skin.progression-minimal-dark .wp-playlist-prev, body .progression-skin.progression-minimal-dark .wp-playlist-next,
+.progression-skin.progression-minimal-dark .mejs-controls .mejs-playpause-button, .progression-skin.progression-minimal-dark .mejs-controls .mejs-playpause-button  button,
+.progression-skin.progression-minimal-dark .mejs-controls .mejs-mute button, .progression-skin.progression-minimal-dark .mejs-controls .mejs-unmute button
   {
 	border-right:1px solid #202020;
 }
 
-body .progression-skin.progression-dark-light .mejs-inner .mejs-controls .mejs-duration-container {
+body .progression-skin.progression-minimal-dark .mejs-inner .mejs-controls .mejs-duration-container {
 	border-right:1px solid #202020;
 }
 
-body .progression-skin.progression-dark-light .mejs-controls .mejs-fullscreen-button {
+body .progression-skin.progression-minimal-dark .mejs-controls .mejs-fullscreen-button {
 	border-left:1px solid #202020;
 	
 }
 
-body .progression-skin.progression-dark-light .wp-playlist-tracks {
+body .progression-skin.progression-minimal-dark .wp-playlist-tracks {
 	border-left:1px solid #202020;
 	border-right:1px solid #202020;
 	border-bottom:1px solid #202020;
 	border-top:1px solid #202020;
 }
-body .progression-skin.progression-dark-light  .wp-playlist-item {
+body .progression-skin.progression-minimal-dark  .wp-playlist-item {
 	border-color:#202020;
 }
 
 
 
-body .progression-skin.progression-dark-light .wp-playlist-tracks {
+body .progression-skin.progression-minimal-dark .wp-playlist-tracks {
 	border-left:1px solid #202020;
 	border-right:1px solid #202020;
 	border-bottom:1px solid #202020;
@@ -1469,18 +1469,18 @@ body .progression-skin.progression-dark-light .wp-playlist-tracks {
 
 
 
-body .progression-skin.progression-dark-light .wp-playlist-item.wp-playlist-playing, body .progression-skin.progression-dark-light .wp-playlist-item.wp-playlist-playing:hover {
+body .progression-skin.progression-minimal-dark .wp-playlist-item.wp-playlist-playing, body .progression-skin.progression-minimal-dark .wp-playlist-item.wp-playlist-playing:hover {
 	color:#ffffff;
 	background:#000000;
 	background: rgba(0, 0, 0, 0.35);
 }
 
-body .progression-skin.progression-dark-light  .wp-playlist-item {
+body .progression-skin.progression-minimal-dark  .wp-playlist-item {
 	color: #999999;  background-color: rgba(250, 250, 250, 0.1);
 
 }
 
-body .progression-skin.progression-dark-light  .wp-playlist-item:hover {
+body .progression-skin.progression-minimal-dark  .wp-playlist-item:hover {
 	background-color: #000000;
 	background-color: rgba(250, 250, 250, 0.15);
 }
@@ -1491,19 +1491,19 @@ body .progression-skin.progression-dark-light  .wp-playlist-item:hover {
 
 /* Timer */
 
-body .progression-skin.progression-dark-light .mejs-controls .mejs-time-rail .mejs-time-total {
+body .progression-skin.progression-minimal-dark .mejs-controls .mejs-time-rail .mejs-time-total {
 	background:#5c5c5c; /* IE Fall-Back */
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	
 }
-body .progression-skin.progression-dark-light .mejs-controls .mejs-time-rail .mejs-time-loaded { 
+body .progression-skin.progression-minimal-dark .mejs-controls .mejs-time-rail .mejs-time-loaded { 
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	background:#4c4c4c; /* IE Fall-Back */
 }
 
-body .progression-skin.progression-dark-light .mejs-controls .mejs-time-rail .mejs-time-current {
+body .progression-skin.progression-minimal-dark .mejs-controls .mejs-time-rail .mejs-time-current {
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	background:#c2c2c2; /* IE Fall-Back */
@@ -1512,7 +1512,7 @@ body .progression-skin.progression-dark-light .mejs-controls .mejs-time-rail .me
 
 
 
-body .progression-skin.progression-dark-light .mejs-controls .mejs-time-rail .mejs-time-handle  {
+body .progression-skin.progression-minimal-dark .mejs-controls .mejs-time-rail .mejs-time-handle  {
 	display: block; margin: 0; padding:0px; border: 0;
 	width: 2px;
 	height: 2px;
@@ -1530,14 +1530,14 @@ body .progression-skin.progression-dark-light .mejs-controls .mejs-time-rail .me
 
 
 
-body .progression-skin.progression-dark-light .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-total {
+body .progression-skin.progression-minimal-dark .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-total {
 	background:#5c5c5c; /* IE Fall-Back */
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 }
 
 /* Volume Bar Background Volume On */
-body .progression-skin.progression-dark-light .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-current {
+body .progression-skin.progression-minimal-dark .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-current {
 	background:#c2c2c2; /* IE Fall-Back */
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
@@ -1545,7 +1545,7 @@ body .progression-skin.progression-dark-light .mejs-controls .mejs-horizontal-vo
 
 
 /* Volume Bar Volume Handle */
-body .progression-skin.progression-dark-light .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-handle {
+body .progression-skin.progression-minimal-dark .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-handle {
 	display: block;
 	position: absolute;
 	width: 4px;
