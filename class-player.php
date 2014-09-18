@@ -265,7 +265,7 @@ class Progression_Player {
 
 		$options = $this->options();
 		$options['startvolume'] = $options['startvolume'] / 100; // 80% => 0.8
-		$options['features'] = array( 'playpause', 'current', 'progress', 'duration', 'volume', 'togglePlaylist' ); // 80% => 0.8
+		$options['features'] = array( 'playpause', 'current', 'progress', 'duration', 'volume', 'togglePlaylist', 'fullscreen' ); // 80% => 0.8
 
 		// hand over options to javascript object
 		wp_localize_script( 'mediaelement', '_wpmejsProgressionSettings', $options);
