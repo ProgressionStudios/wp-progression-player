@@ -3,18 +3,19 @@
 Product Name: Audio + Video Player
 Product URI: http://progressionstudios.com/
 Description: A video and audio player
-Version: 2.0
+Version: 1.4
 License: GNU General Public License version 3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Author: Progression Studios
 Author URI: http://progressionstudios.com/themeforest
 */
 
+
 /*  Table of Contents 
-01. MOBILE/TABLET STYLES
-02. FONT ICONS + CSS TRANSITIONS
-03. PLAYER ICON COLORS 
-04. PLAYER CONTAINERS
+01. ICON FONT AND CSS3 TRANSITIONS
+02. MOBILE/TABLET STYLES
+03. PLAYER ICON COLORS
+04. PLAYER CONTAINERS 
 05. PLAYER BUTTONS
 06. PLAYER TIMER
 07. PLAYER VOLUME
@@ -22,78 +23,55 @@ Author URI: http://progressionstudios.com/themeforest
 09. PLAYLIST STYLES
 10. PLAYER SMALL SIZE
 11. PLAYER DROP SHADOW
-12. FANCY SKIN
+12. FANCY SKIN 
 13. MINIMAL LIGHT SKIN
 14. DARK SKIN
 15. MINIMAL DARK SKIN
 */
 
 
+
 /*
-=============================================== 01. MOBILE/TABLET STYLES ===============================================
+=============================================== 01. ICON FONT AND CSS3 TRANSITIONS ===============================================
+*/
+@import url('../genericons/genericons.css');
+.progression-skin .mejs-overlay-button:before { -webkit-font-smoothing: antialiased; content: '\f452'; display: inline-block; font: normal 32px/1.125 Genericons; position: absolute; top: 1px; left: 10px;}
+.progression-skin .mejs-controls .mejs-button button { -webkit-font-smoothing: antialiased; background: none; color: #fff; display: inline-block; font: normal 16px/1 Genericons; }
+.progression-skin .mejs-controls .mejs-button button:focus { outline: none; }
+.progression-skin .mejs-playpause-button.mejs-play button:before { content: '\f452'; }
+.progression-skin .mejs-playpause-button.mejs-pause button:before { content: '\f448'; }
+.progression-skin .mejs-playlist-button button:before { content: "\f419";  }
+.progression-skin .mejs-volume-button.mejs-mute button:before { content: '\f109'; font-size: 20px; position: absolute; top: -2px; left: 0; }
+.progression-skin .mejs-volume-button.mejs-unmute button:before { content: '\f109'; left: 0; position: absolute; top: 0; }
+.progression-skin .mejs-fullscreen-button button:before { content: '\f474'; }
+.progression-skin .mejs-fullscreen-button.mejs-unfullscreen button:before { content: '\f406'; }
+.progression-skin .wp-playlist .wp-playlist-next, .progression-skin .wp-playlist .wp-playlist-prev { cursor:pointer; -webkit-font-smoothing: antialiased; font: normal 16px/1 Genericons; display:block; width:40px; height:40px; position:relative; }
+.progression-skin .wp-playlist .wp-playlist-next:before { content: '\f458'; }
+.progression-skin .wp-playlist .wp-playlist-prev:before { content: '\f459'; }
+
+/* CSS TRANSITIONS */
+body .progression-skin button, .mejs-overlay-button, .wp-playlist .wp-playlist-next, .wp-playlist .wp-playlist-prev,
+body .progression-skin  .wp-playlist-item {
+	-webkit-transition-duration: 150ms; -webkit-transition-property: color, background, opacity; -webkit-transition-timing-function: ease-in-out;
+	-moz-transition-duration: 150ms; -moz-transition-property: color, background, opacity; -moz-transition-timing-function: ease-in-out;
+	-o-transition-duration: 150ms; -o-transition-property: color, background, opacity; -o-transition-timing-function: ease-in-out;
+	transition-duration: 150ms; transition-property: color, background, opacity;
+}
+
+/*
+=============================================== 02. MOBILE/TABLET STYLES ===============================================
 */
 /* -- This Code Removes Audio Controls on Mobile/Tablet  -- */
 @media only screen and (max-width: 959px) {
 
-/* Remove Playlist Left/Right */
-.progression-skin .wp-playlist-next,
-.progression-skin .wp-playlist-prev  {display:none !important;}
-body .progression-skin .wp-audio-playlist .mejs-controls .mejs-playpause-button { margin-left:0px !important; margin-right:0px !important; }
-body .progression-skin .wp-audio-playlist .wp-playlist-tracks { margin-top:0px !important; }
+	/* Remove Playlist Left/Right */
+	body .progression-skin .wp-playlist.wp-audio-playlist .mejs-container .mejs-inner .mejs-controls .mejs-playpause-button {
+		margin-left:0px !important; margin-right:0px !important;
+	}
+	.progression-skin .wp-playlist.wp-audio-playlist .wp-playlist-next, .progression-skin  .wp-playlist.wp-audio-playlist .wp-playlist-prev {
+		display:none;
+	}
 
-
-}
-
-
-/*
-=============================================== 02. FONT ICONS + CSS TRANSITIONS ===============================================
-*/
-/* FONT AWESOME ICONs */
-body .progression-skin .wp-playlist-prev, body .progression-skin .wp-playlist-next,
-.progression-skin .mejs-controls .mejs-fullscreen-button button,
-.progression-skin .mejs-overlay-button, 
-.progression-skin .mejs-controls .mejs-show-playlist button, .progression-skin  .mejs-controls .mejs-hide-playlist button,
-.progression-skin .mejs-overlay-button, .progression-skin .mejs-overlay:hover .mejs-overlay-button,
-.progression-skin .mejs-controls .mejs-fullscreen-button button, .progression-skin .mejs-controls .mejs-unfullscreen button, .progression-skin .mejs-controls .mejs-playpause-button button, .progression-skin .mejs-controls .mejs-mute button, .progression-skin .mejs-controls .mejs-unmute button,
-.progression-skin .mejs-controls .mejs-playlist button  {
-	font-family: FontAwesome;
-	font-weight: normal;
-	font-style: normal;
-	text-decoration: inherit;
-	-webkit-font-smoothing: antialiased;
-}
-
-
-.progression-skin .mejs-controls .mejs-playpause-button  button:before { content: "\f04b";}
-.progression-skin .mejs-controls .mejs-pause button:before  { content: "\f04c"; }
-
-.progression-skin .mejs-controls .mejs-mute button:before { content: "\f028"; }
-.progression-skin .mejs-controls .mejs-unmute button:before { content: "\f026"; }
-
-.progression-skin .mejs-controls .mejs-fullscreen-button button:before { content: "\f0b2"; }
-.progression-skin .mejs-controls .mejs-unfullscreen button:before { content: "\f0b2"; }
-.progression-skin .mejs-overlay-button:before { content: "\f04b"; }
-
-.progression-skin .mejs-playlist-button button:before { content: "\f03a"; }
-
-
-
-/* CSS TRANSITIONS */
-body .progression-skin .wp-audio-playlist .wp-playlist-prev, body .progression-skin .wp-playlist-next,
-body .progression-skin button, .progression-skin .mejs-controls .mejs-playpause-button, .mejs-overlay-button,
-body .progression-skin  .wp-playlist-item
- {
-	-webkit-transition-duration: 200ms;
-	-webkit-transition-property: color, background, opacity;
-	-webkit-transition-timing-function: ease-in-out;
-	-moz-transition-duration: 200ms;
-	-moz-transition-property: color, background, opacity;
-	-moz-transition-timing-function: ease-in-out;
-	-o-transition-duration: 200ms;
-	-o-transition-property: color, background, opacity;
-	-o-transition-timing-function: ease-in-out;
-	transition-duration: 200ms;
-	transition-property: color, background, opacity;
 }
 
 
@@ -103,16 +81,17 @@ body .progression-skin  .wp-playlist-item
 =============================================== 03. PLAYER ICON COLORS ===============================================
 */
 /* Main Button Color */
-.progression-skin .mejs-controls button, body .progression-skin .wp-playlist-prev, body .progression-skin .wp-playlist-next {
+.progression-skin .wp-playlist .wp-playlist-next, .progression-skin  .wp-playlist .wp-playlist-prev,
+body .progression-skin .mejs-inner .mejs-controls span,
+body .progression-skin .mejs-inner .mejs-controls button {
 	color:#868686;
 }
 
 /* Main Button Hover Color */
-.progression-skin .mejs-controls button:hover, body .progression-skin .wp-playlist-prev:hover, body .progression-skin .wp-playlist-next:hover {
+.progression-skin .wp-playlist .wp-playlist-next:hover, .progression-skin  .wp-playlist .wp-playlist-prev:hover,
+body .progression-skin .mejs-inner .mejs-controls button:hover {
 	color:#555555;
 }
-
-
 
 
 /*
@@ -122,11 +101,7 @@ body .progression-skin  .wp-playlist-item
 body .progression-skin .mejs-container {
 	border:1px solid #b5b5b5;
 	background:#000000;
-}
-
-body .progression-skin .wp-playlist .mejs-container {
-	border-bottom:0px;
-	position:relative;
+	margin:0px;
 }
 
 body .progression-skin .mejs-container.mejs-audio {
@@ -134,8 +109,7 @@ body .progression-skin .mejs-container.mejs-audio {
 }
 
 
-
-body .progression-skin .mejs-container .mejs-controls {
+body .progression-skin .mejs-container .mejs-controls, .progression-skin .wp-playlist .wp-playlist-next, .progression-skin  .wp-playlist .wp-playlist-prev {
 	height:40px;
 	background:#ffffff; /* IE Fall-Back */
 	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#eeeeee), to(#FFFFFF));  /* Safari 4+, Chrome 1-9 */
@@ -147,8 +121,10 @@ body .progression-skin .mejs-container .mejs-controls {
 }
 
 
-body .progression-skin .wp-audio-playlist .wp-playlist-prev:hover, body .progression-skin .wp-playlist-next:hover,
-body .progression-skin .mejs-controls .mejs-playpause-button:hover {
+body .progression-skin .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button button:hover,
+body .progression-skin .mejs-container .mejs-controls .mejs-playlist button:hover,
+.progression-skin .wp-playlist .wp-playlist-next:hover, .progression-skin  .wp-playlist .wp-playlist-prev:hover,
+body .progression-skin .mejs-container .mejs-controls .mejs-playpause-button button:hover {
 	background: #eeeeee; /* IE Fall-Back */
 	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#ffffff), to(#f0f0f0));  /* Safari 4+, Chrome 1-9 */
 	background-image: -webkit-linear-gradient(bottom, #ffffff, #f0f0f0);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
@@ -158,79 +134,61 @@ body .progression-skin .mejs-controls .mejs-playpause-button:hover {
 	background-image: linear-gradient(bottom, #ffffff 0%, #f0f0f0 100%);
 }
 
+body .progression-skin .mejs-container .mejs-controls .mejs-playlist {
+	width:35px;
+}
+body .progression-skin .mejs-container .mejs-controls .mejs-playlist button {
+	font-size:12px;
+	height:40px;
+	width:35px;
+	margin:0px;
+	border-left:1px solid #b5b5b5;
+}
+
+
+
 
 
 /*
 =============================================== 05. PLAYER BUTTONS ===============================================
 */
-/* BUTTON STYLES */
-body .progression-skin .wp-playlist-prev, body .progression-skin .wp-playlist-next,
-.progression-skin .mejs-controls .mejs-playpause-button, .progression-skin .mejs-controls .mejs-playpause-button  button,
-.progression-skin .mejs-controls .mejs-mute button, .progression-skin .mejs-controls .mejs-unmute button
-  {
+body .progression-skin .mejs-container .mejs-controls .mejs-playpause-button {
+	margin:0px;
+	padding:0px;
+	width:48px;
+}
+body .progression-skin .mejs-container .mejs-controls .mejs-playpause-button button {
 	margin:0px;
 	padding:0px;
 	height:40px;
 	width:40px;
-	outline:none;
+	font-size:22px;
 	border-right:1px solid #b5b5b5;
-	background-image:none;
 }
-
-
-.progression-skin .mejs-controls .mejs-playpause-button  button,
-.progression-skin .mejs-controls .mejs-mute button, .progression-skin .mejs-controls .mejs-unmute button {
-	border-right:none !important;
-}
-
-
-.progression-skin .mejs-controls .mejs-playpause-button  button:before,
-.progression-skin .mejs-controls .mejs-mute button:before, .progression-skin .mejs-controls .mejs-unmute button:before,
-.progression-skin .mejs-controls .mejs-playlist button:before
- {
-	font-size:17px;
-	line-height:40px;
-	text-decoration: inherit;
-	display: inline-block;
-} 
-
-/* Smaller Pause Button  */
-body .progression-skin .mejs-controls .mejs-pause button:before  {
-	font-size:15px;
-}
-
-
-
-/* Time Rail Positioning */
-body .progression-skin .mejs-inner .mejs-controls .mejs-time {
-	height: 27px; /* Needs to add to total height */
-	padding-top:13px; /* Needs to add to total height */
-}
-
-
-body .progression-skin .mejs-controls div.mejs-time-rail {
-	padding-top:10px;
-}
-
-/* Volumne Rail Positioning */
-body .progression-skin .mejs-controls div.mejs-horizontal-volume-slider {
-	margin-top:5px;
-}
-
 
 
 
 /*
 =============================================== 06. PLAYER TIMER ===============================================
 */
-body .progression-skin .mejs-controls .mejs-time-rail span {
-	height:10px;
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
+body .progression-skin .mejs-container .mejs-controls .mejs-duration-container {
+	border-right:1px solid #b5b5b5;
+	margin-right:3px;
+}
+body .progression-skin .mejs-container .mejs-controls .mejs-duration {
+	margin-right:6px;
 }
 
-body .progression-skin .mejs-controls .mejs-time-rail .mejs-time-total {
+body .progression-skin .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-total ,
+body .progression-skin .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-loaded,
+body .progression-skin .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-current {
+	height:10px;
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+}
+
+body .progression-skin .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-total {
 	background:#d5d5d5; /* IE Fall-Back */
 	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#d5d5d5), to(#c6c6c6));  /* Safari 4+, Chrome 1-9 */
 	background-image: -webkit-linear-gradient(bottom, #d5d5d5, #c6c6c6);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
@@ -242,7 +200,8 @@ body .progression-skin .mejs-controls .mejs-time-rail .mejs-time-total {
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.15);
 	
 }
-body .progression-skin .mejs-controls .mejs-time-rail .mejs-time-loaded { 
+
+body .progression-skin .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-loaded { 
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
 	background:#aaaaaa; /* IE Fall-Back */
@@ -254,7 +213,8 @@ body .progression-skin .mejs-controls .mejs-time-rail .mejs-time-loaded {
 	background-image: linear-gradient(bottom, #c6c6c6 0%, #aaaaaa 100%);
 }
 
-body .progression-skin .mejs-controls .mejs-time-rail .mejs-time-current {
+
+body .progression-skin .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-current {
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
 	background:#666666; /* IE Fall-Back */
@@ -268,8 +228,7 @@ body .progression-skin .mejs-controls .mejs-time-rail .mejs-time-current {
 }
 
 
-
-/* -------------------- D. Handle and Timer  -------------------- */
+/* -------------------- A. Handle and Timer  -------------------- */
 body .progression-skin .mejs-controls .mejs-time-rail .mejs-time-handle  {
 	display: block; margin: 0; padding:0px; border: 0;
 	width: 6px;
@@ -279,7 +238,6 @@ body .progression-skin .mejs-controls .mejs-time-rail .mejs-time-handle  {
 	border-radius: 12px;
 	top:-3px;
 	left:-8px;
-	
 	-webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.25);
 	box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.25);
 	border:5px solid #eaeaea;
@@ -293,15 +251,9 @@ body .progression-skin .mejs-controls .mejs-time-rail .mejs-time-handle  {
 }
 
 body .progression-skin .mejs-controls .mejs-time-rail .mejs-time-float {
-	width: 38px;
-	height: 17px;
-	top: -28px;
-	margin-left: -19px !important;
 	background: #909090;
 	border-color:#909090;
 	background: rgba(0, 0, 0, 0.5); 
-	color:#ffffff;
-	
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
@@ -310,6 +262,7 @@ body .progression-skin .mejs-controls .mejs-time-rail .mejs-time-float {
 body .progression-skin .mejs-controls .mejs-time-rail .mejs-time-float-current {
 	margin:3px 4px 4px 4px;
 	font-size:10px;
+	color:#ffffff;
 }
 
 body .progression-skin .mejs-controls .mejs-time-rail .mejs-time-float-corner {
@@ -320,56 +273,42 @@ body .progression-skin .mejs-controls .mejs-time-rail .mejs-time-float-corner {
 
 
 
-/* -------------------- E. Time (Current / Duration)  -------------------- */
+/* -------------------- B. Time (Current / Duration)  -------------------- */
+body .progression-skin .mejs-inner .mejs-controls .mejs-currenttime-container {
+	margin-right:7px;
+}
+
 body .progression-skin .mejs-inner .mejs-controls .mejs-time {
 	height: 27px;
-	padding: 13px 2px 0 2px;
-	margin-left:5px;
-	margin-right:8px;
 }
-
-body .progression-skin .mejs-inner .mejs-controls .mejs-duration-container {
-	border-right:1px solid #b5b5b5;
-	padding: 13px 10px 0 2px;
-	margin-left:5px;
-	margin-right:8px;
-}
-
-body .progression-playlist-height .progression-skin .mejs-inner .mejs-controls .mejs-time.mejs-currenttime-container { 
-	margin-right:-2px;
-	padding-right:0px;
-	padding-left:8px;
-}
-
-
 
 body .progression-skin .mejs-inner .mejs-time .mejs-currenttime, .progression-skin .mejs-inner .mejs-time  .mejs-duration {
-	color:#aaaaaa ;
+	color:#aaaaaa;
 }
 
-.progression-skin .mejs-controls .mejs-playlist button
-  {
-	margin:0px;
-	padding:0px;
-	height:40px;
-	width:40px;
-	outline:none;
-	border-left:1px solid #b5b5b5;
-	background-image:none;
-	border-radius: 0;
+
+/* Time Rail Positioning */
+body .progression-skin .mejs-inner .mejs-controls .mejs-time {
+	padding-top:13px;
 }
+body .progression-skin .mejs-controls div.mejs-time-rail {
+	padding-top:10px;
+}
+
+/* Volumne Rail Positioning */
+body .progression-skin .mejs-controls div.mejs-horizontal-volume-slider {
+	margin-top:5px;
+}
+
 
 
 /*
 =============================================== 07. PLAYER VOLUME ===============================================
 */
-body .progression-skin .mejs-controls .mejs-volume-button button {
-	position:relative;
-	left:-3px;
-}
-
-body .progression-skin .mejs-controls .mejs-volume-button.mejs-unmute button {
-	left:-7px;
+.progression-skin .mejs-container .mejs-inner .mejs-controls .mejs-volume-button {
+	padding-top:5px;
+	margin-top:0px;
+	margin-right:3px;
 }
 
 
@@ -432,83 +371,52 @@ body .progression-skin .mejs-controls .mejs-horizontal-volume-slider .mejs-horiz
 /*
 =============================================== 08. VIDEO STYLES ===============================================
 */
-/* Full Screen Button */
-body .progression-skin .mejs-controls .mejs-fullscreen-button {
-	height:40px;
-	width:30px;
-	margin-top:0px;
-	padding:0px;
+body .progression-skin .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button {
 	border-left:1px solid #b5b5b5;
-	
-}
-body .progression-skin .mejs-controls .mejs-fullscreen-button:hover {
-	background: #ffffff;
-	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#ffffff), to(#f0f0f0));  /* Safari 4+, Chrome 1-9 */
-	background-image: -webkit-linear-gradient(bottom, #ffffff, #f0f0f0);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
-	background-image: -moz-linear-gradient(bottom, #ffffff, #f0f0f0);  /* Firefox 3.6+ */
-	background-image: -ms-linear-gradient(bottom, #ffffff, #f0f0f0); /* IE 10+ */
-	background-image: -o-linear-gradient(bottom, #ffffff, #f0f0f0); /* Opera 11.10+ */
-	background-image: linear-gradient(bottom, #ffffff 0%, #f0f0f0 100%);
-}
-
-body .progression-skin .mejs-controls .mejs-fullscreen-button button {
-	background-image:none;
+	margin:0px;
 	height:40px;
-	margin-top:0px;
 }
 
-body .progression-skin .mejs-controls .mejs-fullscreen-button button:before {
-	position:relative;
-	left:3px;
-	font-size:12px;
-	content: "\f0b2";
-	text-decoration: inherit;
-	display: inline-block;
+body .progression-skin .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button button {
+	margin:0px;
+	height:40px;
+	width:26px;
 }
 
-body .progression-skin .mejs-controls .mejs-unfullscreen button {
-	background-image:none;
+body .progression-skin .mejs-container .mejs-inner .mejs-controls .mejs-volume-button .mejs-volume-slider {
+    top: -115px;
 }
 
 
-body .progression-skin .mejs-controls .mejs-unfullscreen button:before {
-	position:relative;
-	left:3px;
-	font-size:12px;
-	content: "\f0b2";
-	text-decoration: inherit;
-	display: inline-block;
-}
-
-
-
-/* Overlay Video Button */
-body .progression-skin .mejs-overlay-button {
+body .progression-skin .mejs-video.mejs-container .mejs-layers .mejs-layer .mejs-overlay-button {
 	background:none;
 	background:#000000;
 	background: rgba(0, 0, 0, 0.75);
+    position: absolute;
+    top: 50%;
+    left: 50%;
 	width: 60px;
 	height: 60px;
-	margin:-30px 0 0 -30px !important;
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
-	border-radius: 4px;
+	margin:-35px 0 0 -30px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
 }
-body .progression-skin .mejs-overlay-button:before {
+
+body .progression-skin .mejs-video.mejs-container .mejs-layers .mejs-layer .mejs-overlay-button:before {
 	color:#ffffff;
 	line-height:1;
-	font-size:30px;
-	content: "\f04b";
+	font-size:36px;
 	text-decoration: inherit;
 	display: inline-block;
-	left:20px;
-	top:15px;
+	left:13px;
+	top:13px;
 	margin:0px;
 	padding:0px;
 	position:relative;
 }
 
-body .progression-skin .mejs-overlay:hover .mejs-overlay-button {
+body .progression-skin .mejs-video.mejs-container .mejs-layers .mejs-layer.mejs-overlay:hover .mejs-overlay-button {
 	background:none;
 	background:#000000;
 	background: rgba(0, 0, 0, 0.95);
@@ -516,43 +424,77 @@ body .progression-skin .mejs-overlay:hover .mejs-overlay-button {
 
 
 
-
 /*
 =============================================== 09. PLAYLIST STYLES ===============================================
 */
 
-body .progression-skin .hide-playlist-meta-pro .wp-playlist-current-item {
-	display:none !important;
+body .progression-skin .wp-playlist.wp-audio-playlist .mejs-container .mejs-inner .mejs-controls .mejs-playpause-button {
+	margin-left:40px;
+	margin-right:40px;
 }
+
+.progression-skin .wp-playlist.wp-audio-playlist .wp-playlist-next, .progression-skin  .wp-playlist.wp-audio-playlist .wp-playlist-prev {
+	line-height:40px; 
+	margin-bottom:-40px;
+	float:left;
+	text-align:center;
+	top:-41px;
+	left:1px;
+	position:relative;
+	z-index:1;
+	font-size:15px;
+	border-right:1px solid #b5b5b5;
+}
+
+.progression-skin  .wp-playlist.wp-audio-playlist .wp-playlist-next {
+	left:81px;
+}
+
+.progression-skin .wp-playlist.wp-video-playlist .wp-playlist-next, .progression-skin  .wp-playlist.wp-video-playlist .wp-playlist-prev {
+	display:none;
+}
+/* Hide the next/previous buttons on audio playlist
+body .progression-skin .wp-playlist.wp-audio-playlist .mejs-container .mejs-inner .mejs-controls .mejs-playpause-button {
+	margin-left:0px; margin-right:0px;
+}
+.progression-skin .wp-playlist.wp-audio-playlist .wp-playlist-next, .progression-skin  .wp-playlist.wp-audio-playlist .wp-playlist-prev {
+	display:none;
+}
+*/
 
 
 body .progression-skin .wp-playlist {
 	padding:0px;
-	border:none;
 	background:none;
+	border:none;
 }
 
 body .progression-skin .wp-playlist-tracks {
 	margin-left:1px;
-	margin-right:0px;
+	margin-right:-1px;
 	margin-top:0px;
 	padding-top:0px;
 	border-left:1px solid #b5b5b5;
 	border-right:1px solid #b5b5b5;
 	border-bottom:1px solid #b5b5b5;
-	border-top:1px solid #b5b5b5;
 	-webkit-box-shadow: inset 0px 2px 2px 0px rgba(0, 0, 0, 0.15);
 	box-shadow: inset 0px 2px 2px 0px rgba(0, 0, 0, 0.15);
 	background:#ffffff;
 }
 
 
-
 body .progression-skin .wp-playlist-item.wp-playlist-playing, body .progression-skin .wp-playlist-item.wp-playlist-playing:hover {
 	background:#bbbbbb;
 	background: rgba(0, 0, 0, 0.35);
-	color:#ffffff;
 	font-weight:normal;
+}
+
+body .progression-skin .wp-playlist-item.wp-playlist-playing a, body .progression-skin .wp-playlist-item.wp-playlist-playing a:hover {
+	color:#ffffff;
+}
+
+body .progression-skin .wp-playlist-item.wp-playlist-playing .wp-playlist-item-length {
+	color:#ffffff;
 }
 
 body .progression-skin  .wp-playlist-item {
@@ -562,14 +504,19 @@ body .progression-skin  .wp-playlist-item {
 	color:#777777;
 }
 
+body .progression-skin  .wp-playlist-item a, body .progression-skin  .wp-playlist-item .wp-playlist-item-length {
+	color:#777777;
+}
+
 body .progression-skin  .wp-playlist-item:hover {
 	background-color: rgba(0, 0, 0, 0.06);
 }
-
 body .progression-skin  .wp-playlist-caption {
 	padding-left:12px;
-	max-width: 85%;
-	font-size:12px;
+}
+
+body .progression-skin .wp-playlist-item-artist, body .progression-skin  .wp-playlist-caption, body .progression-skin  .wp-playlist-item-title {
+	font-size: 12px;
 }
 
 body .progression-skin  .wp-playlist-item-length {
@@ -578,67 +525,6 @@ body .progression-skin  .wp-playlist-item-length {
 	font-size:11px;
 }
 
-body .progression-skin  .wp-playlist-item-title {
-	font-size: 12px;
-}
-
-
-
-/* Next/Previous Buttons */
-body .progression-skin .wp-audio-playlist .mejs-controls .mejs-playpause-button {
-	margin-left:41px;
-	margin-right:40px;
-}
-
-body .progression-skin .wp-audio-playlist .wp-playlist-tracks {
-	margin-top:-40px;
-}
-
-
-body .progression-skin .wp-video-playlist .wp-playlist-prev, body .progression-skin .wp-video-playlist .wp-playlist-next {
-	display:none !important;
-}
-
-
-body .progression-skin .wp-audio-playlist .wp-playlist-prev, body .progression-skin .wp-playlist-next {
-	display:inline-block;
-	cursor:pointer;
-	width:40px;
-	height:40px;
-	position:relative;
-	z-index:15;
-	left:-43px;
-	top:-41px;
-	margin:0px;
-	padding:0px;
-	text-align:center;
-}
-
-body .progression-skin .wp-audio-playlist .wp-playlist-next {
-	left:83px;
-}
-
-body .progression-skin .wp-audio-playlist .wp-playlist-prev:before {
-	font-size:13px;
-	content: "\f04a";
-	text-decoration: inherit;
-	display: inline-block;
-	position:relative;
-	line-height:40px;
-	left:-2px;
-}
-
-
-
-body .progression-skin .wp-audio-playlist .wp-playlist-next:before {
-	font-size:13px;
-	content: "\f04e";
-	text-decoration: inherit;
-	display: inline-block;
-	position:relative;
-	line-height:40px;
-	left:2px;
-}
 
 
 /*
@@ -649,123 +535,128 @@ body .progression-skin .pro-small-player .mejs-container.mejs-audio {
 }
 
 
-body .progression-skin .pro-small-player .mejs-container .mejs-controls {
+body .progression-skin .pro-small-player .mejs-container .mejs-controls, .progression-skin .pro-small-player .wp-playlist .wp-playlist-next, .progression-skin .pro-small-player  .wp-playlist .wp-playlist-prev {
 	height:30px;
-	background-color:#ffffff;
 }
 
 
-.progression-skin .pro-small-player .mejs-controls .mejs-playpause-button, .progression-skin .pro-small-player .mejs-controls .mejs-playpause-button  button,
-.progression-skin .pro-small-player .mejs-controls .mejs-mute button, .progression-skin .pro-small-player .mejs-controls .mejs-unmute button {
-	height:30px;
+body .progression-skin .pro-small-player .mejs-container .mejs-controls .mejs-playlist {
 	width:30px;
 }
 
-.progression-skin .pro-small-player .mejs-controls .mejs-fullscreen-button  {
+
+body .progression-skin .pro-small-player .mejs-container .mejs-controls .mejs-playlist button {
 	height:30px;
 	width:30px;
+	font-size:11px;
 }
-.progression-skin .pro-small-player .mejs-controls .mejs-fullscreen-button button {
+
+body .progression-skin .pro-small-player .mejs-container .mejs-controls .mejs-playpause-button {
+	width:40px;
+}
+body .progression-skin .pro-small-player .mejs-container .mejs-controls .mejs-playpause-button button {
+	height:30px;
+	width:34px;
+	font-size:18px;
+}
+
+
+
+body .progression-skin .pro-small-player .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button {
 	height:30px;
 }
 
-
-.progression-skin .pro-small-player .mejs-controls .mejs-playpause-button  button:before,
-.progression-skin .pro-small-player .mejs-controls .mejs-mute button:before, .progression-skin .pro-small-player .mejs-controls .mejs-unmute button:before
- {
-	font-size:14px;
-	line-height:30px;
-} 
+body .progression-skin .pro-small-player .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button button {
+	height:30px;
+	width:26px;
+	font-size:11px;
+}
 
 
-body  .progression-skin .pro-small-player .mejs-controls .mejs-currenttime-container .mejs-currenttime,
-body  .progression-skin .pro-small-player .mejs-controls .mejs-duration-container .mejs-duration {
-	font-size:10px;
-	margin-top:0px;
-	padding-top:0px;
+body .progression-skin .pro-small-player .mejs-container .mejs-inner .mejs-controls .mejs-volume-button .mejs-volume-slider {
+    top: -115px;
 }
 
 
 
+.progression-skin .pro-small-player .wp-playlist .wp-playlist-next, .progression-skin .pro-small-player .wp-playlist .wp-playlist-prev {
+	width:30px;
+	height:30px;
+	font-size:12px;
+}
 
-body .progression-skin .pro-small-player  .mejs-controls .mejs-volume-button.mejs-unmute button {
-	left:-6px;
+body .progression-skin .pro-small-player .wp-playlist.wp-audio-playlist .mejs-container .mejs-inner .mejs-controls .mejs-playpause-button {
+	margin-left:30px;
+	margin-right:30px;
 }
 
 
-/* Time Rail Positioning */
-body .progression-skin .pro-small-player .mejs-inner .mejs-controls .mejs-time {
-	height: 20px; /* Needs to add to total height */
-	padding-top:10px; /* Needs to add to total height */
+.progression-skin .pro-small-player .wp-playlist.wp-audio-playlist .wp-playlist-next, .progression-skin .pro-small-player  .wp-playlist.wp-audio-playlist .wp-playlist-prev {
+	line-height:30px; 
+	margin-bottom:-30px;
+	top:-31px;
+}
+
+.progression-skin .pro-small-player  .wp-playlist.wp-audio-playlist .wp-playlist-next {
+	left:65px;
 }
 
 
-body .progression-skin .pro-small-player .mejs-controls div.mejs-time-rail {
-	padding-top:6px;
-}
-
-/* Volumne Rail Positioning */
-body .progression-skin .pro-small-player .mejs-controls div.mejs-horizontal-volume-slider {
-	margin-top:0px;
-}
-
-
-/* PLaylist Styles */
-
-body .progression-skin .pro-small-player  .wp-playlist-item {
+body .progression-skin  .pro-small-player .wp-playlist-item {
 	padding-top:5px;
 	padding-bottom:5px;
 }
 
-
-body .progression-skin .pro-small-player  .wp-playlist-caption {
-	font-size:11px;
+body .progression-skin .pro-small-player .wp-playlist-caption {
+	padding-left:10px;
 }
 
-body .progression-skin .pro-small-player  .wp-playlist-item-length {
-	top:5px;
-	right:10px;
-	font-size:11px;
-}
-
-body .progression-skin  .pro-small-player .wp-playlist-item-title {
+body .progression-skin .pro-small-player .wp-playlist-caption, body .progression-skin .pro-small-player .wp-playlist-item-title, body .progression-skin .pro-small-player .wp-playlist-item-artist {
 	font-size: 11px;
 }
 
-
-/* PLaylist Buttons */
-body .progression-skin .pro-small-player .wp-audio-playlist .mejs-controls .mejs-playpause-button {
-	margin-left:31px;
-	margin-right:30px;
-}
-
-body .progression-skin .pro-small-player .wp-audio-playlist .wp-playlist-tracks {
-	margin-top:-30px;
-}
-
-
-body .progression-skin .pro-small-player .wp-audio-playlist .wp-playlist-prev, body .progression-skin .pro-small-player .wp-playlist-next {
-	width:30px;
-	height:30px;
-	z-index:15;
-	left:-33px;
-	top:-30px;
-	
-	text-align:center;
-}
-
-body .progression-skin .pro-small-player .wp-audio-playlist .wp-playlist-next {
-	left:63px;
-}
-
-body .progression-skin .pro-small-player .wp-audio-playlist .wp-playlist-prev:before, body .progression-skin .pro-small-player .wp-audio-playlist .wp-playlist-next:before {
-	line-height:30px;
-	font-size:11px;
+body .progression-skin .pro-small-player .wp-playlist-item-length {
+	top:6px;
+	right:10px;
+	font-size:10px;
 }
 
 
 
+body .progression-skin .pro-small-player .mejs-inner .mejs-controls .mejs-time {
+	height: 21px;
+}
 
+body .progression-skin .pro-small-player .mejs-inner .mejs-controls .mejs-time {
+	padding-top:9px;
+}
+
+
+body .progression-skin .pro-small-player .mejs-controls div.mejs-horizontal-volume-slider {
+	margin-top:4px;
+}
+
+
+
+.progression-skin .pro-small-player .mejs-container .mejs-inner .mejs-controls .mejs-volume-button {
+	padding-top:0px;
+}
+
+
+.progression-skin .pro-small-player .mejs-container .mejs-inner .mejs-time-rail {
+	margin-top:-4px;
+}
+
+.progression-skin.progression-fancy .pro-small-player .mejs-container .mejs-inner .mejs-controls .mejs-volume-button,
+.progression-skin .pro-small-player .mejs-container .mejs-inner .mejs-controls .mejs-volume-button {
+	padding-top:1px;
+}
+
+
+
+body .progression-skin .pro-small-player .mejs-controls .mejs-horizontal-volume-slider {
+	top:-3px;
+}
 
 
 
@@ -773,29 +664,42 @@ body .progression-skin .pro-small-player .wp-audio-playlist .wp-playlist-prev:be
 =============================================== 11. PLAYER DROP SHADOW ===============================================
 */
 body .progression-skin .mejs-container {
-	-moz-box-shadow:    2px 2px 5px rgba(0, 0, 0, 0.18);
-	-webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.18);
-	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.18);
+	-moz-box-shadow:    2px 2px 4px rgba(0, 0, 0, 0.15);
+	-webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
 }
+
 
 
 /*
 =============================================== 12. FANCY SKIN ===============================================
 */
+body .progression-skin.progression-fancy .mejs-container {
+	border:1px solid #c2c2c2;
+}
+
+
 /* Main Button Color */
-.progression-skin.progression-fancy .mejs-controls button, body .progression-skin.progression-fancy .wp-playlist-prev, body .progression-skin.progression-fancy .wp-playlist-next {
+.progression-skin.progression-fancy .wp-playlist .wp-playlist-next, .progression-skin.progression-fancy  .wp-playlist .wp-playlist-prev,
+body .progression-skin.progression-fancy .mejs-inner .mejs-controls span,
+body .progression-skin.progression-fancy .mejs-inner .mejs-controls button {
 	color:#6b6b6b;
 	text-shadow: 1px 1px 1px #ffffff;
 }
 
+body .progression-skin.progression-fancy .mejs-controls .mejs-time-rail .mejs-time-float-current {
+	color:#ffffff;
+	text-shadow: none;
+}
+
 /* Main Button Hover Color */
-body .progression-skin.progression-fancy .mejs-controls .mejs-fullscreen-button:hover,
-.progression-skin.progression-fancy .mejs-controls button:hover, body .progression-skin.progression-fancy .wp-playlist-prev:hover, body .progression-skin.progression-fancy .wp-playlist-next:hover {
+.progression-skin.progression-fancy .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-fancy  .wp-playlist .wp-playlist-prev:hover,
+body .progression-skin.progression-fancy .mejs-inner .mejs-controls button:hover {
 	color:#6b6b6b;
 }
 
 
-body .progression-skin.progression-fancy .mejs-container .mejs-controls {
+body .progression-skin.progression-fancy .mejs-container .mejs-controls, .progression-skin.progression-fancy .wp-playlist .wp-playlist-next, .progression-skin.progression-fancy  .wp-playlist .wp-playlist-prev {
 	background:#f1f1f1; /* IE Fall-Back */
 	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#deddde), to(#f2f2f2));  /* Safari 4+, Chrome 1-9 */
 	background-image: -webkit-linear-gradient(bottom, #deddde, #f2f2f2);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
@@ -806,9 +710,10 @@ body .progression-skin.progression-fancy .mejs-container .mejs-controls {
 }
 
 
-body .progression-skin.progression-fancy .mejs-controls .mejs-fullscreen-button:hover,
-body .progression-skin.progression-fancy .wp-audio-playlist .wp-playlist-prev:hover, body .progression-skin.progression-fancy .wp-playlist-next:hover,
-body .progression-skin.progression-fancy .mejs-controls .mejs-playpause-button:hover {
+body .progression-skin.progression-fancy .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button button:hover,
+body .progression-skin.progression-fancy .mejs-container .mejs-controls .mejs-playlist button:hover,
+.progression-skin.progression-fancy .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-fancy  .wp-playlist .wp-playlist-prev:hover,
+body .progression-skin.progression-fancy .mejs-container .mejs-controls .mejs-playpause-button button:hover {
 	background:#deddde; /* IE Fall-Back */
 	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#f2f2f2), to(#deddde));  /* Safari 4+, Chrome 1-9 */
 	background-image: -webkit-linear-gradient(bottom, #f2f2f2, #deddde);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
@@ -818,54 +723,35 @@ body .progression-skin.progression-fancy .mejs-controls .mejs-playpause-button:h
 	background-image: linear-gradient(bottom, #f2f2f2 0%, #deddde 100%);
 }
 
-
-
-body .progression-skin.progression-fancy .mejs-container {
-	border:1px solid #c2c2c2;
-}
-
-
-body .progression-skin.progression-fancy .wp-playlist-prev, body .progression-skin.progression-fancy .wp-playlist-next,
-.progression-skin.progression-fancy .mejs-controls .mejs-playpause-button, .progression-skin.progression-fancy .mejs-controls .mejs-playpause-button  button,
-.progression-skin.progression-fancy .mejs-controls .mejs-mute button, .progression-skin.progression-fancy .mejs-controls .mejs-unmute button
-  {
-	border-right:1px solid #c2c2c2;
-}
-
-body .progression-skin.progression-fancy .mejs-inner .mejs-controls .mejs-duration-container {
-	border-right:1px solid #c2c2c2;
-}
-
-body .progression-skin.progression-fancy .mejs-controls .mejs-fullscreen-button {
+body .progression-skin.progression-fancy .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button,
+body .progression-skin.progression-fancy .mejs-container .mejs-controls .mejs-playlist button {
 	border-left:1px solid #c2c2c2;
-	
+}
+
+.progression-skin.progression-fancy .wp-playlist.wp-audio-playlist .wp-playlist-next, .progression-skin.progression-fancy  .wp-playlist.wp-audio-playlist .wp-playlist-prev,
+body .progression-skin.progression-fancy .mejs-container .mejs-controls .mejs-duration-container,
+body .progression-skin.progression-fancy .mejs-container .mejs-controls .mejs-playpause-button button {
+	border-right:1px solid #c2c2c2;
 }
 
 body .progression-skin.progression-fancy .wp-playlist-tracks {
 	border-left:1px solid #c2c2c2;
 	border-right:1px solid #c2c2c2;
 	border-bottom:1px solid #c2c2c2;
-	border-top:1px solid #c2c2c2;
+	background:#efefef;
 }
+
 body .progression-skin.progression-fancy  .wp-playlist-item {
 	border-color:#c2c2c2;
 }
 
 
-
-body .progression-skin.progression-fancy .wp-playlist-tracks {
-	border-left:1px solid #c2c2c2;
-	border-right:1px solid #c2c2c2;
-	border-bottom:1px solid #c2c2c2;
-	border-top:1px solid #c2c2c2;
-	background:#efefef;
-}
-
-
-
 body .progression-skin.progression-fancy .wp-playlist-item.wp-playlist-playing, body .progression-skin.progression-fancy .wp-playlist-item.wp-playlist-playing:hover {
 	background:#bbbbbb;
 	background: rgba(0, 0, 0, 0.35);
+}
+
+body .progression-skin.progression-fancy .wp-playlist-item.wp-playlist-playing a, body .progression-skin.progression-fancy .wp-playlist-item.wp-playlist-playing a:hover {
 	color:#ffffff;
 }
 
@@ -874,17 +760,21 @@ body .progression-skin.progression-fancy  .wp-playlist-item {
 	color:#777777;
 }
 
+body .progression-skin.progression-fancy  .wp-playlist-item a, body .progression-skin.progression-fancy  .wp-playlist-item .wp-playlist-item-length {
+	color:#777777;
+}
+
 body .progression-skin.progression-fancy  .wp-playlist-item:hover {
 	background-color: rgba(0, 0, 0, 0.06);
 }
 
-
-
-
-
 /* Timer */
+body .progression-skin.progression-fancy .mejs-inner .mejs-time .mejs-currenttime, .progression-skin.progression-fancy .mejs-inner .mejs-time  .mejs-duration {
+	color:#777777;
+}
 
-body .progression-skin.progression-fancy .mejs-controls .mejs-time-rail .mejs-time-total {
+
+body .progression-skin.progression-fancy .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-total {
 	background:#9a9a9a; /* IE Fall-Back */
 	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#bcbcbc), to(#9a9a9a));  /* Safari 4+, Chrome 1-9 */
 	background-image: -webkit-linear-gradient(bottom, #bcbcbc, #9a9a9a);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
@@ -892,12 +782,11 @@ body .progression-skin.progression-fancy .mejs-controls .mejs-time-rail .mejs-ti
 	background-image: -ms-linear-gradient(bottom, #bcbcbc, #9a9a9a); /* IE 10+ */
 	background-image: -o-linear-gradient(bottom, #bcbcbc, #9a9a9a); /* Opera 11.10+ */
 	background-image: linear-gradient(bottom, #bcbcbc 0%, #9a9a9a 100%);
-	
 	-webkit-box-shadow: inset 1px 1px 2px  rgba(0, 0, 0, 0.4);
 	box-shadow: inset 1px 1px 2px  rgba(0, 0, 0, 0.4);
-	
 }
-body .progression-skin.progression-fancy .mejs-controls .mejs-time-rail .mejs-time-loaded { 
+
+body .progression-skin.progression-fancy .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-loaded { 
 	-webkit-box-shadow: inset 1px 1px 2px  rgba(0, 0, 0, 0.4);
 	box-shadow: inset 1px 1px 2px  rgba(0, 0, 0, 0.4);
 	background:#8a8a8a; /* IE Fall-Back */
@@ -909,7 +798,7 @@ body .progression-skin.progression-fancy .mejs-controls .mejs-time-rail .mejs-ti
 	background-image: linear-gradient(bottom, #b1b1b1 0%, #8a8a8a 100%);
 }
 
-body .progression-skin.progression-fancy .mejs-controls .mejs-time-rail .mejs-time-current {
+body .progression-skin.progression-fancy .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-current {
 	-webkit-box-shadow: inset 1px 1px 2px  rgba(0, 0, 0, 0.4);
 	box-shadow: inset 1px 1px 2px  rgba(0, 0, 0, 0.4);
 	background:#737373; /* IE Fall-Back */
@@ -922,10 +811,8 @@ body .progression-skin.progression-fancy .mejs-controls .mejs-time-rail .mejs-ti
 
 }
 
-
-
 body .progression-skin.progression-fancy .mejs-controls .mejs-time-rail .mejs-time-handle  {
-	display: block; margin: 0; padding:0px; border: 0;
+	border:none;
 	width: 15px;
 	height: 15px;
 	top:-3px; 
@@ -933,26 +820,21 @@ body .progression-skin.progression-fancy .mejs-controls .mejs-time-rail .mejs-ti
 	border-radius: 20px; -moz-border-radius: 20px; -webkit-border-radius: 20px;
 	-webkit-box-shadow: inset 0 0 1px 1px rgba(255,255,255,0.5), 0 0 0 1px rgba(0,0,0,.3), 0 1px 2px 0 rgba(0,0,0,.3);
 	box-shadow:  inset 0 0 1px 1px rgba(255,255,255,0.5), 0 0 0 1px rgba(0,0,0,.3), 0 1px 2px 0 rgba(0,0,0,.3);
-	background: #ffffff url(build/timer-handle.png) 1px 1px no-repeat;
+	background: #ffffff url(../build/timer-handle.png) 1px 1px no-repeat;
 	background-color: transparent; /* IE8 and below */
 }
 
 
-
-body .progression-skin.progression-fancy .mejs-controls div.mejs-horizontal-volume-slider {
-	margin-top:5px;
-	height:2px;
-}
-
-body .progression-skin.progression-fancy .pro-small-player .mejs-controls div.mejs-horizontal-volume-slider {
+.progression-skin.progression-fancy .mejs-container .mejs-inner .mejs-controls .mejs-volume-button {
+	padding-top:5px;
 	margin-top:0px;
+	margin-right:3px;
 }
+
 
 body .progression-skin.progression-fancy .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-total {
-	
 	height: 9px;
 	top:11px;
-	
 	background:#9a9a9a; /* IE Fall-Back */
 	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#bcbcbc), to(#9a9a9a));  /* Safari 4+, Chrome 1-9 */
 	background-image: -webkit-linear-gradient(bottom, #bcbcbc, #9a9a9a);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
@@ -965,7 +847,6 @@ body .progression-skin.progression-fancy .mejs-controls .mejs-horizontal-volume-
 	box-shadow: inset 1px 1px 2px  rgba(0, 0, 0, 0.4);
 }
 
-/* Volume Bar Background Volume On */
 body .progression-skin.progression-fancy .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-current {
 	-webkit-box-shadow: inset 1px 1px 2px  rgba(0, 0, 0, 0.4);
 	box-shadow: inset 1px 1px 2px  rgba(0, 0, 0, 0.4);
@@ -978,13 +859,7 @@ body .progression-skin.progression-fancy .mejs-controls .mejs-horizontal-volume-
 	background-image: linear-gradient(bottom, #88888b 0%, #737373 100%);
 }
 
-
-/* Volume Bar Volume Handle */
 body .progression-skin.progression-fancy .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-handle {
-	display: block;
-	position: absolute;
-	margin-left:0px;
-	top:8px;
 	text-align: center;
 	width: 15px;
 	height: 15px;
@@ -992,131 +867,116 @@ body .progression-skin.progression-fancy .mejs-controls .mejs-horizontal-volume-
 	border-radius: 20px; -moz-border-radius: 20px; -webkit-border-radius: 20px;
 	-webkit-box-shadow: inset 0 0 1px 1px rgba(255,255,255,0.5), 0 0 0 1px rgba(0,0,0,.3), 0 1px 2px 0 rgba(0,0,0,.3);
 	box-shadow:  inset 0 0 1px 1px rgba(255,255,255,0.5), 0 0 0 1px rgba(0,0,0,.3), 0 1px 2px 0 rgba(0,0,0,.3);
-	background: #ffffff url(build/timer-handle.png) 1px 1px no-repeat;
+	background: #ffffff url(../build/timer-handle.png) 1px 1px no-repeat;
 	background-color: transparent\9; /* IE8 and below */  
 }
-
-
-
 
 /*
 =============================================== 13. MINIMAL LIGHT SKIN ===============================================
 */
-/* Main Button Color */
-.progression-skin.progression-minimal-light .mejs-controls button, body .progression-skin.progression-minimal-light .wp-playlist-prev, body .progression-skin.progression-minimal-light .wp-playlist-next {
-	color:#888888;
-}
-
-/* Main Button Hover Color */
-body .progression-skin.progression-minimal-light .mejs-controls .mejs-fullscreen-button:hover,
-.progression-skin.progression-minimal-light .mejs-controls button:hover, body .progression-skin.progression-minimal-light .wp-playlist-prev:hover, body .progression-skin.progression-minimal-light .wp-playlist-next:hover {
-	color:#555555;
-}
-
-body .progression-skin.progression-minimal-light .mejs-inner .mejs-time .mejs-currenttime, body .progression-skin.progression-minimal-light .mejs-inner .mejs-time  .mejs-duration {
-	color:#aaaaaa;
-}
-
-body .progression-skin.progression-minimal-light .mejs-container .mejs-controls {
-	background:#f7f7f7; /* IE Fall-Back */
-}
-
-
-body .progression-skin.progression-minimal-light .mejs-controls .mejs-fullscreen-button:hover,
-body .progression-skin.progression-minimal-light .wp-audio-playlist .wp-playlist-prev:hover, body .progression-skin.progression-minimal-light .wp-playlist-next:hover,
-body .progression-skin.progression-minimal-light .mejs-controls .mejs-playpause-button:hover {
-	background:#f7f7f7; /* IE Fall-Back */
-}
-
-
 
 body .progression-skin.progression-minimal-light .mejs-container {
 	border:1px solid #c1c1c1;
 }
 
 
-body .progression-skin.progression-minimal-light .wp-playlist-prev, body .progression-skin.progression-minimal-light .wp-playlist-next,
-.progression-skin.progression-minimal-light .mejs-controls .mejs-playpause-button, .progression-skin.progression-minimal-light .mejs-controls .mejs-playpause-button  button,
-.progression-skin.progression-minimal-light .mejs-controls .mejs-mute button, .progression-skin.progression-minimal-light .mejs-controls .mejs-unmute button
-  {
-	border-right:1px solid #c1c1c1;
+/* Main Button Color */
+.progression-skin.progression-minimal-light .wp-playlist .wp-playlist-next, .progression-skin.progression-minimal-light  .wp-playlist .wp-playlist-prev,
+body .progression-skin.progression-minimal-light .mejs-inner .mejs-controls span,
+body .progression-skin.progression-minimal-light .mejs-inner .mejs-controls button {
+	color:#888888;
 }
 
-body .progression-skin.progression-minimal-light .mejs-inner .mejs-controls .mejs-duration-container {
-	border-right:1px solid #c1c1c1;
+/* Main Button Hover Color */
+.progression-skin.progression-minimal-light .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-minimal-light  .wp-playlist .wp-playlist-prev:hover,
+body .progression-skin.progression-minimal-light .mejs-inner .mejs-controls button:hover {
+	color:#555555;
 }
 
-body .progression-skin.progression-minimal-light .mejs-controls .mejs-fullscreen-button {
+
+body .progression-skin.progression-minimal-light .mejs-container .mejs-controls, .progression-skin.progression-minimal-light .wp-playlist .wp-playlist-next, .progression-skin.progression-minimal-light  .wp-playlist .wp-playlist-prev {
+	background:#f7f7f7; /* IE Fall-Back */
+}
+
+
+body .progression-skin.progression-minimal-light .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button button:hover,
+body .progression-skin.progression-minimal-light .mejs-container .mejs-controls .mejs-playlist button:hover,
+.progression-skin.progression-minimal-light .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-minimal-light  .wp-playlist .wp-playlist-prev:hover,
+body .progression-skin.progression-minimal-light .mejs-container .mejs-controls .mejs-playpause-button button:hover {
+	background:#f7f7f7; /* IE Fall-Back */
+}
+
+body .progression-skin.progression-minimal-light .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button,
+body .progression-skin.progression-minimal-light .mejs-container .mejs-controls .mejs-playlist button {
 	border-left:1px solid #c1c1c1;
-	
+}
+
+.progression-skin.progression-minimal-light .wp-playlist.wp-audio-playlist .wp-playlist-next, .progression-skin.progression-minimal-light  .wp-playlist.wp-audio-playlist .wp-playlist-prev,
+body .progression-skin.progression-minimal-light .mejs-container .mejs-controls .mejs-duration-container,
+body .progression-skin.progression-minimal-light .mejs-container .mejs-controls .mejs-playpause-button button {
+	border-right:1px solid #c1c1c1;
 }
 
 body .progression-skin.progression-minimal-light .wp-playlist-tracks {
 	border-left:1px solid #c1c1c1;
 	border-right:1px solid #c1c1c1;
 	border-bottom:1px solid #c1c1c1;
-	border-top:1px solid #c1c1c1;
-}
-body .progression-skin.progression-minimal-light  .wp-playlist-item {
-	border-color:#c2c2c2;
-}
-
-
-
-body .progression-skin.progression-minimal-light .wp-playlist-tracks {
-	border-left:1px solid #c1c1c1;
-	border-right:1px solid #c1c1c1;
-	border-bottom:1px solid #c1c1c1;
-	border-top:1px solid #c1c1c1;
 	background:#ffffff;
 }
 
+body .progression-skin.progression-minimal-light  .wp-playlist-item {
+	border-color:#c1c1c1;
+}
 
 
 body .progression-skin.progression-minimal-light .wp-playlist-item.wp-playlist-playing, body .progression-skin.progression-minimal-light .wp-playlist-item.wp-playlist-playing:hover {
 	background: #e9e9e9;
+}
+
+body .progression-skin.progression-minimal-light .wp-playlist-item.wp-playlist-playing a, body .progression-skin.progression-minimal-light .wp-playlist-item.wp-playlist-playing a:hover {
 	color:#666666;
 }
 
 body .progression-skin.progression-minimal-light  .wp-playlist-item {
 	border-color:#c1c1c1;
+	color:#666666;
+	background: #ffffff;
+}
 
+body .progression-skin.progression-minimal-light  .wp-playlist-item a, body .progression-skin.progression-minimal-light  .wp-playlist-item .wp-playlist-item-length {
+	color:#666666;
 }
 
 body .progression-skin.progression-minimal-light  .wp-playlist-item:hover {
-	color:#666666;
 	background: #e9e9e9;
 }
 
-
-
-
-
 /* Timer */
+body .progression-skin.progression-minimal-light .mejs-inner .mejs-time .mejs-currenttime, .progression-skin.progression-minimal-light .mejs-inner .mejs-time  .mejs-duration {
+	color:#aaaaaa;
+}
 
-body .progression-skin.progression-minimal-light .mejs-controls .mejs-time-rail .mejs-time-total {
+
+body .progression-skin.progression-minimal-light .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-total {
 	background:#c9c9c9; /* IE Fall-Back */
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
-	
 }
-body .progression-skin.progression-minimal-light .mejs-controls .mejs-time-rail .mejs-time-loaded { 
+
+body .progression-skin.progression-minimal-light .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-loaded { 
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	background:#bbbbbb; /* IE Fall-Back */
 }
 
-body .progression-skin.progression-minimal-light .mejs-controls .mejs-time-rail .mejs-time-current {
+body .progression-skin.progression-minimal-light .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-current {
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	background:#666666; /* IE Fall-Back */
-
 }
 
-
-
 body .progression-skin.progression-minimal-light .mejs-controls .mejs-time-rail .mejs-time-handle  {
-	display: block; margin: 0; padding:0px; border: 0;
+	margin: 0; padding:0px; border: 0;
 	width: 4px;
 	height: 4px;
 	-webkit-border-radius: 12px;
@@ -1132,25 +992,19 @@ body .progression-skin.progression-minimal-light .mejs-controls .mejs-time-rail 
 
 
 
-
 body .progression-skin.progression-minimal-light .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-total {
 	background:#c9c9c9; /* IE Fall-Back */
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 }
 
-/* Volume Bar Background Volume On */
 body .progression-skin.progression-minimal-light .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-current {
 	background:#777777; /* IE Fall-Back */
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 }
 
-
-/* Volume Bar Volume Handle */
 body .progression-skin.progression-minimal-light .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-handle {
-	display: block;
-	position: absolute;
 	width: 4px;
 	height:4px;
 	margin-left:-3px;
@@ -1167,26 +1021,31 @@ body .progression-skin.progression-minimal-light .mejs-controls .mejs-horizontal
 }
 
 
-
-
-
 /*
-=============================================== 14. DARK SKIN  ===============================================
+=============================================== 14. DARK SKIN ===============================================
 */
+body .progression-skin.progression-default-dark .mejs-container {
+	border:1px solid #444444;
+}
+
 
 /* Main Button Color */
-.progression-skin.progression-default-dark .mejs-controls button, body .progression-skin.progression-default-dark .wp-playlist-prev, body .progression-skin.progression-default-dark .wp-playlist-next {
+.progression-skin.progression-default-dark .wp-playlist .wp-playlist-next, .progression-skin.progression-default-dark  .wp-playlist .wp-playlist-prev,
+body .progression-skin.progression-default-dark .mejs-inner .mejs-controls span,
+body .progression-skin.progression-default-dark .mejs-inner .mejs-controls button {
 	color:#eeeeee;
 }
 
+
+
 /* Main Button Hover Color */
-body .progression-skin.progression-default-dark .mejs-controls .mejs-fullscreen-button:hover,
-.progression-skin.progression-default-dark .mejs-controls button:hover, body .progression-skin.progression-default-dark .wp-playlist-prev:hover, body .progression-skin.progression-default-dark .wp-playlist-next:hover {
+.progression-skin.progression-default-dark .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-default-dark  .wp-playlist .wp-playlist-prev:hover,
+body .progression-skin.progression-default-dark .mejs-inner .mejs-controls button:hover {
 	color:#ffffff;
 }
 
 
-body .progression-skin.progression-default-dark .mejs-container .mejs-controls {
+body .progression-skin.progression-default-dark .mejs-container .mejs-controls, .progression-skin.progression-default-dark .wp-playlist .wp-playlist-next, .progression-skin.progression-default-dark  .wp-playlist .wp-playlist-prev {
 	background:#202020; /* IE Fall-Back */
 	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#202020), to(#494949));  /* Safari 4+, Chrome 1-9 */
 	background-image: -webkit-linear-gradient(bottom, #202020, #494949);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
@@ -1197,9 +1056,10 @@ body .progression-skin.progression-default-dark .mejs-container .mejs-controls {
 }
 
 
-body .progression-skin.progression-default-dark .mejs-controls .mejs-fullscreen-button:hover,
-body .progression-skin.progression-default-dark .wp-audio-playlist .wp-playlist-prev:hover, body .progression-skin.progression-default-dark .wp-playlist-next:hover,
-body .progression-skin.progression-default-dark .mejs-controls .mejs-playpause-button:hover {
+body .progression-skin.progression-default-dark .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button button:hover,
+body .progression-skin.progression-default-dark .mejs-container .mejs-controls .mejs-playlist button:hover,
+.progression-skin.progression-default-dark .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-default-dark  .wp-playlist .wp-playlist-prev:hover,
+body .progression-skin.progression-default-dark .mejs-container .mejs-controls .mejs-playpause-button button:hover {
 	background: #494949; /* IE Fall-Back */
 	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#494949), to(#202020));  /* Safari 4+, Chrome 1-9 */
 	background-image: -webkit-linear-gradient(bottom, #494949, #202020);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
@@ -1209,49 +1069,27 @@ body .progression-skin.progression-default-dark .mejs-controls .mejs-playpause-b
 	background-image: linear-gradient(bottom, #494949 0%, #202020 100%);
 }
 
-
-
-body .progression-skin.progression-default-dark .mejs-container {
-	border:1px solid #444444;
-}
-
-
-body .progression-skin.progression-default-dark .wp-playlist-prev, body .progression-skin.progression-default-dark .wp-playlist-next,
-.progression-skin.progression-default-dark .mejs-controls .mejs-playpause-button, .progression-skin.progression-default-dark .mejs-controls .mejs-playpause-button  button,
-.progression-skin.progression-default-dark .mejs-controls .mejs-mute button, .progression-skin.progression-default-dark .mejs-controls .mejs-unmute button
-  {
-	border-right:1px solid #444444;
-}
-
-body .progression-skin.progression-default-dark .mejs-inner .mejs-controls .mejs-duration-container {
-	border-right:1px solid #444444;
-}
-
-body .progression-skin.progression-default-dark .mejs-controls .mejs-fullscreen-button {
+body .progression-skin.progression-default-dark .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button,
+body .progression-skin.progression-default-dark .mejs-container .mejs-controls .mejs-playlist button {
 	border-left:1px solid #444444;
-	
+}
+
+.progression-skin.progression-default-dark .wp-playlist.wp-audio-playlist .wp-playlist-next, .progression-skin.progression-default-dark  .wp-playlist.wp-audio-playlist .wp-playlist-prev,
+body .progression-skin.progression-default-dark .mejs-container .mejs-controls .mejs-duration-container,
+body .progression-skin.progression-default-dark .mejs-container .mejs-controls .mejs-playpause-button button {
+	border-right:1px solid #444444;
 }
 
 body .progression-skin.progression-default-dark .wp-playlist-tracks {
 	border-left:1px solid #444444;
 	border-right:1px solid #444444;
 	border-bottom:1px solid #444444;
-	border-top:1px solid #444444;
-}
-body .progression-skin.progression-default-dark  .wp-playlist-item {
-	border-color:#444444;
-}
-
-
-
-body .progression-skin.progression-default-dark .wp-playlist-tracks {
-	border-left:1px solid #444444;
-	border-right:1px solid #444444;
-	border-bottom:1px solid #444444;
-	border-top:1px solid #444444;
 	background:#202020;
 }
 
+body .progression-skin.progression-default-dark  .wp-playlist-item {
+	border-color:#444444;
+}
 
 
 body .progression-skin.progression-default-dark .wp-playlist-item.wp-playlist-playing, body .progression-skin.progression-default-dark .wp-playlist-item.wp-playlist-playing:hover {
@@ -1260,8 +1098,16 @@ body .progression-skin.progression-default-dark .wp-playlist-item.wp-playlist-pl
 	background: rgba(0, 0, 0, 0.35);
 }
 
+body .progression-skin.progression-default-dark .wp-playlist-item.wp-playlist-playing a, body .progression-skin.progression-default-dark .wp-playlist-item.wp-playlist-playing a:hover {
+	color:#ffffff;
+}
+
 body .progression-skin.progression-default-dark  .wp-playlist-item {
 	color: #999999;  background-color: rgba(250, 250, 250, 0.1);
+}
+
+body .progression-skin.progression-default-dark  .wp-playlist-item a, body .progression-skin.progression-default-dark  .wp-playlist-item .wp-playlist-item-length {
+	color: #999999;
 }
 
 body .progression-skin.progression-default-dark  .wp-playlist-item:hover {
@@ -1269,13 +1115,13 @@ body .progression-skin.progression-default-dark  .wp-playlist-item:hover {
 	background-color: rgba(250, 250, 250, 0.06);
 }
 
-
-
-
-
 /* Timer */
+body .progression-skin.progression-default-dark .mejs-inner .mejs-time .mejs-currenttime, .progression-skin.progression-default-dark .mejs-inner .mejs-time  .mejs-duration {
+	color:#ffffff;
+}
 
-body .progression-skin.progression-default-dark .mejs-controls .mejs-time-rail .mejs-time-total {
+
+body .progression-skin.progression-default-dark .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-total {
 	background:#888888; /* IE Fall-Back */
 	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#888888), to(#666666));  /* Safari 4+, Chrome 1-9 */
 	background-image: -webkit-linear-gradient(bottom, #888888, #666666);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
@@ -1283,16 +1129,14 @@ body .progression-skin.progression-default-dark .mejs-controls .mejs-time-rail .
 	background-image: -ms-linear-gradient(bottom, #888888, #666666); /* IE 10+ */
 	background-image: -o-linear-gradient(bottom, #888888, #666666); /* Opera 11.10+ */
 	background-image: linear-gradient(bottom, #888888 0%, #666666 100%);
-	
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
-	
 }
-body .progression-skin.progression-default-dark .mejs-controls .mejs-time-rail .mejs-time-loaded { 
+
+body .progression-skin.progression-default-dark .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-loaded { 
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
 	background:#aaaaaa; /* IE Fall-Back */
-	
 	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#aaaaaa), to(#999999));  /* Safari 4+, Chrome 1-9 */
 	background-image: -webkit-linear-gradient(bottom, #aaaaaa, #999999);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
 	background-image: -moz-linear-gradient(bottom, #aaaaaa, #999999);  /* Firefox 3.6+ */
@@ -1301,24 +1145,20 @@ body .progression-skin.progression-default-dark .mejs-controls .mejs-time-rail .
 	background-image: linear-gradient(bottom, #aaaaaa 0%, #999999 100%);
 }
 
-body .progression-skin.progression-default-dark .mejs-controls .mejs-time-rail .mejs-time-current {
+body .progression-skin.progression-default-dark .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-current {
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
 	background:#eeeeee; /* IE Fall-Back */
-	
 	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#ffffff), to(#bbbbbb));  /* Safari 4+, Chrome 1-9 */
 	background-image: -webkit-linear-gradient(bottom, #ffffff, #bbbbbb);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
 	background-image: -moz-linear-gradient(bottom, #ffffff, #bbbbbb);  /* Firefox 3.6+ */
 	background-image: -ms-linear-gradient(bottom, #ffffff, #bbbbbb); /* IE 10+ */
 	background-image: -o-linear-gradient(bottom, #ffffff, #bbbbbb); /* Opera 11.10+ */
 	background-image: linear-gradient(bottom, #ffffff 0%, #bbbbbb 100%);
-
 }
 
-
-
 body .progression-skin.progression-default-dark .mejs-controls .mejs-time-rail .mejs-time-handle  {
-	display: block; margin: 0; padding:0px; border: 0;
+	border:none;
 	width: 6px;
 	height: 6px;
 	-webkit-border-radius: 12px;
@@ -1330,7 +1170,6 @@ body .progression-skin.progression-default-dark .mejs-controls .mejs-time-rail .
 	box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.25);
 	border:5px solid #eaeaea;
 	background: #adadad;	
-	
 	background-image: -webkit-gradient(linear, bottom, 0% 0%, 0% 100%, from(#9c9c9c), to(#adadad));  /* Safari 4+, Chrome 1-9 */
 	background-image: -webkit-linear-gradient(bottom, #9c9c9c, #adadad);   /* Safari 5.1+, Mobile Safari, Chrome 10+ */
 	background-image: -moz-linear-gradient(bottom, #9c9c9c, #adadad);  /* Firefox 3.6+ */
@@ -1338,7 +1177,6 @@ body .progression-skin.progression-default-dark .mejs-controls .mejs-time-rail .
 	background-image: -o-linear-gradient(bottom, #9c9c9c, #adadad); /* Opera 11.10+ */
 	background-image: linear-gradient(bottom, #9c9c9c 0%, #adadad 100%);
 }
-
 
 
 body .progression-skin.progression-default-dark .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-total {
@@ -1353,7 +1191,6 @@ body .progression-skin.progression-default-dark .mejs-controls .mejs-horizontal-
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 }
 
-/* Volume Bar Background Volume On */
 body .progression-skin.progression-default-dark .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-current {
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
@@ -1366,11 +1203,7 @@ body .progression-skin.progression-default-dark .mejs-controls .mejs-horizontal-
 	background-image: linear-gradient(bottom, #ffffff 0%, #bbbbbb 100%);
 }
 
-
-/* Volume Bar Volume Handle */
 body .progression-skin.progression-default-dark .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-handle {
-	display: block;
-	position: absolute;
 	width: 5px;
 	height:5px;
 	margin-left:-6px;
@@ -1382,7 +1215,6 @@ body .progression-skin.progression-default-dark .mejs-controls .mejs-horizontal-
 	background-image: -ms-linear-gradient(bottom, #9c9c9c, #adadad); /* IE 10+ */
 	background-image: -o-linear-gradient(bottom, #9c9c9c, #adadad); /* Opera 11.10+ */
 	background-image: linear-gradient(bottom, #9c9c9c 0%, #adadad 100%);
-		
 	-webkit-border-radius: 12px;
 	-moz-border-radius: 12px;
 	border-radius: 12px;
@@ -1396,77 +1228,63 @@ body .progression-skin.progression-default-dark .mejs-controls .mejs-horizontal-
 
 
 /*
-=============================================== 15. MINIMAL DARK SKIN  ===============================================
+=============================================== 15. MINIMAL DARK SKIN ===============================================
 */
-/* Main Button Color */
-.progression-skin.progression-minimal-dark .mejs-controls button, body .progression-skin.progression-minimal-dark .wp-playlist-prev, body .progression-skin.progression-minimal-dark .wp-playlist-next {
-	color:#eeeeee;
-}
-
-/* Main Button Hover Color */
-body .progression-skin.progression-minimal-dark .mejs-controls .mejs-fullscreen-button:hover,
-.progression-skin.progression-minimal-dark .mejs-controls button:hover, body .progression-skin.progression-minimal-dark .wp-playlist-prev:hover, body .progression-skin.progression-minimal-dark .wp-playlist-next:hover {
-	color:#ffffff;
-}
-
-body .progression-skin.progression-minimal-dark .mejs-inner .mejs-time .mejs-currenttime, body .progression-skin.progression-minimal-dark .mejs-inner .mejs-time  .mejs-duration {
-	color:#ffffff;
-}
-
-body .progression-skin.progression-minimal-dark .mejs-container .mejs-controls {
-	background:#202020;
-}
-
-
-body .progression-skin.progression-minimal-dark .mejs-controls .mejs-fullscreen-button:hover,
-body .progression-skin.progression-minimal-dark .wp-audio-playlist .wp-playlist-prev:hover, body .progression-skin.progression-minimal-dark .wp-playlist-next:hover,
-body .progression-skin.progression-minimal-dark .mejs-controls .mejs-playpause-button:hover {
-	background:#2a2a2a; /* IE Fall-Back */
-}
-
-
 
 body .progression-skin.progression-minimal-dark .mejs-container {
 	border:1px solid #202020;
 }
 
 
-body .progression-skin.progression-minimal-dark .wp-playlist-prev, body .progression-skin.progression-minimal-dark .wp-playlist-next,
-.progression-skin.progression-minimal-dark .mejs-controls .mejs-playpause-button, .progression-skin.progression-minimal-dark .mejs-controls .mejs-playpause-button  button,
-.progression-skin.progression-minimal-dark .mejs-controls .mejs-mute button, .progression-skin.progression-minimal-dark .mejs-controls .mejs-unmute button
-  {
-	border-right:1px solid #202020;
-}
-
-body .progression-skin.progression-minimal-dark .mejs-inner .mejs-controls .mejs-duration-container {
-	border-right:1px solid #202020;
-}
-
-body .progression-skin.progression-minimal-dark .mejs-controls .mejs-fullscreen-button {
-	border-left:1px solid #202020;
-	
-}
-
-body .progression-skin.progression-minimal-dark .wp-playlist-tracks {
-	border-left:1px solid #202020;
-	border-right:1px solid #202020;
-	border-bottom:1px solid #202020;
-	border-top:1px solid #202020;
-}
-body .progression-skin.progression-minimal-dark  .wp-playlist-item {
-	border-color:#202020;
+/* Main Button Color */
+.progression-skin.progression-minimal-dark .wp-playlist .wp-playlist-next, .progression-skin.progression-minimal-dark  .wp-playlist .wp-playlist-prev,
+body .progression-skin.progression-minimal-dark .mejs-inner .mejs-controls span,
+body .progression-skin.progression-minimal-dark .mejs-inner .mejs-controls button {
+	color:#eeeeee;
 }
 
 
 
-body .progression-skin.progression-minimal-dark .wp-playlist-tracks {
-	border-left:1px solid #202020;
-	border-right:1px solid #202020;
-	border-bottom:1px solid #202020;
-	border-top:1px solid #202020;
+/* Main Button Hover Color */
+.progression-skin.progression-minimal-dark .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-minimal-dark  .wp-playlist .wp-playlist-prev:hover,
+body .progression-skin.progression-minimal-dark .mejs-inner .mejs-controls button:hover {
+	color:#ffffff;
+}
+
+
+body .progression-skin.progression-minimal-dark .mejs-container .mejs-controls, .progression-skin.progression-minimal-dark .wp-playlist .wp-playlist-next, .progression-skin.progression-minimal-dark  .wp-playlist .wp-playlist-prev {
 	background:#202020;
 }
 
+
+body .progression-skin.progression-minimal-dark .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button button:hover,
+body .progression-skin.progression-minimal-dark .mejs-container .mejs-controls .mejs-playlist button:hover,
+.progression-skin.progression-minimal-dark .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-minimal-dark  .wp-playlist .wp-playlist-prev:hover,
+body .progression-skin.progression-minimal-dark .mejs-container .mejs-controls .mejs-playpause-button button:hover {
+	background:#2a2a2a; /* IE Fall-Back */
+}
+
+body .progression-skin.progression-minimal-dark .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button,
+body .progression-skin.progression-minimal-dark .mejs-container .mejs-controls .mejs-playlist button {
+	border-left:1px solid #202020;
+}
+
+.progression-skin.progression-minimal-dark .wp-playlist.wp-audio-playlist .wp-playlist-next, .progression-skin.progression-minimal-dark  .wp-playlist.wp-audio-playlist .wp-playlist-prev,
+body .progression-skin.progression-minimal-dark .mejs-container .mejs-controls .mejs-duration-container,
+body .progression-skin.progression-minimal-dark .mejs-container .mejs-controls .mejs-playpause-button button {
+	border-right:1px solid #202020;
+}
+
+body .progression-skin.progression-minimal-dark .wp-playlist-tracks {
+	border-left:1px solid #202020;
+	border-right:1px solid #202020;
+	border-bottom:1px solid #202020;
+	background:#202020;
+}
+
+body .progression-skin.progression-minimal-dark  .wp-playlist-item {
+	border-color:#202020;
+}
 
 
 body .progression-skin.progression-minimal-dark .wp-playlist-item.wp-playlist-playing, body .progression-skin.progression-minimal-dark .wp-playlist-item.wp-playlist-playing:hover {
@@ -1475,9 +1293,16 @@ body .progression-skin.progression-minimal-dark .wp-playlist-item.wp-playlist-pl
 	background: rgba(0, 0, 0, 0.35);
 }
 
+body .progression-skin.progression-minimal-dark .wp-playlist-item.wp-playlist-playing a, body .progression-skin.progression-minimal-dark .wp-playlist-item.wp-playlist-playing a:hover {
+	color:#ffffff;
+}
+
 body .progression-skin.progression-minimal-dark  .wp-playlist-item {
 	color: #999999;  background-color: rgba(250, 250, 250, 0.1);
+}
 
+body .progression-skin.progression-minimal-dark  .wp-playlist-item a, body .progression-skin.progression-minimal-dark  .wp-playlist-item .wp-playlist-item-length {
+	color: #999999;
 }
 
 body .progression-skin.progression-minimal-dark  .wp-playlist-item:hover {
@@ -1485,35 +1310,32 @@ body .progression-skin.progression-minimal-dark  .wp-playlist-item:hover {
 	background-color: rgba(250, 250, 250, 0.15);
 }
 
-
-
-
-
 /* Timer */
+body .progression-skin.progression-minimal-dark .mejs-inner .mejs-time .mejs-currenttime, .progression-skin.progression-minimal-dark .mejs-inner .mejs-time  .mejs-duration {
+	color:#ffffff;
+}
 
-body .progression-skin.progression-minimal-dark .mejs-controls .mejs-time-rail .mejs-time-total {
+
+body .progression-skin.progression-minimal-dark .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-total {
 	background:#5c5c5c; /* IE Fall-Back */
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
-	
 }
-body .progression-skin.progression-minimal-dark .mejs-controls .mejs-time-rail .mejs-time-loaded { 
+
+body .progression-skin.progression-minimal-dark .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-loaded { 
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	background:#4c4c4c; /* IE Fall-Back */
 }
 
-body .progression-skin.progression-minimal-dark .mejs-controls .mejs-time-rail .mejs-time-current {
+body .progression-skin.progression-minimal-dark .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-current {
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	background:#c2c2c2; /* IE Fall-Back */
-
 }
 
-
-
 body .progression-skin.progression-minimal-dark .mejs-controls .mejs-time-rail .mejs-time-handle  {
-	display: block; margin: 0; padding:0px; border: 0;
+	border:none;
 	width: 2px;
 	height: 2px;
 	-webkit-border-radius: 12px;
@@ -1528,26 +1350,19 @@ body .progression-skin.progression-minimal-dark .mejs-controls .mejs-time-rail .
 }
 
 
-
-
 body .progression-skin.progression-minimal-dark .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-total {
 	background:#5c5c5c; /* IE Fall-Back */
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 }
 
-/* Volume Bar Background Volume On */
 body .progression-skin.progression-minimal-dark .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-current {
 	background:#c2c2c2; /* IE Fall-Back */
 	-webkit-box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 	box-shadow: inset 1px 1px 1px 1px rgba(0, 0, 0, 0);
 }
 
-
-/* Volume Bar Volume Handle */
 body .progression-skin.progression-minimal-dark .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-handle {
-	display: block;
-	position: absolute;
 	width: 4px;
 	height:4px;
 	margin-left:-3px;
