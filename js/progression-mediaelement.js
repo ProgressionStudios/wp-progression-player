@@ -29,8 +29,6 @@
 			}
 		};
 
-		players.mediaelementplayer( settings ).attr( 'preload', "true" === settings.preload );
-
 		if ( "true" === settings.autoplay ) {
     		$players.attr( 'autoplay', 'autoplay' );
     	};

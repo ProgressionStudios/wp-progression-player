@@ -73,7 +73,6 @@ class Progression_Player {
 		$defaults = array(
 			'startvolume' => 80,
 			'autoplay' => 'false',
-			'preload' => 'none',
 			'controls' => 'false',
 			'size' => 'normal',
 			'playlist' => 'true',
@@ -396,17 +395,6 @@ class Progression_Player {
 			)
 		);
 
-	 	add_settings_field(
-	 		$this->plugin_slug . '_preload',
-			__( 'Preload' ),
-			array( $this, 'settings_field_defaults_cb' ),
-			'progression',
-			$this->plugin_slug . '_defaults',
-			array(
-				'key' => 'preload'
-			)
-		);
-
 	 	add_settings_section(
 	 		$this->plugin_slug . '_playlist',
 			__( 'Playlist options' ),
@@ -536,16 +524,6 @@ class Progression_Player {
 		if ( 'startvolume' === $key ) {
 			echo "<input name='$name' type='number' value='$value' min='0' max='100' step='5' /> <span>%<span>";
 		}
-
-		if ( 'preload' === $key ) { ?>
-
-			<select name="<?php echo $name ?>">
-				<option value="none" <?php selected( $value, 'none' ) ?>><?php _e( 'None (recommended)'); ?> </option>
-				<option value="metadata" <?php selected( $value, 'metadata' ) ?>><?php _e( 'Metadata'); ?> </option>
-				<option value="auto" <?php selected( $value, 'auto' ) ?>><?php _e( 'Auto (browser setting)'); ?> </option>
-			</select>
-
-		<?php }
 
 		if (
 			'controls' === $key ||
