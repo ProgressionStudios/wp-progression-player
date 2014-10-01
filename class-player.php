@@ -610,26 +610,34 @@ class Progression_Player {
 				if ( empty( $color ) ) continue;
 
 				if ( 'bg' === $key ) {
-					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls { background: %s }', $color );
-					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-nexttrack:hover, body .progression-skin.progression-custom .mejs-controls .mejs-prevtrack:hover,  body .progression-skin.progression-custom .mejs-controls .mejs-show-playlist:hover, body .progression-skin.progression-custom  .mejs-controls .mejs-hide-playlist:hover,  body .progression-skin.progression-custom .mejs-controls .mejs-mute button:hover,  body .progression-skin.progression-custom .mejs-controls .mejs-fullscreen-button:hover,  body .progression-skin.progression-custom .mejs-controls .mejs-hide-playlist, body .progression-skin.progression-custom .mejs-controls .mejs-playpause-button:hover { background: %s }', $this->brightness( $color, 20 ) );
+					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-container .mejs-controls, .progression-skin.progression-custom .wp-playlist .wp-playlist-next, .progression-skin.progression-custom  .wp-playlist .wp-playlist-prev{ background: %s }', $color );
+					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-container .mejs-controls .mejs-playlist.progression-selected button,
+body .progression-skin.progression-custom .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button button:hover,
+body .progression-skin.progression-custom .mejs-container .mejs-controls .mejs-playlist button:hover,
+.progression-skin.progression-custom .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-custom  .wp-playlist .wp-playlist-prev:hover,
+body .progression-skin.progression-custom .mejs-container .mejs-controls .mejs-playpause-button button:hover { background: %s }', $this->brightness( $color, 20 ) );
 				}
 
 				if ( 'border' === $key ) {
-					$html .= sprintf( 'body .progression-skin.progression-custom, body .progression-skin.progression-custom .mejs-controls, body .progression-skin.progression-custom .mejs-controls .mejs-playpause-button, body .progression-skin.progression-custom .mejs-inner .mejs-controls .mejs-time, body .progression-skin.progression-custom .mejs-controls .mejs-fullscreen-button,  body .progression-skin.progression-custom .mejs-controls .mejs-show-playlist, body .progression-skin.progression-custom  .mejs-controls .mejs-hide-playlist, body .progression-skin.progression-custom .mejs-controls .mejs-prevtrack button,  body .progression-skin.progression-custom .mejs-controls .mejs-nexttrack button { border-color: %s }', $color );
+					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button, body .progression-skin.progression-custom .mejs-container .mejs-controls .mejs-playlist button, .progression-skin.progression-custom .wp-playlist.wp-audio-playlist .wp-playlist-next, .progression-skin.progression-custom  .wp-playlist.wp-audio-playlist .wp-playlist-prev, body .progression-skin.progression-custom .mejs-container .mejs-controls .mejs-duration-container, body .progression-skin.progression-custom .mejs-container .mejs-controls .mejs-playpause-button button, body .progression-skin.progression-custom .mejs-container, body .progression-skin.progression-custom .wp-playlist-tracks, body .progression-skin.progression-custom  .wp-playlist-item { border-color: %s }', $color );
 				}
 
 				if ( 'text' === $key ) {
-					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls button  { color: %s }', $color );
-					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls button:hover, body .progression-skin.progression-custom .mejs-inner .mejs-time .mejs-currenttime, body .progression-skin.progression-custom .mejs-inner .mejs-time .mejs-duration { color: %s }', $this->brightness( $color, 20 ) );
+					$html .= sprintf( '.progression-skin.progression-custom .wp-playlist .wp-playlist-next, .progression-skin.progression-custom  .wp-playlist .wp-playlist-prev,
+body .progression-skin.progression-custom .mejs-inner .mejs-controls span,
+body .progression-skin.progression-custom .mejs-inner .mejs-controls button  { color: %s }', $color );
+					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-container .mejs-controls .mejs-playlist.progression-selected button,
+.progression-skin.progression-custom .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-custom  .wp-playlist .wp-playlist-prev:hover,
+body .progression-skin.progression-custom .mejs-inner .mejs-controls button:hover { color: %s }', $this->brightness( $color, 20 ) );
 				}
 
 				if ( 'handle' === $key ) {
-					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-handle, body .progression-skin.progression-custom .mejs-controls .mejs-volume-button .mejs-volume-slider .mejs-volume-handle, body .progression-skin.progression-custom .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-handle  { background: %s; border-color: %s }', $color, $color );
+					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-handle, body .progression-skin.progression-custom .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-handle, body .progression-skin.progression-custom .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-loaded { background: %s; border-color: %s }', $color, $color );
 				}
 
 				if ( 'slider' === $key ) {
-					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-total, body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-loaded, body .progression-skin.progression-custom .mejs-controls .mejs-volume-button .mejs-volume-slider .mejs-volume-total, body .progression-skin.progression-custom .mejs-controls .mejs-horizontal-volume-slider  .mejs-horizontal-volume-total { background: %s }', $color );
-					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-time-rail .mejs-time-current, body .progression-skin.progression-custom .mejs-controls .mejs-volume-button .mejs-volume-slider .mejs-volume-current, body .progression-skin.progression-custom .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-current { background: %s }', $this->brightness( $color, 30 ) );
+					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-total, body .progression-skin.progression-custom .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-total { background: %s }', $color );
+					$html .= sprintf( 'body .progression-skin.progression-custom .mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-current, body .progression-skin.progression-custom .mejs-container .mejs-inner .mejs-controls .mejs-time-rail span.mejs-time-current { background: %s }', $this->brightness( $color, 30 ) );
 				}
 
 			}
