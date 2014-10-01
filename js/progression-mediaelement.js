@@ -29,8 +29,10 @@
 			}
 		};
 
+		players.mediaelementplayer( settings );
+
 		if ( "true" === settings.autoplay ) {
-    		$players.attr( 'autoplay', 'autoplay' );
+    		players.attr( 'autoplay', 'autoplay' );
     	};
 
 	});
