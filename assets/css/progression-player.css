@@ -88,6 +88,7 @@ body .progression-skin .mejs-inner .mejs-controls button {
 }
 
 /* Main Button Hover Color */
+body .progression-skin .mejs-container .mejs-controls .mejs-playlist.progression-selected button,
 .progression-skin .wp-playlist .wp-playlist-next:hover, .progression-skin  .wp-playlist .wp-playlist-prev:hover,
 body .progression-skin .mejs-inner .mejs-controls button:hover {
 	color:#555555;
@@ -120,7 +121,7 @@ body .progression-skin .mejs-container .mejs-controls, .progression-skin .wp-pla
 	background-image: linear-gradient(bottom, #eeeeee 0%, #FFFFFF 100%);
 }
 
-
+body .progression-skin .mejs-container .mejs-controls .mejs-playlist.progression-selected button,
 body .progression-skin .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button button:hover,
 body .progression-skin .mejs-container .mejs-controls .mejs-playlist button:hover,
 .progression-skin .wp-playlist .wp-playlist-next:hover, .progression-skin  .wp-playlist .wp-playlist-prev:hover,
@@ -680,7 +681,7 @@ body .progression-skin.progression-fancy .mejs-container {
 
 
 /* Main Button Color */
-.progression-skin.progression-fancy .wp-playlist .wp-playlist-next, .progression-skin.progression-fancy  .wp-playlist .wp-playlist-prev,
+body .progression-skin.progression-fancy .wp-playlist .wp-playlist-next, .progression-skin.progression-fancy  .wp-playlist .wp-playlist-prev,
 body .progression-skin.progression-fancy .mejs-inner .mejs-controls span,
 body .progression-skin.progression-fancy .mejs-inner .mejs-controls button {
 	color:#6b6b6b;
@@ -693,6 +694,7 @@ body .progression-skin.progression-fancy .mejs-controls .mejs-time-rail .mejs-ti
 }
 
 /* Main Button Hover Color */
+body .progression-skin .progression-fancy .mejs-controls .mejs-playlist.progression-selected button,
 .progression-skin.progression-fancy .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-fancy  .wp-playlist .wp-playlist-prev:hover,
 body .progression-skin.progression-fancy .mejs-inner .mejs-controls button:hover {
 	color:#6b6b6b;
@@ -709,7 +711,7 @@ body .progression-skin.progression-fancy .mejs-container .mejs-controls, .progre
 	background-image: linear-gradient(bottom, #deddde 0%, #f2f2f2 100%);
 }
 
-
+body .progression-skin.progression-fancy .mejs-controls .mejs-playlist.progression-selected button,
 body .progression-skin.progression-fancy .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button button:hover,
 body .progression-skin.progression-fancy .mejs-container .mejs-controls .mejs-playlist button:hover,
 .progression-skin.progression-fancy .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-fancy  .wp-playlist .wp-playlist-prev:hover,
@@ -888,6 +890,7 @@ body .progression-skin.progression-minimal-light .mejs-inner .mejs-controls butt
 }
 
 /* Main Button Hover Color */
+body .progression-skin.progression-minimal-light .mejs-container .mejs-controls .mejs-playlist.progression-selected button,
 .progression-skin.progression-minimal-light .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-minimal-light  .wp-playlist .wp-playlist-prev:hover,
 body .progression-skin.progression-minimal-light .mejs-inner .mejs-controls button:hover {
 	color:#555555;
@@ -898,7 +901,7 @@ body .progression-skin.progression-minimal-light .mejs-container .mejs-controls,
 	background:#f7f7f7; /* IE Fall-Back */
 }
 
-
+body .progression-skin.progression-minimal-light .mejs-container .mejs-controls .mejs-playlist.progression-selected button,
 body .progression-skin.progression-minimal-light .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button button:hover,
 body .progression-skin.progression-minimal-light .mejs-container .mejs-controls .mejs-playlist button:hover,
 .progression-skin.progression-minimal-light .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-minimal-light  .wp-playlist .wp-playlist-prev:hover,
@@ -1039,6 +1042,7 @@ body .progression-skin.progression-default-dark .mejs-inner .mejs-controls butto
 
 
 /* Main Button Hover Color */
+body .progression-skin.progression-default-dark .mejs-container .mejs-controls .mejs-playlist.progression-selected button,
 .progression-skin.progression-default-dark .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-default-dark  .wp-playlist .wp-playlist-prev:hover,
 body .progression-skin.progression-default-dark .mejs-inner .mejs-controls button:hover {
 	color:#ffffff;
@@ -1055,7 +1059,7 @@ body .progression-skin.progression-default-dark .mejs-container .mejs-controls, 
 	background-image: linear-gradient(bottom, #202020 0%, #494949 100%);
 }
 
-
+body .progression-skin.progression-default-dark .mejs-container .mejs-controls .mejs-playlist.progression-selected button,
 body .progression-skin.progression-default-dark .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button button:hover,
 body .progression-skin.progression-default-dark .mejs-container .mejs-controls .mejs-playlist button:hover,
 .progression-skin.progression-default-dark .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-default-dark  .wp-playlist .wp-playlist-prev:hover,
@@ -1246,6 +1250,7 @@ body .progression-skin.progression-minimal-dark .mejs-inner .mejs-controls butto
 
 
 /* Main Button Hover Color */
+body .progression-skin.progression-minimal-dark .mejs-container .mejs-controls .mejs-playlist.progression-selected button,
 .progression-skin.progression-minimal-dark .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-minimal-dark  .wp-playlist .wp-playlist-prev:hover,
 body .progression-skin.progression-minimal-dark .mejs-inner .mejs-controls button:hover {
 	color:#ffffff;
@@ -1256,7 +1261,7 @@ body .progression-skin.progression-minimal-dark .mejs-container .mejs-controls, 
 	background:#202020;
 }
 
-
+body .progression-skin.progression-minimal-dark .mejs-container .mejs-controls .mejs-playlist.progression-selected button,
 body .progression-skin.progression-minimal-dark .mejs-container .mejs-inner .mejs-controls .mejs-fullscreen-button button:hover,
 body .progression-skin.progression-minimal-dark .mejs-container .mejs-controls .mejs-playlist button:hover,
 .progression-skin.progression-minimal-dark .wp-playlist .wp-playlist-next:hover, .progression-skin.progression-minimal-dark  .wp-playlist .wp-playlist-prev:hover,
