@@ -206,7 +206,7 @@
 
             if (playlist.length) {
             	// create the playlist button
-            	var playlist =  
+            	var playlistButton =  
 	            $('<div class="mejs-button mejs-playlist mejs-playlist-button"><button type="button" aria-controls="mep_0" title="Show/Hide Playlist" aria-label="Show/Hide Playlist"></button></div>' +
 	            '</div>')
             	// append it to the toolbar
@@ -220,7 +220,7 @@
 	            if ( false == data.tracklist || typeof _wpmejsProgressionSettings !== 'undefined' && _wpmejsProgressionSettings.playlist !== "true"  ) {
 					playlist.hide();
 				} else {
-					playlist.addClass('progression-selected')
+					playlistButton.addClass('progression-selected')
 				}
 
 
